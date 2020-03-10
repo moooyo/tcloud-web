@@ -1,0 +1,51 @@
+.checkBox {
+  padding-left: 0.5vw;
+  padding-top: 0.5vh;
+  position: absolute;
+  bottom: 75%;
+}
+
+.select {
+  background-color: #f1f5fa;
+  border: 1px solid #90d8ff;
+  border-radius: 5px;
+}
+
+.item {
+}
+
+:global(.ant-card-body) {
+  padding: 10px;
+}
+
+.tableItemAction {
+  margin: 3px;
+}
+
+.tableItemMouseEnter {
+}
+
+.tableItemMouseEnter > td > div {
+  display: unset;
+}
+
+.noDisplay {
+  display: none;
+}
+
+.noScrollBar::-webkit-scrollbar {
+  display: none;
+}
+
+.actionButton {
+  margin-right: 10px;
+}
+
+.actionSearch {
+  border-radius: 33px !important;
+  background: #f1f2f4 !important;
+}
+
+.actionSearch > input {
+  background: #f1f2f4 !important;
+}
