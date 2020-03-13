@@ -1,4 +1,4 @@
-let dev = true;
+let dev = false;
 let yapi = true;
 let baseUrl = "";
 if (dev) {
@@ -8,7 +8,7 @@ if (dev) {
     baseUrl = "/api";
   }
 } else {
-  baseUrl = "/"
+  baseUrl = "http://localhost:8080"
 }
 
 let loginUrl = baseUrl + "/session";
@@ -17,4 +17,9 @@ let userInfoUrl = baseUrl + '/session';
 
 let fileInfoUrl = baseUrl + "/files";
 
-export {loginUrl, forgetPassword, userInfoUrl, fileInfoUrl};
+let UsersBaseUrl = baseUrl + "/users";
+let RegisterUrl = UsersBaseUrl;
+let RegisterConfirmUrl = UsersBaseUrl + "/confirm";
+let RegisterCodeResend = UsersBaseUrl + "/code";
+
+export {loginUrl, forgetPassword, userInfoUrl, fileInfoUrl, RegisterUrl, RegisterConfirmUrl, RegisterCodeResend};
