@@ -21,8 +21,10 @@ jobs:
           cmd: build
 
       - name: Deploy
-        uses: JamesIves/github-pages-deploy-action@master
+        if: success()
+        uses: crazy-max/ghaction-github-pages@v1
+        with:
+          target_branch: gh-pages
+          build_dir: dist
         env:
-          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-          BRANCH: gh-pages
-          FOLDER: dist
+          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
