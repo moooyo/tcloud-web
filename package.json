@@ -1,5 +1,5 @@
 {
-  "homepage": "moooyo.github.io/tcloud-web",
+  "homepage": "lengyu.me/tcloud-web",
   "private": true,
   "scripts": {
     "start": "umi dev",
