@@ -1,5 +1,5 @@
 {
-  "homepage": "lengyu.me/tcloud-web",
+  "homepage": "tcloud.lengyu.me",
   "private": true,
   "scripts": {
     "start": "umi dev",
