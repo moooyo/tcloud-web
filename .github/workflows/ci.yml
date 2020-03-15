@@ -39,7 +39,7 @@ jobs:
           options: ''
           ssh_options: ''
           src: 'dis/'
-          dest: '${{secrets.USER_NAME}}@${{secrets.SERVER_ADDRESS}}:${{secrets. ADDRESS}}'
+          dest: 'lengyu@35.220.216.177:/home/lengyu/tcloud'
 
       - name: Display status from deploy
         run: echo "${{ steps.deploy.outputs.status }}"
