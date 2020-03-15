@@ -38,7 +38,7 @@ jobs:
           flags: '-avzr --delete'
           options: ''
           ssh_options: ''
-          src: 'dis/'
+          src: 'dist/'
           dest: 'lengyu@35.220.216.177:/home/lengyu/tcloud'
 
       - name: Display status from deploy
