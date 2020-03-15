@@ -28,3 +28,18 @@ jobs:
           build_dir: dist
         env:
           GITHUB_PAT: ${{ secrets.ACCESS_TOKEN }}
+
+      - name: Deploy to server
+        id: deploy
+        uses: Pendect/action-rsyncer@v1.1.0
+        env:
+          DEPLOY_KEY: ${{secrets.DEPLOY_KEY}}
+        with:
+          flags: '-avzr --delete'
+          options: ''
+          ssh_options: ''
+          src: 'dis/'
+          dest: '${{secrets.USER_NAME}}@${{secrets.SERVER_ADDRESS}}:${{secrets. ADDRESS}}'
+
+      - name: Display status from deploy
+        run: echo "${{ steps.deploy.outputs.status }}"

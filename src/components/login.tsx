@@ -49,9 +49,11 @@ class LoginBox extends React.Component<any, state> {
       console.log(res);
       if (res.code !== ErrorCode.OK) {
         return openLoginFailNotification(res.message);
+      } else {
+        window.location.href = "/cloud";
       }
     }).catch(error => {
-      openLoginFailNotification(error);
+      console.log(error)
     }).finally(() => {
       this.setState({
         loading: false
@@ -74,8 +76,8 @@ class LoginBox extends React.Component<any, state> {
             </Form.Item>
             <Form.Item name={"type"} rules={[{required: true}]}>
               <Select placeholder={"用户类型"}>
-                <Option value={"student"}>学生</Option>
-                <Option value={"teacher"}>教师</Option>
+                <Option value={0}>学生</Option>
+                <Option value={1}>教师</Option>
               </Select>
             </Form.Item>
             <Form.Item name={"remember"} valuePropName={"checked"}>
