@@ -8,7 +8,7 @@ if (dev) {
     baseUrl = "/api";
   }
 } else {
-  baseUrl = "http://localhost:8080"
+  baseUrl = "http://api.tcloud.lengyu.me"
 }
 
 let loginUrl = baseUrl + "/session";
