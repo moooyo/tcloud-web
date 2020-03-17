@@ -1,13 +1,22 @@
-import React from 'react'
-import {Button, Checkbox, Col, Form, Input, notification, Row, Select, Spin} from 'antd'
-import style from './login.module.css'
-import {forgetPassword, loginUrl} from "@/_config/.api";
-import {ErrorCode} from "@/_config/error";
-import {FormInstance} from "antd/lib/form";
-import {LoadingOutlined} from '@ant-design/icons'
+import React from 'react';
+import {
+  Button,
+  Checkbox,
+  Col,
+  Form,
+  Input,
+  notification,
+  Row,
+  Select,
+  Spin,
+} from 'antd';
+import style from './login.module.css';
+import { forgetPassword, loginUrl } from '@/_config/.api';
+import { ErrorCode } from '@/_config/error';
+import { FormInstance } from 'antd/lib/form';
+import { LoadingOutlined } from '@ant-design/icons';
 
-const antIcon = <LoadingOutlined style={{fontSize: 24}} spin/>;
-
+const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
 const openLoginFailNotification = (message: string) => {
   // @ts-ignore
@@ -18,10 +27,10 @@ const openLoginFailNotification = (message: string) => {
 };
 
 interface state {
-  loading: boolean
+  loading: boolean;
 }
 
-const {Option} = Select;
+const { Option } = Select;
 
 class LoginBox extends React.Component<any, state> {
   formRef = React.createRef<FormInstance>();
@@ -30,35 +39,39 @@ class LoginBox extends React.Component<any, state> {
     super(props);
     this.state = {
       loading: false,
-    }
+    };
   }
 
   submit = (values: any) => {
     this.setState({
-      loading: true
+      loading: true,
     });
     fetch(loginUrl, {
       method: 'POST',
       headers: new Headers({
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       }),
       body: JSON.stringify(values),
-    }).then(res => {
-      return res.json();
-    }).then(res => {
-      console.log(res);
-      if (res.code !== ErrorCode.OK) {
-        return openLoginFailNotification(res.message);
-      } else {
-        window.location.href = "/cloud";
-      }
-    }).catch(error => {
-      console.log(error)
-    }).finally(() => {
-      this.setState({
-        loading: false
-      })
     })
+      .then(res => {
+        return res.json();
+      })
+      .then(res => {
+        console.log(res);
+        if (res.code !== ErrorCode.OK) {
+          return openLoginFailNotification(res.message);
+        } else {
+          window.location.href = '/cloud';
+        }
+      })
+      .catch(error => {
+        console.log(error);
+      })
+      .finally(() => {
+        this.setState({
+          loading: false,
+        });
+      });
   };
 
   render() {
@@ -68,19 +81,22 @@ class LoginBox extends React.Component<any, state> {
           <div className={style.m1}>登录</div>
           <div className={style.m2}>以进入TCloud</div>
           <Form onFinish={this.submit} ref={this.formRef}>
-            <Form.Item name={"username"} rules={[{type: "email", required: true}]}>
-              <Input placeholder={"邮箱地址"}/>
+            <Form.Item
+              name={'email'}
+              rules={[{ type: 'email', required: true }]}
+            >
+              <Input placeholder={'邮箱地址'} />
             </Form.Item>
-            <Form.Item name={"password"} rules={[{required: true}]}>
-              <Input.Password placeholder={"账户密码"}/>
+            <Form.Item name={'password'} rules={[{ required: true }]}>
+              <Input.Password placeholder={'账户密码'} />
             </Form.Item>
-            <Form.Item name={"type"} rules={[{required: true}]}>
-              <Select placeholder={"用户类型"}>
+            <Form.Item name={'type'} rules={[{ required: true }]}>
+              <Select placeholder={'用户类型'}>
                 <Option value={0}>学生</Option>
                 <Option value={1}>教师</Option>
               </Select>
             </Form.Item>
-            <Form.Item name={"remember"} valuePropName={"checked"}>
+            <Form.Item name={'remember'} valuePropName={'checked'}>
               <Row>
                 <Col span={8}>
                   <Checkbox>自动登录</Checkbox>
@@ -91,16 +107,22 @@ class LoginBox extends React.Component<any, state> {
               </Row>
             </Form.Item>
             <Spin indicator={antIcon} spinning={this.state.loading}>
-              <Button size={"large"} block={true} type={"primary"} shape={"round"} htmlType={"submit"}
-                      className={style.button}>
+              <Button
+                size={'large'}
+                block={true}
+                type={'primary'}
+                shape={'round'}
+                htmlType={'submit'}
+                className={style.button}
+              >
                 登录/注册
               </Button>
             </Spin>
           </Form>
         </div>
       </div>
-    )
+    );
   }
 }
 
-export default LoginBox
+export default LoginBox;
