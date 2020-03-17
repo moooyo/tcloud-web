@@ -1,25 +1,35 @@
 let dev = false;
-let yapi = true;
-let baseUrl = "";
+let yapi = false;
+let baseUrl = '';
 if (dev) {
   if (yapi) {
-    baseUrl = "http://localhost:3333/mock/9"
+    baseUrl = 'http://localhost:3333/mock/9';
   } else {
-    baseUrl = "/api";
+    baseUrl = 'http://localhost:8080';
   }
 } else {
-  baseUrl = "http://api.tcloud.lengyu.me"
+  baseUrl = 'http://api.tcloud.lengyu.me';
 }
 
-let loginUrl = baseUrl + "/session";
-let forgetPassword = baseUrl + "/forget";
-let userInfoUrl = baseUrl + '/session';
+let loginUrl = baseUrl + '/session';
+let forgetPassword = baseUrl + '/forget';
 
-let fileInfoUrl = baseUrl + "/files";
+let infoUrl = baseUrl + '/info';
+let userInfoUrl = infoUrl + '/user';
 
-let UsersBaseUrl = baseUrl + "/users";
+let fileInfoUrl = baseUrl + '/files';
+
+let UsersBaseUrl = baseUrl + '/users';
 let RegisterUrl = UsersBaseUrl;
-let RegisterConfirmUrl = UsersBaseUrl + "/confirm";
-let RegisterCodeResend = UsersBaseUrl + "/code";
+let RegisterConfirmUrl = UsersBaseUrl + '/confirm';
+let RegisterCodeResend = UsersBaseUrl + '/code';
 
-export {loginUrl, forgetPassword, userInfoUrl, fileInfoUrl, RegisterUrl, RegisterConfirmUrl, RegisterCodeResend};
+export {
+  loginUrl,
+  forgetPassword,
+  userInfoUrl,
+  fileInfoUrl,
+  RegisterUrl,
+  RegisterConfirmUrl,
+  RegisterCodeResend,
+};

@@ -1,8 +1,9 @@
-import {defineConfig} from 'umi';
+import { defineConfig } from 'umi';
 
 export default defineConfig({
   hash: true,
   history: {
-    type: "hash"
-  }
+    type: 'hash',
+  },
 });
+//export default ({})

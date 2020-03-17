@@ -1,28 +1,33 @@
-import React from "react";
-import {Button, Form, Input, notification, Select} from "antd";
-import {FormInstance} from "antd/es/form";
-import style from './register.module.css'
-import {RegisterCodeResend, RegisterConfirmUrl, RegisterUrl} from "@/_config/.api";
+import React from 'react';
+import { Button, Form, Input, notification, Select } from 'antd';
+import { history } from 'umi';
+import { FormInstance } from 'antd/es/form';
+import style from './register.module.css';
+import {
+  RegisterCodeResend,
+  RegisterConfirmUrl,
+  RegisterUrl,
+} from '@/_config/.api';
 
-const {Option} = Select;
+const { Option } = Select;
 
 interface confirmProps {
-  email: string
-  formType: number
+  email: string;
+  formType: number;
 }
 
 interface confirmState {
-  countdown: number
+  countdown: number;
 }
 const nickname = (
-  <Form.Item name={"nickname"} rules={[{required: true}]}>
-    <Input placeholder={"昵称"}/>
+  <Form.Item name={'nickname'} rules={[{ required: true }]}>
+    <Input placeholder={'昵称'} />
   </Form.Item>
 );
 
 class ConfirmForm extends React.Component<confirmProps, confirmState> {
   state = {
-    countdown: 5
+    countdown: 5,
   };
   formRef = React.createRef<FormInstance>();
   timer: NodeJS.Timeout;
@@ -33,119 +38,140 @@ class ConfirmForm extends React.Component<confirmProps, confirmState> {
       let count = this.state.countdown;
       if (count > 0) {
         this.setState({
-          countdown: count - 1
-        })
+          countdown: count - 1,
+        });
       } else {
         clearInterval(this.timer);
       }
-    }, 1000)
-
+    }, 1000);
   }
 
   onFinished = (value: any) => {
     fetch(RegisterConfirmUrl, {
-      method: "POST",
+      method: 'POST',
       headers: new Headers({
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       }),
-      body: JSON.stringify(value)
-    }).then(res => res.json()).then(resp => {
-      if (resp.code === 0) {
-        alert("ok");
-      } else {
-        notification['error']({
-          message: "注册失败",
-          description: resp.message
-        })
-      }
-    }).catch(err => console.log(err));
+      body: JSON.stringify(value),
+    })
+      .then(res => res.json())
+      .then(resp => {
+        if (resp.code === 0) {
+          history.push('/cloud');
+        } else {
+          notification['error']({
+            message: '注册失败',
+            description: resp.message,
+          });
+        }
+      })
+      .catch(err => console.log(err));
   };
 
   onSendClick = () => {
-    //todo call send email api
-    fetch(RegisterCodeResend + "?email=" + this.props.email).then(res => res.json()).then(resp => {
-      if (resp.code === 0) {
-        notification['warning']({
-          message: "注册码已发送",
-          description: "注册码已经重新投递到您的邮箱，请您在稍后确认这封邮件，如果多次重试均无法获得注册码，请联系管理员。注意：注册码有效期只有5分钟。"
-        })
-      } else {
-        notification['error']({
-          message: "注册码获取失败",
-          description: resp.message,
-        })
-      }
-    }).catch(err => console.log(err)).finally(() => {
-      this.setState({
-        countdown: 60
-      });
-      this.timer = setInterval(() => {
-        let count = this.state.countdown;
-        if (count > 0) {
-          this.setState({
-            countdown: count - 1
-          })
+    fetch(RegisterCodeResend + '?email=' + this.props.email)
+      .then(res => res.json())
+      .then(resp => {
+        if (resp.code === 0) {
+          notification['warning']({
+            message: '注册码已发送',
+            description:
+              '注册码已经重新投递到您的邮箱，请您在稍后确认这封邮件，如果多次重试均无法获得注册码，请联系管理员。注意：注册码有效期只有5分钟。',
+          });
         } else {
-          clearInterval(this.timer);
+          notification['error']({
+            message: '注册码获取失败',
+            description: resp.message,
+          });
         }
-      }, 1000)
-    });
+      })
+      .catch(err => console.log(err))
+      .finally(() => {
+        this.setState({
+          countdown: 60,
+        });
+        this.timer = setInterval(() => {
+          let count = this.state.countdown;
+          if (count > 0) {
+            this.setState({
+              countdown: count - 1,
+            });
+          } else {
+            clearInterval(this.timer);
+          }
+        }, 1000);
+      });
   };
 
   render() {
     return (
       <div className={style.wrap}>
-        <div className={style.m1}>
-          确认信息
-        </div>
-        <div className={style.m2}>
-          用以完成注册
-        </div>
-        <Form ref={this.formRef} onFinish={this.onFinished} initialValues={{
-          "email": this.props.email
-        }}>
-          <Form.Item name={"email"} rules={[{required: true}]}>
-            <Input placeholder={"邮箱地址"} disabled={true}/>
+        <div className={style.m1}>确认信息</div>
+        <div className={style.m2}>用以完成注册</div>
+        <Form
+          ref={this.formRef}
+          onFinish={this.onFinished}
+          initialValues={{
+            email: this.props.email,
+          }}
+        >
+          <Form.Item name={'email'} rules={[{ required: true }]}>
+            <Input placeholder={'邮箱地址'} disabled={true} />
           </Form.Item>
-          <Form.Item name={"code"} rules={[{required: true}]}>
+          <Form.Item name={'code'} rules={[{ required: true }]}>
             <div>
-              <Input placeholder={"注册码"} style={{width: "60%", marginRight: "1vw"}}/>
-              <Button type={"primary"} style={{width: "35%"}} disabled={this.state.countdown > 0}
-                      onClick={this.onSendClick}>
-                {this.state.countdown > 0 ? this.state.countdown + "秒后重新发送" : "重新发送"}
+              <Input
+                placeholder={'注册码'}
+                style={{ width: '60%', marginRight: '1vw' }}
+              />
+              <Button
+                type={'primary'}
+                style={{ width: '35%' }}
+                disabled={this.state.countdown > 0}
+                onClick={this.onSendClick}
+              >
+                {this.state.countdown > 0
+                  ? this.state.countdown + '秒后重新发送'
+                  : '重新发送'}
               </Button>
             </div>
           </Form.Item>
-          {this.props.formType === 1 ? nickname : ""}
-          <Button type={"primary"} htmlType={"submit"} size={"large"}
-                  shape={"round"} style={{width: "100%"}}>确认</Button>
+          {this.props.formType === 1 ? nickname : ''}
+          <Button
+            type={'primary'}
+            htmlType={'submit'}
+            size={'large'}
+            shape={'round'}
+            style={{ width: '100%' }}
+          >
+            确认
+          </Button>
         </Form>
       </div>
-    )
+    );
   }
 }
 
-
 interface props {
-  formType: number
+  formType: number;
 }
 
 interface state {
-  type: number
-  status: number
-  step: number
-  email: string
+  type: number;
+  status: number;
+  step: number;
+  email: string;
 }
 
 const TeacherCode = (
-  <Form.Item name={"code"} rules={[{required: true}]}>
-    <Input placeholder={"教师注册码"}/>
+  <Form.Item name={'code'} rules={[{ required: true }]}>
+    <Input placeholder={'教师注册码'} />
   </Form.Item>
 );
 
 const InviteCode = (
-  <Form.Item name={"invite"} rules={[{required: true}]}>
-    <Input placeholder={"班级邀请码"}/>
+  <Form.Item name={'invite'} rules={[{ required: true }]}>
+    <Input placeholder={'班级邀请码'} />
   </Form.Item>
 );
 
@@ -163,103 +189,113 @@ class RegisterForm extends React.Component<props, state> {
     type: 0,
     status: 0,
     step: 0,
-    email: ""
+    email: '',
   };
 
   onFinished = (value: any) => {
     //todo: send data to web server
     console.log(value);
     fetch(RegisterUrl, {
-      method: "POST",
+      method: 'POST',
       headers: new Headers({
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       }),
-      body: JSON.stringify(value)
-    }).then(res => res.json()).then(resp => {
-      if (resp.code === 0) {
-        notification['success']({
-          message: "注册码已发送",
-          description: "一封带有注册码的邮件已经发送往您的邮箱，您可以在稍后确认。" +
-            "如果长时间没有收到这封邮件，您也可以点击按钮再次获取。注意:注册码的有效时间为五分钟！",
-          duration: 0
-        });
-        this.setState({
-          email: value.email,
-          step: 1
-        })
-      } else {
-        notification['error']({
-          message: "服务器异常",
-          description: resp.message,
-          duration: 0
-        });
-        console.log(resp);
-      }
-    }).catch(err => console.log(err));
+      body: JSON.stringify(value),
+    })
+      .then(res => res.json())
+      .then(resp => {
+        if (resp.code === 0) {
+          notification['success']({
+            message: '注册码已发送',
+            description:
+              '一封带有注册码的邮件已经发送往您的邮箱，您可以在稍后确认。' +
+              '如果长时间没有收到这封邮件，您也可以点击按钮再次获取。注意:注册码的有效时间为五分钟！',
+          });
+          this.setState({
+            email: value.email,
+            step: 1,
+          });
+        } else {
+          notification['error']({
+            message: '服务器异常',
+            description: resp.message,
+          });
+          console.log(resp);
+        }
+      })
+      .catch(err => console.log(err));
   };
 
   onSelectionChange = (value: number) => {
     this.setState({
-      type: value
-    })
+      type: value,
+    });
   };
   onClassChange = (value: number) => {
     this.setState({
-      status: value
-    })
+      status: value,
+    });
   };
 
   render() {
     if (this.state.step === 0) {
       return (
         <div className={style.wrap}>
-          <div className={style.m1}>
-            请输入邮箱和密码
-          </div>
-          <div className={style.m2}>
-            以进入Account Register
-          </div>
+          <div className={style.m1}>请输入邮箱和密码</div>
+          <div className={style.m2}>以进入Account Register</div>
           <Form ref={this.formRef} onFinish={this.onFinished}>
-            <Form.Item name={"email"} rules={[{required: true, type: "email"}]}>
-              <Input placeholder={"邮箱地址"}/>
+            <Form.Item
+              name={'email'}
+              rules={[{ required: true, type: 'email' }]}
+            >
+              <Input placeholder={'邮箱地址'} />
             </Form.Item>
-            <Form.Item name={"password"} rules={[{required: true}]}>
-              <Input.Password placeholder={"账户密码"}/>
+            <Form.Item name={'password'} rules={[{ required: true }]}>
+              <Input.Password placeholder={'账户密码'} />
             </Form.Item>
-            <Form.Item name={"nickname"} rules={[{required: true}]}>
-              <Input placeholder={"昵称"}/>
+            <Form.Item name={'nickname'} rules={[{ required: true }]}>
+              <Input placeholder={'昵称'} />
             </Form.Item>
-            {
-              this.state.type === 0 ? (
-                <Form.Item name={"class"}>
-                  <Select placeholder={"班级"} onChange={this.onClassChange}>
-                    <Option value={0}>暂不加入</Option>
-                    <Option value={1}>软件1601</Option>
-                    <Option value={2}>软件1602</Option>
-                  </Select>
-                </Form.Item>
-              ) : ""
-            }
-            {this.state.status !== 0 && this.state.type === 0 ? InviteCode : ""}
-            <Form.Item name={"type"}>
-              <Select placeholder={"用户类型"} onChange={this.onSelectionChange}>
+            {this.state.type === 0 ? (
+              <Form.Item name={'class'}>
+                <Select placeholder={'班级'} onChange={this.onClassChange}>
+                  <Option value={0}>暂不加入</Option>
+                  <Option value={1}>软件1601</Option>
+                  <Option value={2}>软件1602</Option>
+                </Select>
+              </Form.Item>
+            ) : (
+              ''
+            )}
+            {this.state.status !== 0 && this.state.type === 0 ? InviteCode : ''}
+            <Form.Item name={'type'}>
+              <Select
+                placeholder={'用户类型'}
+                onChange={this.onSelectionChange}
+              >
                 <Option value={0}>学生</Option>
                 <Option value={1}>教师</Option>
               </Select>
             </Form.Item>
-            {this.state.type !== 0 ? TeacherCode : ""}
-            <Button type={"primary"} htmlType={"submit"} shape={"round"} size={"large"} style={{
-              width: "100%"
-            }}>继续</Button>
+            {this.state.type !== 0 ? TeacherCode : ''}
+            <Button
+              type={'primary'}
+              htmlType={'submit'}
+              shape={'round'}
+              size={'large'}
+              style={{
+                width: '100%',
+              }}
+            >
+              继续
+            </Button>
           </Form>
         </div>
-      )
+      );
     } else {
-      return (
-        <ConfirmForm email={this.state.email} formType={0}/>
-      )
+      return <ConfirmForm email={this.state.email} formType={0} />;
     }
   }
 }
 
-export {RegisterForm, ConfirmForm}
+export { RegisterForm, ConfirmForm };
