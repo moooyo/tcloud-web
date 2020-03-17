@@ -52,6 +52,7 @@ class ConfirmForm extends React.Component<confirmProps, confirmState> {
       headers: new Headers({
         'Content-Type': 'application/json',
       }),
+      mode: 'cors',
       body: JSON.stringify(value),
     })
       .then(res => res.json())
@@ -69,7 +70,10 @@ class ConfirmForm extends React.Component<confirmProps, confirmState> {
   };
 
   onSendClick = () => {
-    fetch(RegisterCodeResend + '?email=' + this.props.email)
+    fetch(RegisterCodeResend + '?email=' + this.props.email, {
+      method: 'GET',
+      mode: 'cors',
+    })
       .then(res => res.json())
       .then(resp => {
         if (resp.code === 0) {

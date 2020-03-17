@@ -1,38 +1,36 @@
-import React from 'react'
-import moment from "moment";
-import {Table} from 'antd'
-import {FileInfo} from "@/components/file";
+import React from 'react';
+import moment from 'moment';
+import { Table } from 'antd';
+import { FileInfo } from '@/components/file';
 import {
   CloudDownloadOutlined,
   FilePdfOutlined,
   FolderOutlined,
   MoreOutlined,
   ShareAltOutlined,
-} from '@ant-design/icons'
-import style from './file.module.css'
-import {fileInfoUrl} from "@/_config/.api";
+} from '@ant-design/icons';
+import style from './file.module.css';
+import { fileInfoUrl } from '@/_config/.api';
 
-interface props {
-
-}
+interface props {}
 
 interface state {
-  loading: boolean
-  selectedRowKeys: number[]
-  enterRowIndex: number | undefined
-  data: FileInfo[]
-  limit: number
+  loading: boolean;
+  selectedRowKeys: number[];
+  enterRowIndex: number | undefined;
+  data: FileInfo[];
+  limit: number;
 }
 
 const fileImgStyle = {
-  fontSize: ""
+  fontSize: '',
 };
 
 const file2img = (file: FileInfo) => {
   if (file.isDirectory) {
-    return <FolderOutlined style={fileImgStyle}/>
+    return <FolderOutlined style={fileImgStyle} />;
   } else {
-    return <FilePdfOutlined style={fileImgStyle}/>
+    return <FilePdfOutlined style={fileImgStyle} />;
   }
 };
 const size2str = (size: number) => {
@@ -45,22 +43,22 @@ const size2str = (size: number) => {
     size = size / K;
     ret = size;
   }
-  let tmp = "";
+  let tmp = '';
   switch (t) {
     case 0:
-      tmp = "K";
+      tmp = 'K';
       break;
     case 1:
-      tmp = "M";
+      tmp = 'M';
       break;
     case 2:
-      tmp = "G";
+      tmp = 'G';
       break;
     case 3:
-      tmp = "T";
+      tmp = 'T';
       break;
     case 4:
-      tmp = "P";
+      tmp = 'P';
       break;
   }
   return ret.toFixed(2).toString() + tmp;
@@ -76,78 +74,79 @@ class FileTable extends React.Component<props, state> {
   hasMore = true;
   shouldLoad = true;
   offset = 0;
-  columns = [{
-    title: "文件名",
-    dataIndex: "fileName",
-    width: "50%",
-    sorter: (rowA: FileInfo, rowB: FileInfo) => {
-      return rowA.fileName > rowB.fileName
-    },
-    render: (fileName: string, record: FileInfo) => {
-      return (
-        <span>
-           <span style={{marginRight: "10px"}}>
-           {file2img(record)}
-           </span>
-           <a style={{userSelect: "none"}}>
-             {fileName}
-           </a>
-         </span>
-      )
-    }
-  }, {
-    title: "",
-    dataIndex: "action",
-    width: "10%",
-    render: (x: any, record: FileInfo) => {
-      if (!record.isDirectory) {
+  columns = [
+    {
+      title: '文件名',
+      dataIndex: 'fileName',
+      width: '50%',
+      sorter: (rowA: FileInfo, rowB: FileInfo) => {
+        return rowA.fileName > rowB.fileName;
+      },
+      render: (fileName: string, record: FileInfo) => {
         return (
-          <div className={"action" + " " + style.noDisplay}>
-            <span className={style.tableItemAction}>
-              <ShareAltOutlined style={fileImgStyle}/>
-            </span>
-            <span className={style.tableItemAction}>
-              <CloudDownloadOutlined style={fileImgStyle}/>
-            </span>
-            <span className={style.tableItemAction}>
-              <MoreOutlined style={fileImgStyle}/>
-            </span>
-          </div>
-        )
-      }
-    }
-  }, {
-    title: "大小",
-    dataIndex: "size",
-    width: "15%",
-    sorter: (rowA: FileInfo, rowB: FileInfo) => {
-      return rowA.size > rowB.size
+          <span>
+            <span style={{ marginRight: '10px' }}>{file2img(record)}</span>
+            <a style={{ userSelect: 'none' }}>{fileName}</a>
+          </span>
+        );
+      },
     },
-    render: (text: number, record: FileInfo) => {
-      if (record.isDirectory) {
-        return <span style={{userSelect: "none"}}>-</span>
-      } else {
-        return <span style={{userSelect: "none"}}>{size2str(text)}</span>
-      }
-    }
-  }, {
-    title: "修改时间",
-    dataIndex: "editTime",
-    sorter: (rowA: FileInfo, rowB: FileInfo) => {
-      return rowA.editTime > rowB.editTime
+    {
+      title: '',
+      dataIndex: 'action',
+      width: '10%',
+      render: (x: any, record: FileInfo) => {
+        if (!record.isDirectory) {
+          return (
+            <div className={'action' + ' ' + style.noDisplay}>
+              <span className={style.tableItemAction}>
+                <ShareAltOutlined style={fileImgStyle} />
+              </span>
+              <span className={style.tableItemAction}>
+                <CloudDownloadOutlined style={fileImgStyle} />
+              </span>
+              <span className={style.tableItemAction}>
+                <MoreOutlined style={fileImgStyle} />
+              </span>
+            </div>
+          );
+        }
+      },
     },
-    render: (time: number, record: FileInfo) => {
-      if (record.isDirectory) {
-        return (
-          <span style={{userSelect: "none"}}>-</span>
-        )
-      } else {
-        return (
-          <span style={{userSelect: "none"}}>{moment(time).format("YYYY-MM-DD HH:mm")}</span>
-        )
-      }
-    }
-  }];
+    {
+      title: '大小',
+      dataIndex: 'size',
+      width: '15%',
+      sorter: (rowA: FileInfo, rowB: FileInfo) => {
+        return rowA.size > rowB.size;
+      },
+      render: (text: number, record: FileInfo) => {
+        if (record.isDirectory) {
+          return <span style={{ userSelect: 'none' }}>-</span>;
+        } else {
+          return <span style={{ userSelect: 'none' }}>{size2str(text)}</span>;
+        }
+      },
+    },
+    {
+      title: '修改时间',
+      dataIndex: 'editTime',
+      sorter: (rowA: FileInfo, rowB: FileInfo) => {
+        return rowA.editTime > rowB.editTime;
+      },
+      render: (time: number, record: FileInfo) => {
+        if (record.isDirectory) {
+          return <span style={{ userSelect: 'none' }}>-</span>;
+        } else {
+          return (
+            <span style={{ userSelect: 'none' }}>
+              {moment(time).format('YYYY-MM-DD HH:mm')}
+            </span>
+          );
+        }
+      },
+    },
+  ];
 
   constructor(props: any) {
     super(props);
@@ -160,13 +159,19 @@ class FileTable extends React.Component<props, state> {
     };
     this.initDataBuffer().finally(() => {
       this.setState({
-        loading: false
+        loading: false,
       });
     });
   }
 
   formatPageUrl = () => {
-    return fileInfoUrl + "?offset=" + this.offset.toString() + "&limit=" + this.state.limit.toString();
+    return (
+      fileInfoUrl +
+      '?offset=' +
+      this.offset.toString() +
+      '&limit=' +
+      this.state.limit.toString()
+    );
   };
 
   refreshBuffer = async () => {
@@ -181,7 +186,10 @@ class FileTable extends React.Component<props, state> {
 
     // fetch new data
     try {
-      let data = await fetch(this.formatPageUrl());
+      let data = await fetch(this.formatPageUrl(), {
+        method: 'GET',
+        mode: 'cors',
+      });
       let json = await data.json();
       this.preFetchedData = json.data;
       this.preFetchedData.map((e: any) => {
@@ -212,7 +220,7 @@ class FileTable extends React.Component<props, state> {
     this.nextBuffer = c;
     // now render data is ready;
     this.setState({
-      data: this.usedData
+      data: this.usedData,
     });
     // start to fetch new data
     if (this.hasMore) {
@@ -244,7 +252,7 @@ class FileTable extends React.Component<props, state> {
     // @ts-ignore
     const scrollHeight = this.scrollRef.scrollHeight;
     const loadingRate = 0.8;
-    let loading = (scrollTop + clientHeight) > scrollHeight * loadingRate;
+    let loading = scrollTop + clientHeight > scrollHeight * loadingRate;
     if (loading) {
       this.loadNewPage().finally();
     }
@@ -252,11 +260,11 @@ class FileTable extends React.Component<props, state> {
 
   onSelectChange = (selectedRowKeys: any, selectedRows: any) => {
     this.setState({
-      selectedRowKeys: selectedRowKeys
-    })
+      selectedRowKeys: selectedRowKeys,
+    });
   };
   setRowClassName = (record: FileInfo, index: number) => {
-    return this.state.enterRowIndex === index ? style.tableItemMouseEnter : "";
+    return this.state.enterRowIndex === index ? style.tableItemMouseEnter : '';
   };
 
   render() {
@@ -264,28 +272,28 @@ class FileTable extends React.Component<props, state> {
       <div
         className={style.noScrollBar}
         onScrollCapture={() => {
-          this.onScrollHandle()
+          this.onScrollHandle();
         }}
         ref={c => {
-          this.scrollRef = c
+          this.scrollRef = c;
         }}
         style={{
           overflowY: 'scroll',
-          height: "100%",
+          height: '100%',
         }}
       >
         <Table
           scroll={{
-            scrollToFirstRowOnChange: false
+            scrollToFirstRowOnChange: false,
           }}
           // @ts-ignore
           columns={this.columns}
           dataSource={this.state.data}
-          size={"small"}
+          size={'small'}
           rowSelection={{
             selectedRowKeys: this.state.selectedRowKeys,
             fixed: true,
-            onChange: this.onSelectChange
+            onChange: this.onSelectChange,
           }}
           loading={this.state.loading}
           rowKey={(file: FileInfo) => file.key}
@@ -294,20 +302,20 @@ class FileTable extends React.Component<props, state> {
             return {
               onMouseEnter: event => {
                 this.setState({
-                  enterRowIndex: index
-                })
+                  enterRowIndex: index,
+                });
               },
               onMouseLeave: event => {
                 this.setState({
-                  enterRowIndex: undefined
-                })
-              }
-            }
+                  enterRowIndex: undefined,
+                });
+              },
+            };
           }}
           rowClassName={this.setRowClassName}
         />
       </div>
-    )
+    );
   }
 }
 
