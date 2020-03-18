@@ -24,14 +24,11 @@ class Index extends React.Component<any, state> {
       user: errorUser,
       loading: true,
     };
-    fetch(userInfoUrl, {
-      method: 'GET',
-      mode: 'cors',
-    })
+    fetch(userInfoUrl)
       .then(res => res.json())
       .then(res => {
         this.setState({
-          user: res,
+          user: res.data,
           loading: false,
         });
       })

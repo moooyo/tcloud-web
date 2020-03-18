@@ -5,7 +5,7 @@ if (dev) {
   if (yapi) {
     baseUrl = 'http://localhost:3333/mock/9';
   } else {
-    baseUrl = 'http://localhost:8080';
+    baseUrl = 'http://localhost/api';
   }
 } else {
   baseUrl = 'http://tcloud.lengyu.me/api';

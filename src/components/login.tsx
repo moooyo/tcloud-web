@@ -15,6 +15,7 @@ import { forgetPassword, loginUrl } from '@/_config/.api';
 import { ErrorCode } from '@/_config/error';
 import { FormInstance } from 'antd/lib/form';
 import { LoadingOutlined } from '@ant-design/icons';
+import { history } from 'umi';
 
 const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
@@ -51,7 +52,6 @@ class LoginBox extends React.Component<any, state> {
       headers: new Headers({
         'Content-Type': 'application/json',
       }),
-      mode: 'cors',
       body: JSON.stringify(values),
     })
       .then(res => {
@@ -62,7 +62,7 @@ class LoginBox extends React.Component<any, state> {
         if (res.code !== ErrorCode.OK) {
           return openLoginFailNotification(res.message);
         } else {
-          window.location.href = '/cloud';
+          history.push('/cloud');
         }
       })
       .catch(error => {

@@ -1,12 +1,18 @@
 interface UserInfo {
-  name: string,
-  className: string,
-  type: string
+  Nickname: string;
+  Class: string;
+  Type: number;
+  Email: string;
+  Status: number;
+  DiskRoot: number;
 }
 
 let errorUser = {
-  name: "Alice",
-  className: "xs1604",
-  type: "student"
+  Nickname: 'Alice',
+  Class: 'xs1604',
+  Type: 0,
+  Email: 'register@lengyu.me',
+  Status: 3,
+  DiskRoot: 0,
 };
-export {UserInfo, errorUser}
+export { UserInfo, errorUser };
