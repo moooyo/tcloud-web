@@ -16,6 +16,18 @@ interface state {}
 
 class FileAction extends React.Component<props, state> {
   state = {};
+  uploadButtonClick = () => {
+    let input = document.getElementById('upload_file');
+    if (input === null) {
+      return;
+    }
+    input.click();
+  };
+  onUploadChange = (e: any) => {
+    e.persist();
+    let files = e.nativeEvent.target.files;
+    console.log(files);
+  };
 
   render() {
     return (
@@ -31,12 +43,17 @@ class FileAction extends React.Component<props, state> {
               type={'primary'}
               icon={<UploadOutlined />}
               className={style.actionButton}
-              style={{
-                marginLeft: '22px',
-              }}
+              style={{ marginLeft: '22px' }}
+              onClick={this.uploadButtonClick}
             >
-              <input type={'file'} style={{ opacity: '0' }} />
               上传
+              <input
+                type={'file'}
+                multiple={true}
+                id={'upload_file'}
+                style={{ display: 'none' }}
+                onChange={this.onUploadChange}
+              />
             </Button>
             <Button icon={<FolderAddOutlined />} className={style.actionButton}>
               新建文件夹
