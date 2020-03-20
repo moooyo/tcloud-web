@@ -4,19 +4,43 @@ import {
   AppstoreOutlined,
   CloudDownloadOutlined,
   FolderAddOutlined,
+  SwapOutlined,
   UploadOutlined,
 } from '@ant-design/icons';
 import style from './file.module.css';
+import UploadList from '@/components/uploadList';
 
 const { Search } = Input;
 
+interface UploadFileMeta {
+  Name: string;
+  Size: number;
+  PathID: number; // directory ID
+  Path: string; //virtual path name
+  uploader: boolean;
+  Process: number;
+  Type: string;
+}
+
 interface props {}
 
-interface state {}
+interface state {
+  FileList: Array<UploadFileMeta>;
+}
 
 class FileAction extends React.Component<props, state> {
-  state = {};
-  uploadButtonClick = () => {
+  state = {
+    FileList: Array<UploadFileMeta>(),
+  };
+  onUploadListClick = () => {
+    let upload = document.getElementById('upload_list_action');
+    if (upload === null) {
+      return;
+    }
+    upload.setAttribute('style', '');
+  };
+
+  onUploadButtonClick = () => {
     let input = document.getElementById('upload_file');
     if (input === null) {
       return;
@@ -26,7 +50,42 @@ class FileAction extends React.Component<props, state> {
   onUploadChange = (e: any) => {
     e.persist();
     let files = e.nativeEvent.target.files;
-    console.log(files);
+    let data = this.state.FileList;
+    for (let f of files) {
+      let tmp: UploadFileMeta = {
+        Name: f.name,
+        Size: f.size,
+        PathID: 0, // directory ID
+        Path: '我的文件', //virtual path name
+        uploader: true,
+        Process: 60,
+        Type: f.type,
+      };
+      data.push(tmp);
+      this.uploadFile(f);
+    }
+    this.setState({
+      FileList: data,
+    });
+  };
+  uploadFile = async (file: any) => {
+    const SliceSize = 4 * 1024 * 1024; //4M
+    let reader = new FileReader();
+    reader.readAsBinaryString(file);
+    reader.onload = () => {
+      if (reader.result === null) {
+        console.log('error! loading file error!');
+        return;
+      }
+      let now = 0;
+      let count = file.size / SliceSize;
+      while (now < count) {
+        let tmp = reader.result.slice(now * SliceSize, (now + 1) * SliceSize);
+        //
+        now++;
+      }
+    };
+    return;
   };
 
   render() {
@@ -37,6 +96,11 @@ class FileAction extends React.Component<props, state> {
           marginTop: '1vh',
         }}
       >
+        <UploadList
+          className={style.uploaderList}
+          id={'upload_list_action'}
+          source={this.state.FileList}
+        />
         <Row>
           <Col flex={2}>
             <Button
@@ -44,7 +108,7 @@ class FileAction extends React.Component<props, state> {
               icon={<UploadOutlined />}
               className={style.actionButton}
               style={{ marginLeft: '22px' }}
-              onClick={this.uploadButtonClick}
+              onClick={this.onUploadButtonClick}
             >
               上传
               <input
@@ -63,6 +127,13 @@ class FileAction extends React.Component<props, state> {
               className={style.actionButton}
             >
               离线下载
+            </Button>
+            <Button
+              icon={<SwapOutlined />}
+              className={style.actionButton}
+              onClick={this.onUploadListClick}
+            >
+              传输列表
             </Button>
           </Col>
           <Col flex={2}>
@@ -127,4 +198,4 @@ class FileShowLoadData extends React.Component<any, any> {
   }
 }
 
-export { FileAction, FileShowLoadData };
+export { FileAction, FileShowLoadData, UploadFileMeta };
