@@ -1,4 +1,4 @@
-let dev = false;
+let dev = true;
 let yapi = false;
 let baseUrl = '';
 if (dev) {
@@ -19,6 +19,8 @@ let userInfoUrl = infoUrl + '/user';
 
 let fileInfoUrl = baseUrl + '/files';
 
+let uploadFileUrl = fileInfoUrl;
+
 let UsersBaseUrl = baseUrl + '/users';
 let RegisterUrl = UsersBaseUrl;
 let RegisterConfirmUrl = UsersBaseUrl + '/confirm';
@@ -32,4 +34,5 @@ export {
   RegisterUrl,
   RegisterConfirmUrl,
   RegisterCodeResend,
+  uploadFileUrl,
 };

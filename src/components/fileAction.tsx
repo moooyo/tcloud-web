@@ -9,6 +9,7 @@ import {
 } from '@ant-design/icons';
 import style from './file.module.css';
 import UploadList from '@/components/uploadList';
+import { uploadFileUrl } from '@/_config/.api';
 
 const { Search } = Input;
 
@@ -68,11 +69,12 @@ class FileAction extends React.Component<props, state> {
       FileList: data,
     });
   };
-  uploadFile = async (file: any) => {
-    const SliceSize = 4 * 1024 * 1024; //4M
+  uploadFile = (file: any) => {
+    const SliceSize = 1024 * 1024; //1M
     let reader = new FileReader();
     reader.readAsBinaryString(file);
-    reader.onload = () => {
+    console.log(file.size);
+    reader.onloadend = async () => {
       if (reader.result === null) {
         console.log('error! loading file error!');
         return;
@@ -80,11 +82,39 @@ class FileAction extends React.Component<props, state> {
       let now = 0;
       let count = file.size / SliceSize;
       while (now < count) {
+        let start = now * SliceSize;
+        let end = start + SliceSize;
+        if (end > file.size) {
+          end = file.size;
+        }
+        console.log(start, end);
         let tmp = reader.result.slice(now * SliceSize, (now + 1) * SliceSize);
-        //
+        let len = 0;
+        if (typeof tmp === 'string') {
+          len = tmp.length;
+        } else {
+          alert('assume error!');
+        }
+        // todo resize to slice to upload. Using ACK to confirm slice upload success
+        try {
+          let ret = await fetch(uploadFileUrl, {
+            method: 'POST',
+            body: JSON.stringify({
+              slice_id: 1,
+              length: len,
+              // @ts-ignore
+              file: window.btoa(tmp),
+            }),
+          });
+          let resp = await ret.json();
+          console.log(resp.body);
+        } catch (e) {
+          console.log(e);
+        }
         now++;
       }
     };
+
     return;
   };
 
