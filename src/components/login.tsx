@@ -58,11 +58,20 @@ class LoginBox extends React.Component<any, state> {
         return res.json();
       })
       .then(res => {
-        console.log(res);
-        if (res.code !== ErrorCode.OK) {
-          return openLoginFailNotification(res.message);
-        } else {
+        if (res.code === ErrorCode.CreateUserByLogin) {
+          history.push(
+            '/register?email=' + values.email + '&form_type=1&confirm=1',
+          );
+          notification['success']({
+            message: '注册码已发送',
+            description:
+              '一封带有注册码的邮件已经发送往您的邮箱，您可以在稍后确认。' +
+              '如果长时间没有收到这封邮件，您也可以点击按钮再次获取。注意:注册码的有效时间为五分钟！',
+          });
+        } else if (res.code === ErrorCode.OK) {
           history.push('/cloud');
+        } else {
+          return openLoginFailNotification(res.message);
         }
       })
       .catch(error => {

@@ -1,35 +1,53 @@
 import React from 'react';
-import { Layout, Spin } from 'antd';
+import { Layout } from 'antd';
 import { errorUser, UserInfo } from '@/components/user';
 import { userInfoUrl } from '@/_config/.api';
-import MainHeader from '@/components/header';
-import CloudSider from '@/components/cloudSider';
-import { LoadingOutlined } from '@ant-design/icons';
 import FileTable from '@/components/fileTable';
-import { FileAction, FileShowLoadData } from '@/components/fileAction';
+import {
+  FileAction,
+  FileShowLoadData,
+  routerArgs,
+} from '@/components/fileAction';
+import { FileInfo } from '@/components/file';
+import FileList from '@/components/fileList';
 
 const { Header, Sider, Content } = Layout;
 
 interface state {
   user: UserInfo;
   loading: boolean;
+  routerArgs: routerArgs[];
+  selectRows: FileInfo[];
+  hasMore: boolean;
+  count: number;
+  displayMode: number;
 }
 
-const actIcon = <LoadingOutlined spin />;
-
 class Index extends React.Component<any, state> {
+  state = {
+    user: errorUser,
+    loading: true,
+    routerArgs: [],
+    selectRows: [],
+    hasMore: true,
+    count: 0,
+    displayMode: 0,
+  };
+
   constructor(props: any) {
     super(props);
-    this.state = {
-      user: errorUser,
-      loading: true,
-    };
     fetch(userInfoUrl)
       .then(res => res.json())
       .then(res => {
         this.setState({
           user: res.data,
           loading: false,
+          routerArgs: [
+            {
+              Key: res.data.DiskRoot,
+              Name: '我的文件',
+            },
+          ],
         });
       })
       .catch(error => {
@@ -37,67 +55,91 @@ class Index extends React.Component<any, state> {
       });
   }
 
+  onRouterClick = (e: any) => {
+    let key = e.currentTarget.children[0].innerHTML;
+    let id = e.currentTarget.children[1].innerHTML;
+    if (key === -1) {
+      return;
+    } else {
+      let args = this.state.routerArgs;
+      args = args.slice(0, id + 1);
+      this.setState({
+        routerArgs: args,
+      });
+    }
+  };
+
+  onSelectKeyChange = (selected: FileInfo[]) => {
+    this.setState({
+      selectRows: selected,
+    });
+  };
+
+  onSourceChanged = (hasMore: boolean, count: number) => {
+    this.setState({
+      hasMore: hasMore,
+      count: count,
+    });
+  };
+
+  onShowModeChanged = () => {
+    if (this.state.displayMode === 1) {
+      this.setState({
+        displayMode: 0,
+      });
+    } else {
+      this.setState({
+        displayMode: 1,
+      });
+    }
+  };
+
   render() {
+    if (this.state.loading) {
+      return null;
+    }
+    let path = this.state.routerArgs[this.state.routerArgs.length - 1];
+    const displayTable = (
+      <FileTable
+        path={path}
+        onSelectRowKeyChanged={this.onSelectKeyChange}
+        onSourceChanged={this.onSourceChanged}
+      />
+    );
+    const displayList = (
+      <FileList
+        path={path}
+        onSelectKeyChanged={this.onSelectKeyChange}
+        onSourceChanged={this.onSourceChanged}
+      />
+    );
     return (
-      <Spin
-        tip={'加载中...'}
-        spinning={this.state.loading}
-        size={'large'}
-        indicator={actIcon}
-        style={{
-          top: '40vh',
-        }}
-      >
-        <div>
-          <Layout style={{ backgroundColor: 'white' }}>
-            <Header
-              style={{
-                backgroundColor: '#FFFFFF',
-                boxShadow: '0 2px 6px 0 rgba(0,0,0,.05)',
-                position: 'fixed',
-                width: '100%',
-                overflow: 'auto',
-              }}
-            >
-              <MainHeader user={this.state.user} />
-            </Header>
-            <Layout
-              style={{
-                marginTop: '10vh',
-              }}
-            >
-              <Sider
-                style={{
-                  position: 'fixed',
-                  left: '1vw',
-                  height: '88vh',
-                  backgroundColor: 'white',
-                  boxShadow: '2px -1px 6px 0 rgba(0,0,0,.05)',
-                  width: '10vw',
-                  overflow: 'auto',
-                }}
-              >
-                <CloudSider />
-              </Sider>
-              <Content
-                style={{
-                  backgroundColor: 'white',
-                  width: '84vw',
-                  height: '88vh',
-                  boxShadow: '-2px -1px 6px 0 rgba(0,0,0,.05)',
-                  position: 'fixed',
-                  top: '10vh',
-                  left: '15vw',
-                }}
-              >
-                <FileAction />
-                <FileShowLoadData />
-                <FileTable />
-              </Content>
-            </Layout>
-          </Layout>
-        </div>
-      </Spin>
+      <Layout>
+        <Content
+          style={{
+            backgroundColor: 'white',
+            width: '84vw',
+            height: '88vh',
+            boxShadow: '-2px -1px 6px 0 rgba(0,0,0,.05)',
+            position: 'fixed',
+            top: '10vh',
+            left: '15vw',
+          }}
+        >
+          <FileAction
+            path={path}
+            selectRows={this.state.selectRows}
+            onShowModeChanged={this.onShowModeChanged}
+          />
+          <FileShowLoadData
+            args={this.state.routerArgs}
+            onClick={this.onRouterClick}
+            count={this.state.count}
+            hasMore={this.state.hasMore}
+          />
+          {this.state.displayMode === 0 ? displayTable : displayList}
+        </Content>
+      </Layout>
     );
   }
 }

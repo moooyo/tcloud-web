@@ -11,8 +11,13 @@ import {
 } from '@ant-design/icons';
 import style from './file.module.css';
 import { fileInfoUrl } from '@/_config/.api';
+import { routerArgs } from '@/components/fileAction';
 
-interface props {}
+interface props {
+  path: routerArgs;
+  onSelectRowKeyChanged: any;
+  onSourceChanged: any;
+}
 
 interface state {
   loading: boolean;
@@ -27,7 +32,7 @@ const fileImgStyle = {
 };
 
 const file2img = (file: FileInfo) => {
-  if (file.isDirectory) {
+  if (file.IsDirectory) {
     return <FolderOutlined style={fileImgStyle} />;
   } else {
     return <FilePdfOutlined style={fileImgStyle} />;
@@ -77,10 +82,10 @@ class FileTable extends React.Component<props, state> {
   columns = [
     {
       title: '文件名',
-      dataIndex: 'fileName',
+      dataIndex: 'Name',
       width: '50%',
       sorter: (rowA: FileInfo, rowB: FileInfo) => {
-        return rowA.fileName > rowB.fileName;
+        return rowA.Name > rowB.Name;
       },
       render: (fileName: string, record: FileInfo) => {
         return (
@@ -96,7 +101,7 @@ class FileTable extends React.Component<props, state> {
       dataIndex: 'action',
       width: '10%',
       render: (x: any, record: FileInfo) => {
-        if (!record.isDirectory) {
+        if (!record.IsDirectory) {
           return (
             <div className={'action' + ' ' + style.noDisplay}>
               <span className={style.tableItemAction}>
@@ -115,13 +120,13 @@ class FileTable extends React.Component<props, state> {
     },
     {
       title: '大小',
-      dataIndex: 'size',
+      dataIndex: 'Size',
       width: '15%',
       sorter: (rowA: FileInfo, rowB: FileInfo) => {
-        return rowA.size > rowB.size;
+        return rowA.Size > rowB.Size;
       },
       render: (text: number, record: FileInfo) => {
-        if (record.isDirectory) {
+        if (record.IsDirectory) {
           return <span style={{ userSelect: 'none' }}>-</span>;
         } else {
           return <span style={{ userSelect: 'none' }}>{size2str(text)}</span>;
@@ -130,12 +135,12 @@ class FileTable extends React.Component<props, state> {
     },
     {
       title: '修改时间',
-      dataIndex: 'editTime',
+      dataIndex: 'UpdateAt',
       sorter: (rowA: FileInfo, rowB: FileInfo) => {
-        return rowA.editTime > rowB.editTime;
+        return rowA.UpdatedAt > rowB.UpdatedAt;
       },
       render: (time: number, record: FileInfo) => {
-        if (record.isDirectory) {
+        if (record.IsDirectory) {
           return <span style={{ userSelect: 'none' }}>-</span>;
         } else {
           return (
@@ -161,6 +166,7 @@ class FileTable extends React.Component<props, state> {
       this.setState({
         loading: false,
       });
+      this.props.onSourceChanged(this.hasMore, this.usedData.length);
     });
   }
 
@@ -170,7 +176,9 @@ class FileTable extends React.Component<props, state> {
       '?offset=' +
       this.offset.toString() +
       '&limit=' +
-      this.state.limit.toString()
+      this.state.limit.toString() +
+      '&path=' +
+      this.props.path.Key.toString()
     );
   };
 
@@ -180,9 +188,11 @@ class FileTable extends React.Component<props, state> {
     }
 
     this.isRefresh = true;
-    this.preFetchedData.map((e: any) => {
-      this.nextBuffer.push(e);
-    });
+    if (this.preFetchedData !== null) {
+      this.preFetchedData.map((e: any) => {
+        this.nextBuffer.push(e);
+      });
+    }
 
     // fetch new data
     try {
@@ -192,18 +202,22 @@ class FileTable extends React.Component<props, state> {
       });
       let json = await data.json();
       this.preFetchedData = json.data;
-      this.preFetchedData.map((e: any) => {
-        this.nextBuffer.push(e);
-      });
-      this.offset = this.offset + this.preFetchedData.length;
+      if (this.preFetchedData !== null) {
+        this.preFetchedData.map((e: any) => {
+          this.nextBuffer.push(e);
+        });
+        this.offset = this.offset + this.preFetchedData.length;
+      }
     } catch (e) {
       console.log(e);
     }
 
     // now next buffer is ready
     this.isRefresh = false;
-    if (this.preFetchedData.length === 0) {
-      this.hasMore = false;
+    if (this.preFetchedData !== null) {
+      if (this.preFetchedData.length === 0) {
+        this.hasMore = false;
+      }
     }
   };
 
@@ -212,8 +226,6 @@ class FileTable extends React.Component<props, state> {
       return;
     }
     this.isLoading = true;
-    console.log(this.usedData.length);
-    console.log(this.nextBuffer.length);
     // swap buffer;
     let c = this.usedData;
     this.usedData = this.nextBuffer;
@@ -254,7 +266,9 @@ class FileTable extends React.Component<props, state> {
     const loadingRate = 0.8;
     let loading = scrollTop + clientHeight > scrollHeight * loadingRate;
     if (loading) {
-      this.loadNewPage().finally();
+      this.loadNewPage().finally(() => {
+        this.props.onSourceChanged(this.hasMore, this.usedData.length);
+      });
     }
   }
 
@@ -262,6 +276,7 @@ class FileTable extends React.Component<props, state> {
     this.setState({
       selectedRowKeys: selectedRowKeys,
     });
+    this.props.onSelectRowKeyChanged(selectedRows);
   };
   setRowClassName = (record: FileInfo, index: number) => {
     return this.state.enterRowIndex === index ? style.tableItemMouseEnter : '';
@@ -296,7 +311,7 @@ class FileTable extends React.Component<props, state> {
             onChange: this.onSelectChange,
           }}
           loading={this.state.loading}
-          rowKey={(file: FileInfo) => file.key}
+          rowKey={(file: FileInfo) => file.ID}
           pagination={false}
           onRow={(record: FileInfo, index: number | undefined) => {
             return {

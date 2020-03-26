@@ -1,9 +1,10 @@
 interface FileInfo {
-  key: number
-  fileName: string
-  editTime: number
-  size: number
-  isDirectory: boolean
+  ID: number;
+  Name: string;
+  UpdatedAt: number;
+  Size: number;
+  MetaID: number;
+  IsDirectory: boolean;
 }
 
-export {FileInfo}
+export { FileInfo };

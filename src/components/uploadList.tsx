@@ -52,15 +52,6 @@ const number2size = (size: number) => {
 };
 
 class UploadList extends React.Component<props, state> {
-  uploaderAction = (
-    <div style={{ bottom: '1%', position: 'absolute' }}>
-      <Button type={'link'} icon={<SyncOutlined />} />
-      <Button type={'link'} icon={<PauseCircleTwoTone />} />
-      <Button type={'link'} icon={<PlayCircleTwoTone />} />
-      <Button type={'link'} icon={<CloseCircleTwoTone />} />
-    </div>
-  );
-
   onCloseClick = () => {
     let upload = document.getElementById(this.props.id);
     if (upload === null) {
@@ -128,7 +119,47 @@ class UploadList extends React.Component<props, state> {
                         visibility: item.uploader ? 'visible' : 'hidden',
                       }}
                     >
-                      {this.uploaderAction}
+                      <div style={{ bottom: '1%', position: 'absolute' }}>
+                        <Row>
+                          {item.uploader === 3 ? (
+                            <Col flex={1}>
+                              <Button type={'link'} icon={<SyncOutlined />} />
+                            </Col>
+                          ) : (
+                            ''
+                          )}
+                          {item.uploader === 1 ? (
+                            <Col flex={1}>
+                              <Button
+                                type={'link'}
+                                icon={<PauseCircleTwoTone />}
+                              />
+                            </Col>
+                          ) : (
+                            ''
+                          )}
+                          {item.uploader === 2 ? (
+                            <Col flex={1}>
+                              <Button
+                                type={'link'}
+                                icon={<PlayCircleTwoTone />}
+                              />
+                            </Col>
+                          ) : (
+                            ''
+                          )}
+                          {item.uploader !== 4 ? (
+                            <Col flex={1}>
+                              <Button
+                                type={'link'}
+                                icon={<CloseCircleTwoTone />}
+                              />
+                            </Col>
+                          ) : (
+                            ''
+                          )}
+                        </Row>
+                      </div>
                     </div>
                   </Col>
                 </Row>

@@ -5,5 +5,4 @@ export default defineConfig({
   history: {
     type: 'hash',
   },
-});
-//export default ({})
+}); //export default ({})

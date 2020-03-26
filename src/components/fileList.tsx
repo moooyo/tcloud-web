@@ -7,11 +7,13 @@ import { fileInfoUrl } from '@/_config/.api';
 import { ListGridType } from 'antd/es/list';
 // @ts-ignore
 import InfiniteScroll from 'react-infinite-scroller';
+import { routerArgs } from '@/components/fileAction';
 
 const { Meta } = Card;
 
 interface CardProps {
   file: FileInfo;
+  onSelectChanged: any;
 }
 
 interface CardState {
@@ -22,8 +24,9 @@ const file2cover = (file: FileInfo) => {
   return (
     <FilePdfOutlined
       style={{
-        marginTop: '3vh',
-        fontSize: 'xxx-large',
+        marginTop: '4vh',
+        marginBottom: '-2vh',
+        fontSize: 'xx-large',
       }}
     />
   );
@@ -52,17 +55,17 @@ class FileCard extends React.Component<CardProps, CardState> {
               userSelect: 'none',
             }}
           >
-            {this.props.file.fileName}
+            {this.props.file.Name}
           </div>
         </Card>
         <Checkbox
           className={style.checkBox}
           onChange={e => {
-            console.log('select');
             let select = this.state.select;
             this.setState({
               select: !select,
             });
+            this.props.onSelectChanged(this.props.file);
           }}
         />
       </div>
@@ -70,7 +73,11 @@ class FileCard extends React.Component<CardProps, CardState> {
   }
 }
 
-interface props {}
+interface props {
+  path: routerArgs;
+  onSelectKeyChanged: any;
+  onSourceChanged: any;
+}
 
 interface state {
   source: FileInfo[];
@@ -78,10 +85,21 @@ interface state {
 }
 
 class FileList extends React.Component<props, state> {
+  source: FileInfo[] = [];
   state = {
     source: [],
     loading: true,
   };
+
+  constructor(props: any) {
+    super(props);
+    this.initData().finally(() => {
+      this.setState({
+        loading: false,
+      });
+      this.props.onSourceChanged(this.hasMore, this.state.source.length);
+    });
+  }
 
   limit = 24;
   offset = 0;
@@ -97,14 +115,17 @@ class FileList extends React.Component<props, state> {
     xxl: 8,
   };
 
-  constructor(props: any) {
-    super(props);
-    this.initData().finally(() => {
-      this.setState({
-        loading: false,
-      });
+  onSelectChanged = (file: FileInfo) => {
+    let find = this.source.findIndex(e => {
+      return e === file;
     });
-  }
+    if (find === -1) {
+      this.source.push(file);
+    } else {
+      this.source.splice(find, 1);
+    }
+    this.props.onSelectKeyChanged(this.source);
+  };
 
   formatPageUrl = () => {
     return (
@@ -112,7 +133,9 @@ class FileList extends React.Component<props, state> {
       '?offset=' +
       this.offset.toString() +
       '&limit=' +
-      this.limit.toString()
+      this.limit.toString() +
+      '&path=' +
+      this.props.path.Key.toString()
     );
   };
 
@@ -161,6 +184,7 @@ class FileList extends React.Component<props, state> {
         this.setState({
           loading: false,
         });
+        this.props.onSourceChanged(this.hasMore, this.state.source.length);
       });
   };
 
@@ -175,16 +199,20 @@ class FileList extends React.Component<props, state> {
       >
         <List
           rowKey={(item: FileInfo) => {
-            return item.key.toString();
+            return item.ID.toString();
           }}
           dataSource={this.state.source}
           grid={this.grid}
           loading={this.state.loading}
           renderItem={item => (
             <List.Item>
-              <FileCard file={item} />
+              <FileCard file={item} onSelectChanged={this.onSelectChanged} />
             </List.Item>
           )}
+          style={{
+            marginLeft: '1.5vw',
+            marginRight: '1.5vw',
+          }}
         />
       </InfiniteScroll>
     );

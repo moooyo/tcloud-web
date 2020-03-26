@@ -18,6 +18,7 @@ let infoUrl = baseUrl + '/info';
 let userInfoUrl = infoUrl + '/user';
 
 let fileInfoUrl = baseUrl + '/files';
+let fileDownloadUrl = fileInfoUrl + '/download';
 
 let uploadFileUrl = fileInfoUrl;
 
@@ -25,6 +26,8 @@ let UsersBaseUrl = baseUrl + '/users';
 let RegisterUrl = UsersBaseUrl;
 let RegisterConfirmUrl = UsersBaseUrl + '/confirm';
 let RegisterCodeResend = UsersBaseUrl + '/code';
+
+let IconFontCnUrl = '//at.alicdn.com/t/font_1704308_m2wkww8mq2.js';
 
 export {
   loginUrl,
@@ -35,4 +38,6 @@ export {
   RegisterConfirmUrl,
   RegisterCodeResend,
   uploadFileUrl,
+  fileDownloadUrl,
+  IconFontCnUrl,
 };
