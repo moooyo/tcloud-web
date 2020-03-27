@@ -1,6 +1,7 @@
+import SettingForm from '@/pages/user/components/SettingForm';
+import { initUserDetail } from '@/components/user';
 import React from 'react';
-import UserInfoPage from '@/pages/user/info';
 
 export default function() {
-  return <UserInfoPage />;
+  return <SettingForm user={initUserDetail} />;
 }

@@ -6,7 +6,10 @@ import {
   CloudOutlined,
   CodeOutlined,
   CommentOutlined,
+  createFromIconfontCN,
 } from '@ant-design/icons';
+import { IconFontCnUrl } from '@/_config/.api';
+import { history } from 'umi';
 
 interface state {
   current: string;
@@ -25,6 +28,10 @@ const menu = (
   </Menu>
 );
 
+const IconFont = createFromIconfontCN({
+  scriptUrl: IconFontCnUrl,
+});
+
 class MainHeader extends React.Component<props, state> {
   constructor(props: any) {
     super(props);
@@ -38,6 +45,20 @@ class MainHeader extends React.Component<props, state> {
     this.setState({
       current: e.key,
     });
+    switch (e.key) {
+      case 'cloud':
+        history.push('/cloud');
+        return;
+      case 'practise':
+        history.push('/practice');
+        return;
+      case 'comment':
+        history.push('/comment');
+        return;
+      case 'user':
+        history.push('/user/info');
+        return;
+    }
   };
 
   render() {
@@ -64,9 +85,13 @@ class MainHeader extends React.Component<props, state> {
                 <CodeOutlined />
                 练习系统
               </Menu.Item>
-              <Menu.Item>
+              <Menu.Item key={'comment'}>
                 <CommentOutlined />
                 讨论区
+              </Menu.Item>
+              <Menu.Item key={'user'}>
+                <IconFont type={'icon-ico-user-info'} />
+                用户中心
               </Menu.Item>
             </Menu>
           </Col>

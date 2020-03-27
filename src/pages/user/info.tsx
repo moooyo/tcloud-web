@@ -1,10 +1,22 @@
 import React from 'react';
-import { Card, Col, Divider, Row } from 'antd';
+import { Card, Col, Divider, Row, Spin } from 'antd';
 import UserIconCard from '@/pages/user/components/UserIconCard';
 import UserApprove from '@/pages/user/components/UserApprove';
 import TodoListDisplay from '@/pages/user/components/TodoListDisplay';
+import UserFeed from '@/pages/user/components/UserFeed';
+import { initUserDetail, UserDetailInfo } from '@/components/user';
 
-class UserInfoPage extends React.Component<any, any> {
+interface state {
+  user: UserDetailInfo;
+  loading: boolean;
+}
+
+class UserInfoPage extends React.Component<any, state> {
+  state = {
+    user: initUserDetail,
+    loading: false,
+  };
+
   render() {
     return (
       <div
@@ -13,22 +25,24 @@ class UserInfoPage extends React.Component<any, any> {
           paddingTop: '3vh',
         }}
       >
-        <Row>
+        <Spin spinning={this.state.loading}>
+          <Row>
+            <Col span={3} />
+            <Col span={6} style={{ paddingRight: '1vw' }}>
+              <Card>
+                <UserIconCard />
+                <Divider />
+                <TodoListDisplay user={this.state.user} />
+                <Divider />
+                <UserApprove />
+              </Card>
+            </Col>
+            <Col span={12}>
+              <UserFeed />
+            </Col>
+          </Row>
           <Col span={3} />
-          <Col span={6} style={{ paddingRight: '1vw' }}>
-            <Card>
-              <UserIconCard />
-              <Divider />
-              <TodoListDisplay />
-              <Divider />
-              <UserApprove />
-            </Card>
-          </Col>
-          <Col span={12}>
-            <Card>1</Card>
-          </Col>
-        </Row>
-        <Col span={3} />
+        </Spin>
       </div>
     );
   }

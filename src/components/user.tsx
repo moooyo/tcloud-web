@@ -8,6 +8,7 @@ interface UserInfo {
 }
 
 interface Todo {
+  ID: number;
   Name: string;
   StartTime: number;
   EndTime: number;
@@ -54,6 +55,7 @@ let errorUser = {
 
 let todoList: Todo[] = [
   {
+    ID: 1,
     Name: '动物之森',
     StartTime: 1585233935000,
     EndTime: 1590417935000,
@@ -62,6 +64,7 @@ let todoList: Todo[] = [
     Finished: false,
   },
   {
+    ID: 2,
     Name: '写毕设',
     StartTime: 1585233935000,
     EndTime: 1590417935000,
@@ -70,6 +73,7 @@ let todoList: Todo[] = [
     Finished: false,
   },
   {
+    ID: 3,
     Name: '搬砖',
     StartTime: 1585233935000,
     EndTime: 1590417935000,
@@ -78,6 +82,7 @@ let todoList: Todo[] = [
     Finished: false,
   },
   {
+    ID: 4,
     Name: '搬砖',
     StartTime: 1585233935000,
     EndTime: 1590417935000,

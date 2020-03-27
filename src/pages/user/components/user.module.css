@@ -68,3 +68,8 @@
   height: 1px;
   background-color: black;
 }
+
+.feedItemCard {
+  user-select: none;
+  margin-bottom: 1vh;
+}
