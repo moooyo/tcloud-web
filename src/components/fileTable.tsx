@@ -1,6 +1,6 @@
 import React from 'react';
 import moment from 'moment';
-import { Table } from 'antd';
+import { Table, Input, Button } from 'antd';
 import { FileInfo } from '@/components/file';
 import {
   CloudDownloadOutlined,
@@ -12,11 +12,14 @@ import {
 import style from './file.module.css';
 import { fileInfoUrl } from '@/_config/.api';
 import { routerArgs } from '@/components/fileAction';
+import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 
 interface props {
   path: routerArgs;
   onSelectRowKeyChanged: any;
   onSourceChanged: any;
+  changedFileNameID: number;
+  changedFileNameHandle: any;
 }
 
 interface state {
@@ -79,6 +82,23 @@ class FileTable extends React.Component<props, state> {
   hasMore = true;
   shouldLoad = true;
   offset = 0;
+  changedFileName = ''; // used for change file name
+
+  // @ts-ignore
+  changedFileNameRef = React.createRef<input>();
+  onConfirmChangedName = (ID: number, ref: any) => {
+    return function(e: any) {
+      console.log(ID);
+      console.log(ref.current.state.value);
+      // @ts-ignore
+      this.props.changedFileNameHandle(-1);
+    }.bind(this);
+  };
+
+  onCancelChangedName = (e: any) => {
+    this.props.changedFileNameHandle(-1);
+  };
+
   columns = [
     {
       title: '文件名',
@@ -88,12 +108,44 @@ class FileTable extends React.Component<props, state> {
         return rowA.Name > rowB.Name;
       },
       render: (fileName: string, record: FileInfo) => {
-        return (
-          <span>
-            <span style={{ marginRight: '10px' }}>{file2img(record)}</span>
-            <a style={{ userSelect: 'none' }}>{fileName}</a>
-          </span>
-        );
+        if (record.ID === this.props.changedFileNameID) {
+          return (
+            <span>
+              <Input
+                prefix={file2img(record)}
+                defaultValue={fileName}
+                ref={this.changedFileNameRef}
+                style={{ width: '60%' }}
+                size={'small'}
+              />
+              <Button
+                type={'primary'}
+                size={'small'}
+                style={{ marginLeft: '5px' }}
+                onClick={this.onConfirmChangedName(
+                  record.ID,
+                  this.changedFileName,
+                )}
+              >
+                <CheckOutlined />
+              </Button>
+              <Button
+                size={'small'}
+                style={{ marginLeft: '5px' }}
+                onClick={this.onCancelChangedName}
+              >
+                <CloseOutlined />
+              </Button>
+            </span>
+          );
+        } else {
+          return (
+            <span>
+              <span style={{ marginRight: '10px' }}>{file2img(record)}</span>
+              <a style={{ userSelect: 'none' }}>{fileName}</a>
+            </span>
+          );
+        }
       },
     },
     {

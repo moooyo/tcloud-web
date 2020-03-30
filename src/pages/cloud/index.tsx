@@ -21,6 +21,7 @@ interface state {
   hasMore: boolean;
   count: number;
   displayMode: number;
+  changedFileNameID: number;
 }
 
 class Index extends React.Component<any, state> {
@@ -32,6 +33,7 @@ class Index extends React.Component<any, state> {
     hasMore: true,
     count: 0,
     displayMode: 0,
+    changedFileNameID: -1,
   };
 
   constructor(props: any) {
@@ -94,6 +96,23 @@ class Index extends React.Component<any, state> {
     }
   };
 
+  onChangedFileNameClicked = () => {
+    if (this.state.selectRows.length !== 1) {
+      return;
+    } else {
+      this.setState({
+        //@ts-ignore
+        changedFileNameID: this.state.selectRows[0].ID,
+      });
+    }
+  };
+
+  changedFileIDHandle = (id: number) => {
+    this.setState({
+      changedFileNameID: id,
+    });
+  };
+
   render() {
     if (this.state.loading) {
       return null;
@@ -104,6 +123,8 @@ class Index extends React.Component<any, state> {
         path={path}
         onSelectRowKeyChanged={this.onSelectKeyChange}
         onSourceChanged={this.onSourceChanged}
+        changedFileNameID={this.state.changedFileNameID}
+        changedFileNameHandle={this.changedFileIDHandle}
       />
     );
     const displayList = (
@@ -130,6 +151,7 @@ class Index extends React.Component<any, state> {
             path={path}
             selectRows={this.state.selectRows}
             onShowModeChanged={this.onShowModeChanged}
+            onChangedFileNameClicked={this.onChangedFileNameClicked}
           />
           <FileShowLoadData
             args={this.state.routerArgs}

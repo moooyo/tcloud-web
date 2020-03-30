@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button, Col, DatePicker, Input, InputNumber, Row, Select } from 'antd';
 import { Todo, UserDetailInfo } from '@/components/user';
+import { PlusOutlined } from '@ant-design/icons';
 
 const { RangePicker } = DatePicker;
 const { Option } = Select;
@@ -90,6 +91,10 @@ class TodoListManage extends React.Component<props, state> {
       <div>
         <p>任务清单管理</p>
         {this.state.list.map(e => this.renderTodoItem(e))}
+        <Button style={{ width: '100%' }}>
+          <PlusOutlined />
+          增加日程
+        </Button>
       </div>
     );
   }

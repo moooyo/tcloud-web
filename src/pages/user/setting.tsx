@@ -25,7 +25,7 @@ class UserSetting extends React.Component<any, state> {
       >
         <Spin spinning={this.state.loading}>
           <Row>
-            <Col span={3} />
+            <Col span={6} />
             <Col span={12} style={{ paddingRight: '1vw' }}>
               <Card>
                 <SettingForm user={this.state.user} />
@@ -34,7 +34,7 @@ class UserSetting extends React.Component<any, state> {
               </Card>
             </Col>
           </Row>
-          <Col span={3} />
+          <Col span={6} />
         </Spin>
       </div>
     );

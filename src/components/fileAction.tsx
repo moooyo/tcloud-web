@@ -41,18 +41,24 @@ interface props {
   path: routerArgs;
   selectRows: FileInfo[];
   onShowModeChanged: any;
+  onChangedFileNameClicked: any;
 }
 
 interface state {
   FileList: Array<UploadFileMeta>;
   downloadLoading: boolean;
+  isDisableChangedFileNameButton: boolean;
 }
 
 class FileAction extends React.Component<props, state> {
   state = {
     FileList: Array<UploadFileMeta>(),
     downloadLoading: false,
+    isDisableChangedFileNameButton: this.props.selectRows.length === 1,
   };
+
+  onCreateDirectoryClick = () => {};
+
   onUploadListClick = () => {
     let upload = document.getElementById('upload_list_action');
     if (upload === null) {
@@ -264,6 +270,13 @@ class FileAction extends React.Component<props, state> {
       </Button>
       <Button icon={<ShareAltOutlined />} className={style.actionButton}>
         分享
+      </Button>
+      <Button
+        className={style.actionButton}
+        disabled={this.state.isDisableChangedFileNameButton}
+        onClick={this.props.onChangedFileNameClicked}
+      >
+        重命名
       </Button>
     </span>
   );
