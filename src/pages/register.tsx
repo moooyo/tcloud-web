@@ -1,6 +1,6 @@
 import React from 'react'
-import {ConfirmForm, RegisterForm} from "@/components/register";
-import style from "@/components/register.module.css";
+import {ConfirmForm, RegisterForm} from "@/pages/components/register";
+import style from "@/pages/components/register.module.css";
 
 interface urlProps {
   match: {

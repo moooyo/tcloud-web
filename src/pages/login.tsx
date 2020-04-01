@@ -1,5 +1,5 @@
 import React from "react";
-import LoginBox from "@/components/login";
+import LoginBox from "@/pages/components/login";
 import style from "./login.module.css"
 
 export default () => {

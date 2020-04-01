@@ -1,7 +1,7 @@
 import React from 'react';
 import { Layout } from 'antd';
-import MainHeaderLayout from '@/components/MainHeaderLayout';
-import CloudSider from '@/components/cloudSider';
+import MainHeaderLayout from '@/pages/components/MainHeaderLayout';
+import CloudSider from '@/pages/cloud/components/cloudSider';
 
 const { Content, Sider } = Layout;
 

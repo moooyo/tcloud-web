@@ -1,7 +1,7 @@
 import React from 'react';
 import moment from 'moment';
 import { Table, Input, Button } from 'antd';
-import { FileInfo } from '@/components/file';
+import { FileInfo } from '@/pages/cloud/components/file';
 import {
   CloudDownloadOutlined,
   FilePdfOutlined,
@@ -11,8 +11,9 @@ import {
 } from '@ant-design/icons';
 import style from './file.module.css';
 import { fileInfoUrl } from '@/_config/.api';
-import { routerArgs } from '@/components/fileAction';
+import { routerArgs } from '@/pages/cloud/components/fileAction';
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
+import { useStore } from 'react-redux';
 
 interface props {
   path: routerArgs;
@@ -88,8 +89,6 @@ class FileTable extends React.Component<props, state> {
   changedFileNameRef = React.createRef<input>();
   onConfirmChangedName = (ID: number, ref: any) => {
     return function(e: any) {
-      console.log(ID);
-      console.log(ref.current.state.value);
       // @ts-ignore
       this.props.changedFileNameHandle(-1);
     }.bind(this);

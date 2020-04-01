@@ -2,12 +2,12 @@ import React from 'react';
 import { Card, Checkbox, List } from 'antd';
 import { FilePdfOutlined } from '@ant-design/icons';
 import style from './file.module.css';
-import { FileInfo } from '@/components/file';
+import { FileInfo } from '@/pages/cloud/components/file';
 import { fileInfoUrl } from '@/_config/.api';
 import { ListGridType } from 'antd/es/list';
 // @ts-ignore
 import InfiniteScroll from 'react-infinite-scroller';
-import { routerArgs } from '@/components/fileAction';
+import { routerArgs } from '@/pages/cloud/components/fileAction';
 
 const { Meta } = Card;
 

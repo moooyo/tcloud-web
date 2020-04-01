@@ -1,4 +1,4 @@
-import MainHeaderLayout from '@/components/MainHeaderLayout';
+import MainHeaderLayout from '@/pages/components/MainHeaderLayout';
 
 import React from 'react';
 

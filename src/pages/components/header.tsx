@@ -1,6 +1,6 @@
 import React from 'react';
 import { Avatar, Col, Dropdown, Menu, Row } from 'antd';
-import { UserInfo } from './user';
+import { UserInfo } from '../../components/user';
 import style from './header.module.css';
 import {
   CloudOutlined,

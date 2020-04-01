@@ -1,4 +1,4 @@
-import {FileInfo} from "@/components/file";
+import {FileInfo} from "@/pages/cloud/components/file";
 
 let testFile: FileInfo = {
   key: 1,

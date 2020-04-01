@@ -1,5 +1,5 @@
 import React from 'react';
-import { Breadcrumb, Button, Col, Input, Row } from 'antd';
+import { Breadcrumb, Button, Col, Input, notification, Row } from 'antd';
 import {
   AppstoreOutlined,
   CloudDownloadOutlined,
@@ -10,9 +10,10 @@ import {
   UploadOutlined,
 } from '@ant-design/icons';
 import style from './file.module.css';
-import UploadList from '@/components/uploadList';
-import { fileDownloadUrl, uploadFileUrl } from '@/_config/.api';
-import { FileInfo } from '@/components/file';
+import UploadList from '@/pages/cloud/components/uploadList';
+import { directoryCreateUrl, fileDownloadUrl, uploadFileUrl } from '@/_config/.api';
+import { FileInfo } from '@/pages/cloud/components/file';
+import { ErrorCode } from '@/_config/error';
 
 const { Search } = Input;
 
@@ -42,6 +43,7 @@ interface props {
   selectRows: FileInfo[];
   onShowModeChanged: any;
   onChangedFileNameClicked: any;
+  onCreateDirectory: any;
 }
 
 interface state {
@@ -57,7 +59,35 @@ class FileAction extends React.Component<props, state> {
     isDisableChangedFileNameButton: this.props.selectRows.length === 1,
   };
 
-  onCreateDirectoryClick = () => {};
+  onCreateDirectoryClick = async () => {
+    try {
+      let res = await fetch(directoryCreateUrl, {
+        method: "POST",
+        body: JSON.stringify({
+          path: this.props.path.Key,
+          name: "新建文件夹"
+        })
+      });
+      if (res.status === 200) {
+        let resp = await res.json();
+        if (resp.code === ErrorCode.OK) {
+          this.props.onCreateDirectory(resp.data);
+        } else {
+          notification['error']({
+            message: "新建文件夹错误",
+            description: resp.message,
+          })
+        }
+      } else {
+        notification['error']({
+          message: "服务器错误",
+          description: "无法连接到服务器，请稍后重试",
+        })
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   onUploadListClick = () => {
     let upload = document.getElementById('upload_list_action');
@@ -313,7 +343,7 @@ class FileAction extends React.Component<props, state> {
                 onChange={this.onUploadChange}
               />
             </Button>
-            <Button icon={<FolderAddOutlined />} className={style.actionButton}>
+            <Button icon={<FolderAddOutlined />} className={style.actionButton} onClick={this.onCreateDirectoryClick}>
               新建文件夹
             </Button>
             {somethingSelected ? this.selectedButton : this.defaultButton}

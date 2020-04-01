@@ -3,7 +3,7 @@ import { CheckLoginStatus } from '@/components/checkLoginStatus';
 import { userInfoUrl } from '@/_config/.api';
 import { errorUser, UserInfo } from '@/components/user';
 import { Layout } from 'antd';
-import MainHeader from '@/components/header';
+import MainHeader from '@/pages/components/header';
 
 const { Header, Content } = Layout;
 

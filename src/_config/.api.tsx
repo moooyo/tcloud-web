@@ -1,12 +1,7 @@
 let dev = true;
-let yapi = false;
 let baseUrl = '';
 if (dev) {
-  if (yapi) {
-    baseUrl = 'http://localhost:3333/mock/9';
-  } else {
-    baseUrl = 'http://localhost/api';
-  }
+  baseUrl = '/api';
 } else {
   baseUrl = 'http://tcloud.lengyu.me/api';
 }
@@ -18,6 +13,7 @@ let infoUrl = baseUrl + '/info';
 let userInfoUrl = infoUrl + '/user';
 
 let fileInfoUrl = baseUrl + '/files';
+let directoryCreateUrl = fileInfoUrl + "/directory";
 let fileDownloadUrl = fileInfoUrl + '/download';
 
 let uploadFileUrl = fileInfoUrl;
@@ -40,4 +36,5 @@ export {
   uploadFileUrl,
   fileDownloadUrl,
   IconFontCnUrl,
+  directoryCreateUrl
 };
