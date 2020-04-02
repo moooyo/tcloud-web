@@ -14,6 +14,7 @@ import UploadList from '@/pages/cloud/components/uploadList';
 import { directoryCreateUrl, fileDownloadUrl, uploadFileUrl } from '@/_config/.api';
 import { FileInfo } from '@/pages/cloud/components/file';
 import { ErrorCode } from '@/_config/error';
+import { DeleteOutlined } from '@ant-design/icons/lib';
 
 const { Search } = Input;
 
@@ -44,19 +45,17 @@ interface props {
   onShowModeChanged: any;
   onChangedFileNameClicked: any;
   onCreateDirectory: any;
+  uploadFileList: any;
+  setUploadList: any
 }
 
 interface state {
-  FileList: Array<UploadFileMeta>;
   downloadLoading: boolean;
-  isDisableChangedFileNameButton: boolean;
 }
 
 class FileAction extends React.Component<props, state> {
   state = {
-    FileList: Array<UploadFileMeta>(),
     downloadLoading: false,
-    isDisableChangedFileNameButton: this.props.selectRows.length === 1,
   };
 
   onCreateDirectoryClick = async () => {
@@ -120,9 +119,8 @@ class FileAction extends React.Component<props, state> {
   );
 
   onUploadChange = (e: any) => {
-    e.persist();
     let files = e.nativeEvent.target.files;
-    let data = this.state.FileList;
+    let data = this.props.uploadFileList.slice();
     for (let f of files) {
       let tmp: UploadFileMeta = {
         Name: f.name,
@@ -138,9 +136,7 @@ class FileAction extends React.Component<props, state> {
       data.push(tmp);
       this.uploadFile(f, tmp.PathID);
     }
-    this.setState({
-      FileList: data,
-    });
+    this.props.setUploadList(data);
   };
 
   uploadFile = (file: any, pathID: number) => {
@@ -210,8 +206,7 @@ class FileAction extends React.Component<props, state> {
             }),
           });
           if (ret.status === 200) {
-            console.log('upload ' + now + ' success');
-            let list = this.state.FileList;
+            let list = this.props.uploadFileList.slice();
             //update process
             for (let l of list) {
               if (l.f === file) {
@@ -225,9 +220,7 @@ class FileAction extends React.Component<props, state> {
                 break;
               }
             }
-            this.setState({
-              FileList: list,
-            });
+            this.props.setUploadList(list);
             now++;
             retryCount = 0;
           } else if (ret.status === 400) {
@@ -289,27 +282,36 @@ class FileAction extends React.Component<props, state> {
     });
   };
 
-  selectedButton = (
-    <span>
+  generateSelectedButton = (renameButtonDisabled: boolean) => {
+    return (
+      <span>
       <Button
-        icon={<DownloadOutlined />}
+        icon={<DownloadOutlined/>}
         className={style.actionButton}
         onClick={this.downloadFiles}
       >
         下载
       </Button>
-      <Button icon={<ShareAltOutlined />} className={style.actionButton}>
+      <Button icon={<ShareAltOutlined/>} className={style.actionButton}>
         分享
       </Button>
       <Button
         className={style.actionButton}
-        disabled={this.state.isDisableChangedFileNameButton}
+        disabled={renameButtonDisabled}
         onClick={this.props.onChangedFileNameClicked}
       >
         重命名
       </Button>
+        <Button
+          className={style.actionButton}
+          danger={true}
+          icon={<DeleteOutlined />}
+        >
+          删除
+        </Button>
     </span>
-  );
+    );
+  }
 
   render() {
     let somethingSelected = this.props.selectRows.length > 0;
@@ -323,7 +325,7 @@ class FileAction extends React.Component<props, state> {
         <UploadList
           className={style.uploaderList}
           id={'upload_list_action'}
-          source={this.state.FileList}
+          source={this.props.uploadFileList}
         />
         <Row>
           <Col flex={2}>
@@ -346,7 +348,7 @@ class FileAction extends React.Component<props, state> {
             <Button icon={<FolderAddOutlined />} className={style.actionButton} onClick={this.onCreateDirectoryClick}>
               新建文件夹
             </Button>
-            {somethingSelected ? this.selectedButton : this.defaultButton}
+            {somethingSelected ? this.generateSelectedButton(this.props.selectRows.length !== 1) : this.defaultButton}
           </Col>
           <Col flex={2}>
             <span />

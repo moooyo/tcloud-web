@@ -14,7 +14,7 @@ import { UploadFileMeta } from './fileAction';
 interface props {
   className: string;
   id: string;
-  source: UploadFileMeta[];
+  source: Array<UploadFileMeta>;
 }
 
 interface state {
@@ -89,7 +89,7 @@ class UploadList extends React.Component<props, state> {
             style={{ width: '100%' }}
             itemLayout={'horizontal'}
             dataSource={this.props.source}
-            renderItem={item => (
+            renderItem={item =>  (
               <List.Item style={{ width: '100%' }}>
                 <Row style={{ width: '100%' }}>
                   <Col span={1} style={{ textAlign: 'center' }}>

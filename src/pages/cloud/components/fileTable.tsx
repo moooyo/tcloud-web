@@ -10,24 +10,22 @@ import {
   ShareAltOutlined,
 } from '@ant-design/icons';
 import style from './file.module.css';
-import { fileInfoUrl } from '@/_config/.api';
 import { routerArgs } from '@/pages/cloud/components/fileAction';
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
-import { useStore } from 'react-redux';
 
 interface props {
   path: routerArgs;
   onSelectRowKeyChanged: any;
-  onSourceChanged: any;
-  changedFileNameID: number;
-  changedFileNameHandle: any;
+  ChangedFileNameID: number;
+  setSelectRowKeys: any;
+  onChangedFileNameClicked: (id:number)=>void
+  FileList: FileInfo[],
+  Loading: boolean
 }
 
 interface state {
-  loading: boolean;
   selectedRowKeys: number[];
   enterRowIndex: number | undefined;
-  data: FileInfo[];
   limit: number;
 }
 
@@ -74,15 +72,9 @@ const size2str = (size: number) => {
 };
 
 class FileTable extends React.Component<props, state> {
-  usedData: FileInfo[] = [];
-  nextBuffer: FileInfo[] = [];
-  preFetchedData: FileInfo[] = [];
   scrollRef: HTMLDivElement | null = null;
-  isLoading = false; // loading used
-  isRefresh = false; // refresh used
   hasMore = true;
   shouldLoad = true;
-  offset = 0;
   changedFileName = ''; // used for change file name
 
   // @ts-ignore
@@ -90,12 +82,14 @@ class FileTable extends React.Component<props, state> {
   onConfirmChangedName = (ID: number, ref: any) => {
     return function(e: any) {
       // @ts-ignore
-      this.props.changedFileNameHandle(-1);
+      const {onChangedFileNameClicked} = this.props;
+      onChangedFileNameClicked(-1);
     }.bind(this);
   };
 
   onCancelChangedName = (e: any) => {
-    this.props.changedFileNameHandle(-1);
+    const {onChangedFileNameClicked} = this.props;
+    onChangedFileNameClicked(-1);
   };
 
   columns = [
@@ -107,7 +101,7 @@ class FileTable extends React.Component<props, state> {
         return rowA.Name > rowB.Name;
       },
       render: (fileName: string, record: FileInfo) => {
-        if (record.ID === this.props.changedFileNameID) {
+        if (record.ID === this.props.ChangedFileNameID) {
           return (
             <span>
               <Input
@@ -207,102 +201,12 @@ class FileTable extends React.Component<props, state> {
   constructor(props: any) {
     super(props);
     this.state = {
-      loading: true,
       selectedRowKeys: [],
       enterRowIndex: undefined,
-      data: [],
       limit: 20,
     };
-    this.initDataBuffer().finally(() => {
-      this.setState({
-        loading: false,
-      });
-      this.props.onSourceChanged(this.hasMore, this.usedData.length);
-    });
   }
 
-  formatPageUrl = () => {
-    return (
-      fileInfoUrl +
-      '?offset=' +
-      this.offset.toString() +
-      '&limit=' +
-      this.state.limit.toString() +
-      '&path=' +
-      this.props.path.Key.toString()
-    );
-  };
-
-  refreshBuffer = async () => {
-    if (!this.hasMore || this.isRefresh) {
-      return;
-    }
-
-    this.isRefresh = true;
-    if (this.preFetchedData !== null) {
-      this.preFetchedData.map((e: any) => {
-        this.nextBuffer.push(e);
-      });
-    }
-
-    // fetch new data
-    try {
-      let data = await fetch(this.formatPageUrl(), {
-        method: 'GET',
-        mode: 'cors',
-      });
-      let json = await data.json();
-      this.preFetchedData = json.data;
-      if (this.preFetchedData !== null) {
-        this.preFetchedData.map((e: any) => {
-          this.nextBuffer.push(e);
-        });
-        this.offset = this.offset + this.preFetchedData.length;
-      }
-    } catch (e) {
-      console.log(e);
-    }
-
-    // now next buffer is ready
-    this.isRefresh = false;
-    if (this.preFetchedData !== null) {
-      if (this.preFetchedData.length === 0) {
-        this.hasMore = false;
-      }
-    }
-  };
-
-  loadNewPage = async () => {
-    if (!this.shouldLoad || this.isLoading) {
-      return;
-    }
-    this.isLoading = true;
-    // swap buffer;
-    let c = this.usedData;
-    this.usedData = this.nextBuffer;
-    this.nextBuffer = c;
-    // now render data is ready;
-    this.setState({
-      data: this.usedData,
-    });
-    // start to fetch new data
-    if (this.hasMore) {
-      await this.refreshBuffer();
-    } else {
-      this.shouldLoad = false;
-    }
-    this.isLoading = false;
-  };
-
-  initDataBuffer = async () => {
-    try {
-      await this.loadNewPage();
-      await this.loadNewPage();
-      await this.loadNewPage();
-    } catch (e) {
-      console.log(e);
-    }
-  };
 
   onScrollHandle() {
     if (!this.shouldLoad) {
@@ -317,9 +221,7 @@ class FileTable extends React.Component<props, state> {
     const loadingRate = 0.8;
     let loading = scrollTop + clientHeight > scrollHeight * loadingRate;
     if (loading) {
-      this.loadNewPage().finally(() => {
-        this.props.onSourceChanged(this.hasMore, this.usedData.length);
-      });
+      console.log("here");
     }
   }
 
@@ -327,8 +229,10 @@ class FileTable extends React.Component<props, state> {
     this.setState({
       selectedRowKeys: selectedRowKeys,
     });
+    this.props.setSelectRowKeys(selectedRowKeys);
     this.props.onSelectRowKeyChanged(selectedRows);
   };
+
   setRowClassName = (record: FileInfo, index: number) => {
     return this.state.enterRowIndex === index ? style.tableItemMouseEnter : '';
   };
@@ -354,14 +258,14 @@ class FileTable extends React.Component<props, state> {
           }}
           // @ts-ignore
           columns={this.columns}
-          dataSource={this.state.data}
+          dataSource={this.props.FileList}
           size={'small'}
           rowSelection={{
             selectedRowKeys: this.state.selectedRowKeys,
             fixed: true,
             onChange: this.onSelectChange,
           }}
-          loading={this.state.loading}
+          loading={this.props.Loading}
           rowKey={(file: FileInfo) => file.ID}
           pagination={false}
           onRow={(record: FileInfo, index: number | undefined) => {

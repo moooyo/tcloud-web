@@ -76,7 +76,6 @@ class FileCard extends React.Component<CardProps, CardState> {
 interface props {
   path: routerArgs;
   onSelectKeyChanged: any;
-  onSourceChanged: any;
 }
 
 interface state {
@@ -97,7 +96,6 @@ class FileList extends React.Component<props, state> {
       this.setState({
         loading: false,
       });
-      this.props.onSourceChanged(this.hasMore, this.state.source.length);
     });
   }
 
@@ -184,7 +182,6 @@ class FileList extends React.Component<props, state> {
         this.setState({
           loading: false,
         });
-        this.props.onSourceChanged(this.hasMore, this.state.source.length);
       });
   };
 

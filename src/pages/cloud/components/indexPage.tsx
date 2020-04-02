@@ -1,61 +1,18 @@
 import React from 'react';
 import { Layout } from 'antd';
-import { errorUser, UserInfo } from '@/components/user';
-import { userInfoUrl } from '@/_config/.api';
 import FileTable from '@/pages/cloud/components/fileTable';
 import {
   FileAction,
   FileShowLoadData,
-  routerArgs,
 } from '@/pages/cloud/components/fileAction';
 import { FileInfo } from '@/pages/cloud/components/file';
 import FileList from '@/pages/cloud/components/fileList';
+import { useStore } from 'react-redux';
 
 const { Content } = Layout;
 
-interface state {
-  user: UserInfo;
-  loading: boolean;
-  routerArgs: routerArgs[];
-  selectRows: FileInfo[];
-  hasMore: boolean;
-  count: number;
-  displayMode: number;
-  changedFileNameID: number;
-}
 
-class CloudIndex extends React.Component<any, state> {
-  state = {
-    user: errorUser,
-    loading: true,
-    routerArgs: [],
-    selectRows: [],
-    hasMore: true,
-    count: 0,
-    displayMode: 0,
-    changedFileNameID: -1,
-  };
-
-  constructor(props: any) {
-    super(props);
-    fetch(userInfoUrl)
-      .then(res => res.json())
-      .then(res => {
-        this.setState({
-          user: res.data,
-          loading: false,
-          routerArgs: [
-            {
-              Key: res.data.DiskRoot,
-              Name: '我的文件',
-            },
-          ],
-        });
-      })
-      .catch(error => {
-        console.log(error);
-      });
-  }
+class CloudIndex extends React.Component<any, any> {
 
   onRouterClick = (e: any) => {
     let key = e.currentTarget.children[0].innerHTML;
@@ -72,29 +29,16 @@ class CloudIndex extends React.Component<any, state> {
   };
 
   onSelectKeyChange = (selected: FileInfo[]) => {
-    this.setState({
-      selectRows: selected,
-    });
+    const {setSelect} = this.props;
+    setSelect(selected);
   };
 
-  onSourceChanged = (hasMore: boolean, count: number) => {
-    this.setState({
-      hasMore: hasMore,
-      count: count,
-    });
-  };
 
   onShowModeChanged = () => {
-    if (this.state.displayMode === 1) {
-      this.setState({
-        displayMode: 0,
-      });
-    } else {
-      this.setState({
-        displayMode: 1,
-      });
-    }
-  };
+    const { setDisplayMode, displayMode } = this.props;
+    setDisplayMode(displayMode === 0? 1: 0);
+  }
+
 
 
   onCreateDirectory = (file: FileInfo) => {
@@ -103,43 +47,37 @@ class CloudIndex extends React.Component<any, state> {
     })
   };
 
-
   onChangedFileNameClicked = () => {
-    if (this.state.selectRows.length !== 1) {
+    const {onChangedFileNameClicked} = this.props;
+    if (this.props.selectRows.length !== 1) {
       return;
     } else {
-      this.setState({
-        //@ts-ignore
-        changedFileNameID: this.state.selectRows[0].ID,
-      });
+      onChangedFileNameClicked(this.props.selectRows[0].ID);
     }
-  };
-
-  changedFileIDHandle = (id: number) => {
-    this.setState({
-      changedFileNameID: id,
-    });
   };
 
   render() {
-    if (this.state.loading) {
-      return null;
+    const {loading} = this.props;
+    if (loading) {
+      return (<></>);
     }
-    let path = this.state.routerArgs[this.state.routerArgs.length - 1];
+    const {routerArgs} = this.props;
+    const path = routerArgs[0];
     const displayTable = (
       <FileTable
         path={path}
+        setSelectRowKeys={this.props.setSelectKeys}
         onSelectRowKeyChanged={this.onSelectKeyChange}
-        onSourceChanged={this.onSourceChanged}
-        changedFileNameID={this.state.changedFileNameID}
-        changedFileNameHandle={this.changedFileIDHandle}
+        onChangedFileNameClicked={this.props.onChangedFileNameClicked}
+        ChangedFileNameID={this.props.changedFileNameID}
+        FileList={this.props.fileList}
+        Loading={this.props.loading}
       />
     );
     const displayList = (
       <FileList
         path={path}
         onSelectKeyChanged={this.onSelectKeyChange}
-        onSourceChanged={this.onSourceChanged}
       />
     );
     return (
@@ -157,18 +95,20 @@ class CloudIndex extends React.Component<any, state> {
         >
           <FileAction
             path={path}
-            selectRows={this.state.selectRows}
+            selectRows={this.props.selectRows}
             onShowModeChanged={this.onShowModeChanged}
             onChangedFileNameClicked={this.onChangedFileNameClicked}
             onCreateDirectory={this.onCreateDirectory}
+            uploadFileList={this.props.uploadFileList}
+            setUploadList={this.props.setUploadList}
           />
           <FileShowLoadData
-            args={this.state.routerArgs}
+            args={this.props.routerArgs}
             onClick={this.onRouterClick}
-            count={this.state.count}
-            hasMore={this.state.hasMore}
+            count={this.props.count}
+            hasMore={this.props.hasMore}
           />
-          {this.state.displayMode === 0 ? displayTable : displayList}
+          {this.props.displayMode === 0 ? displayTable : displayList}
         </Content>
       </Layout>
     );
