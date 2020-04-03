@@ -18,8 +18,8 @@ export const SET_SELECTED_ROWS_KEY = "set_selected_rows_key"
 export type SET_SELECTED_ROWS_KEY_TYPE = typeof SET_SELECTED_ROWS_KEY
 export const SET_UPLOAD_LIST = "set_upload_list";
 export type SET_UPLOAD_LIST_TYPE = typeof SET_UPLOAD_LIST;
-
-
+export const CHANGE_FILE_NAME_FROM_LIST = "change_file_name_from_list"
+export type CHANGE_FILE_NAME_TYPE = typeof CHANGE_FILE_NAME_FROM_LIST
 
 export interface AddFileToListAction {
   type: ADD_FILE_TO_FILE_LIST_TYPE
@@ -71,8 +71,12 @@ export interface SetSelectedRowKeysAction {
   payload: any
 }
 
+export interface ChangeFileNameFromListAction {
+  type: CHANGE_FILE_NAME_TYPE
+  payload: any
+}
 
 export type CloudActions = AddFileToListAction | AddFileToUploadListAction
   | ChangedFileNameAction | DeleteFileFromListAction | UpdateCloudStateAction
   | ChangeLoadingStateAction | SetLoadCountAndHasMoreAction | SetDisplayModeAction
-  | SetSelectedRowsAction | SetSelectedRowKeysAction
+  | SetSelectedRowsAction | SetSelectedRowKeysAction | ChangeFileNameFromListAction

@@ -56,6 +56,7 @@ class CloudIndex extends React.Component<any, any> {
     }
   };
 
+
   render() {
     const {loading} = this.props;
     if (loading) {
@@ -72,6 +73,7 @@ class CloudIndex extends React.Component<any, any> {
         ChangedFileNameID={this.props.changedFileNameID}
         FileList={this.props.fileList}
         Loading={this.props.loading}
+        changeFileName={this.props.changeFileName}
       />
     );
     const displayList = (
@@ -96,11 +98,13 @@ class CloudIndex extends React.Component<any, any> {
           <FileAction
             path={path}
             selectRows={this.props.selectRows}
+            setSelect={this.props.setSelect}
             onShowModeChanged={this.onShowModeChanged}
             onChangedFileNameClicked={this.onChangedFileNameClicked}
             onCreateDirectory={this.onCreateDirectory}
             uploadFileList={this.props.uploadFileList}
             setUploadList={this.props.setUploadList}
+            deleteFileFromList={this.props.deleteFileFromList}
           />
           <FileShowLoadData
             args={this.props.routerArgs}

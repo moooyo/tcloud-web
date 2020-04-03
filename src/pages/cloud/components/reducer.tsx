@@ -1,8 +1,10 @@
 import {
   ADD_FILE_TO_FILE_LIST,
+  CHANGE_FILE_NAME_FROM_LIST,
   CHANGE_FILE_NAME_ID,
   CHANGE_LOADING_STATE,
   CloudActions,
+  DELETE_FILE_FROM_FILE_LIST,
   SET_SELECTED_ROWS,
   SET_SELECTED_ROWS_KEY,
   SET_UPLOAD_LIST,
@@ -35,6 +37,36 @@ const CloudReducer = (state = [], action:CloudActions) => {
       )
     case SET_SELECTED_ROWS_KEY:
       return Object.assign({}, state, action.payload)
+    case CHANGE_FILE_NAME_FROM_LIST:
+      // @ts-ignore
+      let fileList = state.fileList.slice();
+      const index = fileList.findIndex((e: { ID: any; })=>{
+        return e.ID === action.payload.id
+      })
+      if (index !== -1) {
+        fileList[index].Name = action.payload.name;
+      }
+      return Object.assign({}, state, {
+        fileList: fileList
+      })
+    case DELETE_FILE_FROM_FILE_LIST: {
+      // @ts-ignore
+      let fileList = state.fileList.slice();
+      for (let i in fileList) {
+        // @ts-ignore
+        const index = action.payload.findIndex(e=>{
+          return e === fileList[i].ID;
+        })
+        if (index !== -1) {
+          delete fileList[i];
+        }
+      }
+      fileList = fileList.filter((e: any)=>e !== undefined);
+      console.log(fileList);
+      return Object.assign({}, state, {
+        fileList: fileList
+      })
+    }
     default:
       return state
   }

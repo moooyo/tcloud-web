@@ -16,6 +16,8 @@ let fileInfoUrl = baseUrl + '/files';
 let directoryCreateUrl = fileInfoUrl + "/directory";
 let fileDownloadUrl = fileInfoUrl + '/download';
 
+let fileChangeUrl = baseUrl + "/file";
+
 let uploadFileUrl = fileInfoUrl;
 
 let UsersBaseUrl = baseUrl + '/users';
@@ -36,5 +38,6 @@ export {
   uploadFileUrl,
   fileDownloadUrl,
   IconFontCnUrl,
-  directoryCreateUrl
+  directoryCreateUrl,
+  fileChangeUrl
 };

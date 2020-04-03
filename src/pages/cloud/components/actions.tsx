@@ -1,7 +1,7 @@
 import { FileInfo } from '@/pages/cloud/components/file';
 import {
   ADD_FILE_TO_FILE_LIST,
-  ADD_FILE_TO_FILE_LIST_TYPE,
+  ADD_FILE_TO_FILE_LIST_TYPE, CHANGE_FILE_NAME_FROM_LIST,
   CHANGE_FILE_NAME_ID, CHANGE_LOADING_STATE,
   CHANGE_LOADING_STATE_TYPE, DELETE_FILE_FROM_FILE_LIST,
   DELETE_FILE_FROM_LIST_TYPE, SET_DISPLAY_MODE, SET_DISPLAY_MODE_TYPE, SET_LOAD_COUNT_AND_HAS_MORE,
@@ -24,7 +24,7 @@ export function ChangedFileNameID(id: number) {
   }
 }
 
-export function DeleteFileFromListID(id: number) {
+export function DeleteFileFromListID(id: number[]) {
   return {
     type: DELETE_FILE_FROM_FILE_LIST,
     payload: id
@@ -85,6 +85,16 @@ export function SetSelectedRowKeys(selectedRowKeys: any) {
     type: SET_SELECTED_ROWS_KEY,
     payload: {
       selectedRowKeys: selectedRowKeys
+    }
+  }
+}
+
+export function ChangeFileNameFromList(ID: number, Name: string) {
+  return {
+    type: CHANGE_FILE_NAME_FROM_LIST,
+    payload: {
+      id: ID,
+      name: Name
     }
   }
 }

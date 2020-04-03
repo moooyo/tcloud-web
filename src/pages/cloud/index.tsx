@@ -6,7 +6,7 @@ import { composeWithDevTools } from 'redux-devtools-extension'
 import CloudReducer from '@/pages/cloud/components/reducer';
 import {
   AddFileToList,
-  ChangedFileNameID,
+  ChangedFileNameID, ChangeFileNameFromList,
   DeleteFileFromListID,
   SetDisplayMode,
   SetLoadCountAndHasMore,
@@ -47,12 +47,13 @@ const mapDispatchToProps = (dispatch:any) => {
   return {
     onChangedFileNameClicked: (id:number) => dispatch(ChangedFileNameID(id)),
     addFileToFileList: (file:FileInfo) => dispatch(AddFileToList(file)),
-    deleteFileFromList: (id: number) => dispatch(DeleteFileFromListID(id)),
+    deleteFileFromList: (id: number[]) => dispatch(DeleteFileFromListID(id)),
     setLoadCount:(count:number, hasMore:boolean) => dispatch(SetLoadCountAndHasMore(count, hasMore)),
     setDisplayMode:(mode:number) => dispatch(SetDisplayMode(mode)),
     setSelect:(select:any) => dispatch(SetSelectRows(select)),
     setSelectKeys:(select:any) => dispatch(SetSelectedRowKeys(select)),
-    setUploadList:(file:UploadFileMeta[]) => dispatch(SetUploadFileList(file))
+    setUploadList:(file:UploadFileMeta[]) => dispatch(SetUploadFileList(file)),
+    changeFileName:(id:number, name:string) => dispatch(ChangeFileNameFromList(id,name))
   }
 }
 

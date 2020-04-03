@@ -11,7 +11,7 @@ import {
 } from '@ant-design/icons';
 import style from './file.module.css';
 import UploadList from '@/pages/cloud/components/uploadList';
-import { directoryCreateUrl, fileDownloadUrl, uploadFileUrl } from '@/_config/.api';
+import { directoryCreateUrl, fileChangeUrl, fileDownloadUrl, uploadFileUrl } from '@/_config/.api';
 import { FileInfo } from '@/pages/cloud/components/file';
 import { ErrorCode } from '@/_config/error';
 import { DeleteOutlined } from '@ant-design/icons/lib';
@@ -46,16 +46,20 @@ interface props {
   onChangedFileNameClicked: any;
   onCreateDirectory: any;
   uploadFileList: any;
-  setUploadList: any
+  setUploadList: any;
+  deleteFileFromList: (id:number[]) => void
+  setSelect: any;
 }
 
 interface state {
   downloadLoading: boolean;
+  deleteLoading: boolean;
 }
 
 class FileAction extends React.Component<props, state> {
   state = {
     downloadLoading: false,
+    deleteLoading: false,
   };
 
   onCreateDirectoryClick = async () => {
@@ -282,6 +286,40 @@ class FileAction extends React.Component<props, state> {
     });
   };
 
+  deleteFile = () => {
+    this.setState({
+      deleteLoading: true
+    })
+    let url = fileChangeUrl;
+    let deleteFiles:number[] = [];
+    this.props.selectRows.forEach(e=>{
+      deleteFiles.push(e.ID);
+    })
+    let x = deleteFiles.join(",")
+    url = url + "/" + x
+    fetch(url, {
+      method: "DELETE"
+    }).then(res=>res.json()).then(resp=>{
+      this.setState({
+        deleteLoading: false
+      })
+      if (resp.code === ErrorCode.OK) {
+        this.props.deleteFileFromList(deleteFiles);
+        this.props.setSelect([]);
+      } else {
+        notification['error']({
+          message: "文件删除失败",
+          description: resp.message
+        })
+      }
+    }).catch(e=>{
+      console.log(e);
+      this.setState({
+        deleteLoading: false
+      })
+    })
+  }
+
   generateSelectedButton = (renameButtonDisabled: boolean) => {
     return (
       <span>
@@ -306,6 +344,9 @@ class FileAction extends React.Component<props, state> {
           className={style.actionButton}
           danger={true}
           icon={<DeleteOutlined />}
+          type={'primary'}
+          onClick={this.deleteFile}
+          loading={this.state.deleteLoading}
         >
           删除
         </Button>

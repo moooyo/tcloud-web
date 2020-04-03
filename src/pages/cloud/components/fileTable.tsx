@@ -1,6 +1,6 @@
 import React from 'react';
 import moment from 'moment';
-import { Table, Input, Button } from 'antd';
+import { Table, Input, Button, notification } from 'antd';
 import { FileInfo } from '@/pages/cloud/components/file';
 import {
   CloudDownloadOutlined,
@@ -12,6 +12,8 @@ import {
 import style from './file.module.css';
 import { routerArgs } from '@/pages/cloud/components/fileAction';
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
+import { fileChangeUrl } from '@/_config/.api';
+import { ErrorCode } from '@/_config/error';
 
 interface props {
   path: routerArgs;
@@ -20,13 +22,15 @@ interface props {
   setSelectRowKeys: any;
   onChangedFileNameClicked: (id:number)=>void
   FileList: FileInfo[],
-  Loading: boolean
+  Loading: boolean,
+  changeFileName: (id:number, name:string) => void
 }
 
 interface state {
   selectedRowKeys: number[];
   enterRowIndex: number | undefined;
   limit: number;
+  changeNameButtonLoading: boolean;
 }
 
 const fileImgStyle = {
@@ -75,15 +79,46 @@ class FileTable extends React.Component<props, state> {
   scrollRef: HTMLDivElement | null = null;
   hasMore = true;
   shouldLoad = true;
-  changedFileName = ''; // used for change file name
 
   // @ts-ignore
   changedFileNameRef = React.createRef<input>();
-  onConfirmChangedName = (ID: number, ref: any) => {
+  onConfirmChangedName = (ID: number) => {
     return function(e: any) {
       // @ts-ignore
-      const {onChangedFileNameClicked} = this.props;
-      onChangedFileNameClicked(-1);
+      const name = this.changedFileNameRef.current.state.value;
+      const url = fileChangeUrl + "/" + ID.toString() + "/name";
+      fetch(url,{
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: name
+        })
+      }).then(res=>res.json()).then(resp=>{
+        // @ts-ignore
+        this.setState({
+          changeNameButtonLoading: false
+        })
+        if (resp.code === ErrorCode.OK) {
+          // @ts-ignore
+          this.props.onChangedFileNameClicked(-1);
+          // @ts-ignore
+          this.props.changeFileName(ID, name);
+        } else {
+          notification['error']({
+            message: "修改文件名失败",
+            description: resp.message
+          })
+        }
+      }).catch(e=> {
+        console.log(e)
+        // @ts-ignore
+        this.setState({
+          changeNameButtonLoading: false
+        })
+      })
+      // @ts-ignore
     }.bind(this);
   };
 
@@ -117,8 +152,8 @@ class FileTable extends React.Component<props, state> {
                 style={{ marginLeft: '5px' }}
                 onClick={this.onConfirmChangedName(
                   record.ID,
-                  this.changedFileName,
                 )}
+                loading={this.state.changeNameButtonLoading}
               >
                 <CheckOutlined />
               </Button>
@@ -126,6 +161,7 @@ class FileTable extends React.Component<props, state> {
                 size={'small'}
                 style={{ marginLeft: '5px' }}
                 onClick={this.onCancelChangedName}
+                loading={this.state.changeNameButtonLoading}
               >
                 <CloseOutlined />
               </Button>
@@ -204,6 +240,7 @@ class FileTable extends React.Component<props, state> {
       selectedRowKeys: [],
       enterRowIndex: undefined,
       limit: 20,
+      changeNameButtonLoading: false,
     };
   }
 
@@ -230,7 +267,9 @@ class FileTable extends React.Component<props, state> {
       selectedRowKeys: selectedRowKeys,
     });
     this.props.setSelectRowKeys(selectedRowKeys);
-    this.props.onSelectRowKeyChanged(selectedRows);
+    const rows = selectedRows.filter((e:any)=>e!==undefined);
+    console.log(rows);
+    this.props.onSelectRowKeyChanged(rows);
   };
 
   setRowClassName = (record: FileInfo, index: number) => {
