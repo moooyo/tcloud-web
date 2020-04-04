@@ -5,4 +5,9 @@ export default defineConfig({
   history: {
     type: 'hash',
   },
+  proxy: {
+    "/f": {
+      target: "http://nas.lurenjia.in",
+    }
+  }
 }); //export default ({})

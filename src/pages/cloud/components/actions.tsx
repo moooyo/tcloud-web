@@ -65,9 +65,7 @@ export function SetLoadCountAndHasMore(count:number, hasMore: boolean) {
 export function SetDisplayMode(mode:number) {
   return {
     type: SET_DISPLAY_MODE,
-    payload: {
-      mode: mode
-    }
+    payload: mode
   }
 }
 
