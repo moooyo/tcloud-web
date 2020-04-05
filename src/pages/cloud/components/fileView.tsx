@@ -2,7 +2,7 @@ import React from 'react';
 // @ts-ignore
 import FileViewer from 'react-file-viewer';
 import style from './file.module.css'
-import { Button } from 'antd';
+import { Alert, Button } from 'antd';
 import {CloseOutlined} from '@ant-design/icons'
 interface props {
   path: string;
@@ -13,7 +13,9 @@ class FileView extends React.Component<props, any> {
     console.log(e);
   }
   onCloseClick = (e:any) => {
-    alert("ok");
+    const mask = document.getElementById("__mask_file_view__")
+    //@ts-ignore
+    mask.remove()
   }
   render() {
     return (

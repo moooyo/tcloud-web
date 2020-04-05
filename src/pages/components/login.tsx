@@ -47,7 +47,6 @@ class LoginBox extends React.Component<any, state> {
     this.setState({
       loading: true,
     });
-    console.log(loginUrl);
     fetch(loginUrl, {
       method: 'POST',
       headers: new Headers({

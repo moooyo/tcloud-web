@@ -25,7 +25,7 @@ let RegisterUrl = UsersBaseUrl;
 let RegisterConfirmUrl = UsersBaseUrl + '/confirm';
 let RegisterCodeResend = UsersBaseUrl + '/code';
 
-let IconFontCnUrl = '//at.alicdn.com/t/font_1704308_ro3tnm4hp89.js\n';
+let IconFontCnUrl = '//at.alicdn.com/t/font_1704308_4o0m5ukzs2b.js';
 
 export {
   loginUrl,

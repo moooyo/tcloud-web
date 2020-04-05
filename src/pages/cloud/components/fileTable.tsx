@@ -1,4 +1,5 @@
-import React from 'react';
+import React  from 'react';
+import ReactDOM  from 'react-dom'
 import moment from 'moment';
 import { Table, Input, Button, notification } from 'antd';
 import { FileInfo } from '@/pages/cloud/components/file';
@@ -14,6 +15,8 @@ import { routerArgs } from '@/pages/cloud/components/fileAction';
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import { fileChangeUrl } from '@/_config/.api';
 import { ErrorCode } from '@/_config/error';
+import FileView from '@/pages/cloud/components/fileView';
+import { Number2FileType } from '@/components/utils';
 
 interface props {
   path: routerArgs;
@@ -127,6 +130,30 @@ class FileTable extends React.Component<props, state> {
     onChangedFileNameClicked(-1);
   };
 
+  formatFileUrl = (file:FileInfo) => {
+    return fileChangeUrl + "/" + file.ID.toString()
+  }
+  generateFileViewClick = (file: FileInfo) =>{
+    return function(e:any) {
+      if (file.IsDirectory) {
+       console.log("directory")
+      } else {
+        if (Number2FileType(file.Type) !== "other") {
+          const maskElement = document.createElement("div")
+          maskElement.setAttribute("id", "__mask_file_view__")
+          document.body.appendChild(maskElement)
+          //@ts-ignore
+          const mask = (<FileView type={Number2FileType(file.Type)} path={this.formatFileUrl(file)}/>)
+          ReactDOM.render(mask, maskElement)
+        } else {
+          notification['error']({
+            message: "无法预览此文件",
+            description: "暂时无法预览此类文件，可能需要后期更新支持"
+          })
+        }
+      }
+    }.bind(this);
+  }
   columns = [
     {
       title: '文件名',
@@ -171,7 +198,7 @@ class FileTable extends React.Component<props, state> {
           return (
             <span>
               <span style={{ marginRight: '10px' }}>{file2img(record)}</span>
-              <a style={{ userSelect: 'none' }}>{fileName}</a>
+              <a style={{ userSelect: 'none' }} onClick={this.generateFileViewClick(record)}>{fileName}</a>
             </span>
           );
         }

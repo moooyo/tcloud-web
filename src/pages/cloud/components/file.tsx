@@ -5,6 +5,7 @@ interface FileInfo {
   Size: number;
   MetaID: number;
   IsDirectory: boolean;
+  Type: number;
 }
 
 export { FileInfo };
