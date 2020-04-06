@@ -1,13 +1,27 @@
 import { FileInfo } from '@/pages/cloud/components/file';
 import {
   ADD_FILE_TO_FILE_LIST,
-  ADD_FILE_TO_FILE_LIST_TYPE, CHANGE_FILE_NAME_FROM_LIST,
-  CHANGE_FILE_NAME_ID, CHANGE_LOADING_STATE,
-  CHANGE_LOADING_STATE_TYPE, DELETE_FILE_FROM_FILE_LIST,
-  DELETE_FILE_FROM_LIST_TYPE, SET_DISPLAY_MODE, SET_DISPLAY_MODE_TYPE, SET_LOAD_COUNT_AND_HAS_MORE,
-  SET_LOAD_COUNT_AND_HAS_MORE_TYPE, SET_SELECTED_ROWS, SET_SELECTED_ROWS_KEY, SET_UPLOAD_LIST, UPDATE_CLOUD_STATE,
+  ADD_FILE_TO_FILE_LIST_TYPE,
+  CHANGE_FILE_NAME_FROM_LIST,
+  CHANGE_FILE_NAME_ID,
+  CHANGE_LOADING_STATE,
+  CHANGE_LOADING_STATE_TYPE,
+  CHANGE_PATH,
+  CHANGE_SIDER_MENU,
+  DELETE_FILE_FROM_FILE_LIST,
+  DELETE_FILE_FROM_LIST_TYPE,
+  SET_DISPLAY_MODE,
+  SET_DISPLAY_MODE_TYPE,
+  SET_FILE_LIST,
+  SET_FILE_LIST_LOADING,
+  SET_LOAD_COUNT_AND_HAS_MORE,
+  SET_LOAD_COUNT_AND_HAS_MORE_TYPE,
+  SET_SELECTED_ROWS,
+  SET_SELECTED_ROWS_KEY,
+  SET_UPLOAD_LIST,
+  UPDATE_CLOUD_STATE,
 } from '@/pages/cloud/components/type';
-import { UploadFileMeta } from '@/pages/cloud/components/fileAction';
+import { routerArgs, UploadFileMeta } from '@/pages/cloud/components/fileAction';
 
 
 export function SetUploadFileList(file: UploadFileMeta[]) {
@@ -94,5 +108,33 @@ export function ChangeFileNameFromList(ID: number, Name: string) {
       id: ID,
       name: Name
     }
+  }
+}
+
+export function ChangeSiderMenu(menu: string) {
+  return {
+    type: CHANGE_SIDER_MENU,
+    payload: menu
+  }
+}
+
+export function ChangePath(path: routerArgs) {
+  return {
+    type: CHANGE_PATH,
+    payload: path
+  }
+}
+
+export function SetFileList(list: FileInfo[]) {
+  return {
+    type: SET_FILE_LIST,
+    payload: list
+  }
+}
+
+export function SetFileListLoading(loading: boolean) {
+  return {
+    type: SET_FILE_LIST_LOADING,
+    payload: loading
   }
 }

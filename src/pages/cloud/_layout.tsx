@@ -1,9 +1,8 @@
 import React from 'react';
 import { Layout } from 'antd';
 import MainHeaderLayout from '@/pages/components/MainHeaderLayout';
-import CloudSider from '@/pages/cloud/components/cloudSider';
 
-const { Content, Sider } = Layout;
+const { Content } = Layout;
 
 class CloudLayout extends React.Component<any, any> {
   render() {
@@ -11,20 +10,6 @@ class CloudLayout extends React.Component<any, any> {
       <div>
         <MainHeaderLayout />
         <Layout>
-          <Sider
-            style={{
-              position: 'fixed',
-              left: '1vw',
-              height: '88vh',
-              backgroundColor: 'white',
-              boxShadow: '2px -1px 6px 0 rgba(0,0,0,.05)',
-              width: '10vw',
-              top: '10vh',
-              userSelect: 'none',
-            }}
-          >
-            <CloudSider />
-          </Sider>
           <Content>{this.props.children}</Content>
         </Layout>
       </div>

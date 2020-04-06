@@ -3,8 +3,11 @@ import {
   CHANGE_FILE_NAME_FROM_LIST,
   CHANGE_FILE_NAME_ID,
   CHANGE_LOADING_STATE,
+  CHANGE_SIDER_MENU,
   CloudActions,
-  DELETE_FILE_FROM_FILE_LIST, SET_DISPLAY_MODE,
+  DELETE_FILE_FROM_FILE_LIST,
+  SET_DISPLAY_MODE,
+  SET_FILE_LIST,
   SET_SELECTED_ROWS,
   SET_SELECTED_ROWS_KEY,
   SET_UPLOAD_LIST,
@@ -70,6 +73,14 @@ const CloudReducer = (state = [], action:CloudActions) => {
     case SET_DISPLAY_MODE:
       return Object.assign({}, state, {
         displayMode: action.payload
+      })
+    case CHANGE_SIDER_MENU:
+      return Object.assign({}, state, {
+        siderMenu: action.payload
+      })
+    case SET_FILE_LIST:
+      return Object.assign({}, state, {
+        fileList: action.payload
       })
     default:
       return state

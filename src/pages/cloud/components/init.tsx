@@ -35,6 +35,7 @@ const loadCloudState = async () => {
       changedFileNameID: -1,
       user: user,
       loading: false,
+      fileListLoading: false,
       routerArgs:[{
         Key: user.DiskRoot,
         Name: '我的文件',
@@ -45,6 +46,7 @@ const loadCloudState = async () => {
       count: fileList.length,
       displayMode: 0,
       uploadFileList: [],
+      siderMenu: "all",
     }
   } catch (e) {
     console.log(e);

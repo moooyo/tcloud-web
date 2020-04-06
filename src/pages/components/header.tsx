@@ -1,6 +1,6 @@
 import React from 'react';
 import { Avatar, Col, Dropdown, Menu, Row } from 'antd';
-import { UserInfo } from '../../components/user';
+import { UserInfo } from '@/components/user';
 import style from './header.module.css';
 import {
   CloudOutlined,
@@ -32,16 +32,20 @@ const IconFont = createFromIconfontCN({
   scriptUrl: IconFontCnUrl,
 });
 
+function pathname2current(pathname:string) {
+  const pathArray = pathname.split("/")
+  return pathArray[1]
+}
+
 class MainHeader extends React.Component<props, state> {
   constructor(props: any) {
     super(props);
     this.state = {
-      current: 'cloud',
+      current: pathname2current(history.location.pathname),
     };
   }
 
   handleClick = (e: any) => {
-    console.log(e);
     this.setState({
       current: e.key,
     });

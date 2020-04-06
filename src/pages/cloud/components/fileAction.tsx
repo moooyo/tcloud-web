@@ -49,6 +49,7 @@ interface props {
   setUploadList: any;
   deleteFileFromList: (id:number[]) => void
   setSelect: any;
+  siderMenu: string
 }
 
 interface state {
@@ -386,9 +387,12 @@ class FileAction extends React.Component<props, state> {
                 onChange={this.onUploadChange}
               />
             </Button>
-            <Button icon={<FolderAddOutlined />} className={style.actionButton} onClick={this.onCreateDirectoryClick}>
-              新建文件夹
-            </Button>
+            {
+              this.props.siderMenu === "all"?(
+              <Button icon={<FolderAddOutlined/>} className={style.actionButton} onClick={this.onCreateDirectoryClick}>
+                新建文件夹
+              </Button>):""
+            }
             {somethingSelected ? this.generateSelectedButton(this.props.selectRows.length !== 1) : this.defaultButton}
           </Col>
           <Col flex={2}>

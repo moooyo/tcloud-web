@@ -1,5 +1,5 @@
 enum FileType {
-  FileTypeOther,
+  FileTypeOther = 1,
   FileTypePdf,
   FileTypeCsv,
   FileTypeXlsx,
@@ -7,6 +7,12 @@ enum FileType {
   FileTypeMp4,
   FileTypeWebm,
   FileTypeMp3,
+  FileTypePng,
+  FileTypeJpeg,
+  FileTypeGif,
+  FileTypeBmp,
+  FileTypeJpg,
+  FileTypeEnd
 }
 
 function Number2FileType(num: number) {
@@ -25,6 +31,16 @@ function Number2FileType(num: number) {
       return "webm"
     case FileType.FileTypeXlsx:
       return "xlsx"
+    case FileType.FileTypeJpeg:
+      return "jpeg"
+    case FileType.FileTypeJpg:
+      return "jpg"
+    case FileType.FileTypeGif:
+      return "gif"
+    case FileType.FileTypeBmp:
+      return "bmp"
+    case FileType.FileTypePng:
+      return "png"
     case FileType.FileTypeOther:
       return "other"
     default:
@@ -32,4 +48,17 @@ function Number2FileType(num: number) {
   }
 }
 
-export {Number2FileType}
+enum FileListType {
+  Unset,
+  Other,
+  Music,
+  Video,
+  Doc,
+  Image,
+}
+
+
+
+
+
+export {Number2FileType, FileListType}

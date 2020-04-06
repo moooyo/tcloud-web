@@ -20,6 +20,15 @@ export const SET_UPLOAD_LIST = "set_upload_list";
 export type SET_UPLOAD_LIST_TYPE = typeof SET_UPLOAD_LIST;
 export const CHANGE_FILE_NAME_FROM_LIST = "change_file_name_from_list"
 export type CHANGE_FILE_NAME_TYPE = typeof CHANGE_FILE_NAME_FROM_LIST
+export const CHANGE_SIDER_MENU = "change_sider_menu"
+export type CHANGE_SIDER_MENU_TYPE = typeof CHANGE_SIDER_MENU
+export const CHANGE_PATH = "change_path"
+export type CHANGE_PATH_TYPE = typeof CHANGE_PATH
+export const SET_FILE_LIST = "set_file_list"
+export type SET_FILE_LIST_TYPE = typeof SET_FILE_LIST
+export const SET_FILE_LIST_LOADING = "set_file_list_loading"
+export type SET_FILE_LIST_LOADING_TYPE = typeof SET_FILE_LIST_LOADING
+
 
 export interface AddFileToListAction {
   type: ADD_FILE_TO_FILE_LIST_TYPE
@@ -76,7 +85,27 @@ export interface ChangeFileNameFromListAction {
   payload: any
 }
 
+export interface ChangeSiderMenu {
+  type: CHANGE_SIDER_MENU_TYPE
+  payload:any
+}
+
+export interface ChangePathAction {
+
+}
+
+export interface SetFileListAction {
+  type: SET_FILE_LIST_TYPE
+  payload: any
+}
+
+export interface SetFileListLoadingAction {
+  type: SET_FILE_LIST_LOADING_TYPE
+  payload: any
+}
+
 export type CloudActions = AddFileToListAction | AddFileToUploadListAction
   | ChangedFileNameAction | DeleteFileFromListAction | UpdateCloudStateAction
   | ChangeLoadingStateAction | SetLoadCountAndHasMoreAction | SetDisplayModeAction
   | SetSelectedRowsAction | SetSelectedRowKeysAction | ChangeFileNameFromListAction
+  | ChangeSiderMenu  | SetFileListAction | SetFileListLoadingAction
