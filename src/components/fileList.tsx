@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, Checkbox, List } from 'antd';
 import { FilePdfOutlined } from '@ant-design/icons';
-import style from './file.module.css';
+import style from '../pages/cloud/components/file.module.css';
 import { FileInfo } from '@/pages/cloud/components/file';
 import { fileInfoUrl } from '@/_config/.api';
 import { ListGridType } from 'antd/es/list';

@@ -1,12 +1,12 @@
 import React from 'react';
 import { Layout, Spin } from 'antd';
-import FileTable from '@/pages/cloud/components/fileTable';
+import FileTable from '@/components/fileTable';
 import {
   FileAction,
   FileShowLoadData, routerArgs,
 } from '@/pages/cloud/components/fileAction';
 import { FileInfo } from '@/pages/cloud/components/file';
-import FileList from '@/pages/cloud/components/fileList';
+import FileList from '@/components/fileList';
 import CloudSider from '@/pages/cloud/components/cloudSider';
 
 const { Content,Sider } = Layout;

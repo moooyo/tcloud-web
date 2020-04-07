@@ -10,7 +10,7 @@ import {
   MoreOutlined,
   ShareAltOutlined,
 } from '@ant-design/icons';
-import style from './file.module.css';
+import style from '../pages/cloud/components/file.module.css';
 import { routerArgs } from '@/pages/cloud/components/fileAction';
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import { fileChangeUrl } from '@/_config/.api';
@@ -295,7 +295,6 @@ class FileTable extends React.Component<props, state> {
     });
     this.props.setSelectRowKeys(selectedRowKeys);
     const rows = selectedRows.filter((e:any)=>e!==undefined);
-    console.log(rows);
     this.props.onSelectRowKeyChanged(rows);
   };
 

@@ -12,7 +12,7 @@ import { fileInfoUrl, IconFontCnUrl } from '@/_config/.api';
 import { FileUnknownOutlined } from '@ant-design/icons/lib';
 import { routerArgs } from '@/pages/cloud/components/fileAction';
 import { UserInfo } from '@/components/user';
-import FileList from '@/pages/cloud/components/fileList';
+import FileList from '@/components/fileList';
 import { FileListType } from '@/components/utils';
 import { FileInfo } from '@/pages/cloud/components/file';
 const {SubMenu} = Menu;
