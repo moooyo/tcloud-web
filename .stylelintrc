@@ -1,7 +1,8 @@
 {
   "extends": [
     "stylelint-config-standard",
-    "stylelint-config-recess-order"
+    "stylelint-config-recess-order",
+    "stylelint-config-css-modules"
   ],
   "rules": {
     "at-rule-no-unknown": [
@@ -13,6 +14,7 @@
           "content"
         ]
       }
-    ]
+    ],
+    "block-no-empty": null
   }
 }
