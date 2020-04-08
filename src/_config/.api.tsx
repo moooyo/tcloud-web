@@ -13,10 +13,10 @@ let infoUrl = baseUrl + '/info';
 let userInfoUrl = infoUrl + '/user';
 
 let fileInfoUrl = baseUrl + '/files';
-let directoryCreateUrl = fileInfoUrl + "/directory";
+let directoryCreateUrl = fileInfoUrl + '/directory';
 let fileDownloadUrl = fileInfoUrl + '/download';
 
-let fileChangeUrl = baseUrl + "/file";
+let fileChangeUrl = baseUrl + '/file';
 
 let uploadFileUrl = fileInfoUrl;
 
@@ -25,7 +25,9 @@ let RegisterUrl = UsersBaseUrl;
 let RegisterConfirmUrl = UsersBaseUrl + '/confirm';
 let RegisterCodeResend = UsersBaseUrl + '/code';
 
-let IconFontCnUrl = '//at.alicdn.com/t/font_1704308_4o0m5ukzs2b.js';
+let shareFileBaseUrl = baseUrl + '/share';
+
+let IconFontCnUrl = '//at.alicdn.com/t/font_1704308_qv8s1dnwkii.js';
 
 export {
   loginUrl,
@@ -39,5 +41,6 @@ export {
   fileDownloadUrl,
   IconFontCnUrl,
   directoryCreateUrl,
-  fileChangeUrl
+  fileChangeUrl,
+  shareFileBaseUrl,
 };

@@ -55,6 +55,7 @@
     "yorkie": "^2.0.0"
   },
   "devDependencies": {
-    "@umijs/preset-ui": "^2.0.8"
+    "@types/react-infinite-scroller": "^1.2.1",
+    "@umijs/preset-ui": "^2.1.9"
   }
 }

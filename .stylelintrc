@@ -15,6 +15,7 @@
         ]
       }
     ],
-    "block-no-empty": null
+    "block-no-empty": null,
+    "declaration-block-trailing-semicolon" : null
   }
 }

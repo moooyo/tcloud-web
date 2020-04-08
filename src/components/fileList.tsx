@@ -5,7 +5,6 @@ import style from '../pages/cloud/components/file.module.css';
 import { FileInfo } from '@/pages/cloud/components/file';
 import { fileInfoUrl } from '@/_config/.api';
 import { ListGridType } from 'antd/es/list';
-// @ts-ignore
 import InfiniteScroll from 'react-infinite-scroller';
 import { routerArgs } from '@/pages/cloud/components/fileAction';
 
@@ -188,7 +187,6 @@ class FileList extends React.Component<props, state> {
   render() {
     return (
       <InfiniteScroll
-        initalLoad={false}
         pageStart={0}
         loadMore={this.loadMore}
         hasMore={!this.state.loading && this.hasMore}

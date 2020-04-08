@@ -1,0 +1,47 @@
+.wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.confirm {
+  width: 740px;
+  height: 400px;
+}
+
+.tab {
+  width: 100%;
+  height: 70%;
+}
+
+.title {
+  width: 100%;
+  height: 30%;
+  padding-top: 5px;
+  padding-left: 10px;
+  user-select: none;
+}
+
+.selectTabBox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+.selectTabs {
+  width: 110px;
+  height: 50px;
+  padding-right: 20px;
+  padding-left: 20px;
+}
+
+.linkContentButton {
+  margin-right: 20px;
+}
