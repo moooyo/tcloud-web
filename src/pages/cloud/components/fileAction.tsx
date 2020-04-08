@@ -11,10 +11,18 @@ import {
 } from '@ant-design/icons';
 import style from './file.module.css';
 import UploadList from '@/pages/cloud/components/uploadList';
-import { directoryCreateUrl, fileChangeUrl, fileDownloadUrl, uploadFileUrl } from '@/_config/.api';
+import {
+  directoryCreateUrl,
+  fileChangeUrl,
+  fileDownloadUrl,
+  uploadFileUrl,
+  shareFileBaseUrl,
+} from '@/_config/.api';
 import { FileInfo } from '@/pages/cloud/components/file';
 import { ErrorCode } from '@/_config/error';
 import { DeleteOutlined } from '@ant-design/icons/lib';
+import ShareConfirm from './share';
+import ReactDOM from 'react-dom';
 
 const { Search } = Input;
 
@@ -47,9 +55,9 @@ interface props {
   onCreateDirectory: any;
   uploadFileList: any;
   setUploadList: any;
-  deleteFileFromList: (id:number[]) => void
+  deleteFileFromList: (id: number[]) => void;
   setSelect: any;
-  siderMenu: string
+  siderMenu: string;
 }
 
 interface state {
@@ -66,11 +74,11 @@ class FileAction extends React.Component<props, state> {
   onCreateDirectoryClick = async () => {
     try {
       let res = await fetch(directoryCreateUrl, {
-        method: "POST",
+        method: 'POST',
         body: JSON.stringify({
           path: this.props.path.Key,
-          name: "新建文件夹"
-        })
+          name: '新建文件夹',
+        }),
       });
       if (res.status === 200) {
         let resp = await res.json();
@@ -78,15 +86,15 @@ class FileAction extends React.Component<props, state> {
           this.props.onCreateDirectory(resp.data);
         } else {
           notification['error']({
-            message: "新建文件夹错误",
+            message: '新建文件夹错误',
             description: resp.message,
-          })
+          });
         }
       } else {
         notification['error']({
-          message: "服务器错误",
-          description: "无法连接到服务器，请稍后重试",
-        })
+          message: '服务器错误',
+          description: '无法连接到服务器，请稍后重试',
+        });
       }
     } catch (e) {
       console.log(e);
@@ -289,58 +297,78 @@ class FileAction extends React.Component<props, state> {
 
   deleteFile = () => {
     this.setState({
-      deleteLoading: true
-    })
+      deleteLoading: true,
+    });
     let url = fileChangeUrl;
-    let deleteFiles:number[] = [];
-    this.props.selectRows.forEach(e=>{
+    let deleteFiles: number[] = [];
+    this.props.selectRows.forEach(e => {
       deleteFiles.push(e.ID);
-    })
-    let x = deleteFiles.join(",")
-    url = url + "/" + x
+    });
+    let x = deleteFiles.join(',');
+    url = url + '/' + x;
     fetch(url, {
-      method: "DELETE"
-    }).then(res=>res.json()).then(resp=>{
-      this.setState({
-        deleteLoading: false
-      })
-      if (resp.code === ErrorCode.OK) {
-        this.props.deleteFileFromList(deleteFiles);
-        this.props.setSelect([]);
-      } else {
-        notification['error']({
-          message: "文件删除失败",
-          description: resp.message
-        })
-      }
-    }).catch(e=>{
-      console.log(e);
-      this.setState({
-        deleteLoading: false
-      })
+      method: 'DELETE',
     })
-  }
+      .then(res => res.json())
+      .then(resp => {
+        this.setState({
+          deleteLoading: false,
+        });
+        if (resp.code === ErrorCode.OK) {
+          this.props.deleteFileFromList(deleteFiles);
+          this.props.setSelect([]);
+        } else {
+          notification['error']({
+            message: '文件删除失败',
+            description: resp.message,
+          });
+        }
+      })
+      .catch(e => {
+        console.log(e);
+        this.setState({
+          deleteLoading: false,
+        });
+      });
+  };
+
+  shareFile = () => {
+    let selectKeys: number[] = [];
+    this.props.selectRows.forEach(e => {
+      selectKeys.push(e.ID);
+    });
+    const fileName = this.props.selectRows[0].Name;
+    const maskElement = document.createElement('div');
+    maskElement.setAttribute('id', '__mask_share__');
+    document.body.appendChild(maskElement);
+    const mask = <ShareConfirm selectKeys={selectKeys} name={fileName} />;
+    ReactDOM.render(mask, maskElement);
+  };
 
   generateSelectedButton = (renameButtonDisabled: boolean) => {
     return (
       <span>
-      <Button
-        icon={<DownloadOutlined/>}
-        className={style.actionButton}
-        onClick={this.downloadFiles}
-      >
-        下载
-      </Button>
-      <Button icon={<ShareAltOutlined/>} className={style.actionButton}>
-        分享
-      </Button>
-      <Button
-        className={style.actionButton}
-        disabled={renameButtonDisabled}
-        onClick={this.props.onChangedFileNameClicked}
-      >
-        重命名
-      </Button>
+        <Button
+          icon={<DownloadOutlined />}
+          className={style.actionButton}
+          onClick={this.downloadFiles}
+        >
+          下载
+        </Button>
+        <Button
+          icon={<ShareAltOutlined />}
+          className={style.actionButton}
+          onClick={this.shareFile}
+        >
+          分享
+        </Button>
+        <Button
+          className={style.actionButton}
+          disabled={renameButtonDisabled}
+          onClick={this.props.onChangedFileNameClicked}
+        >
+          重命名
+        </Button>
         <Button
           className={style.actionButton}
           danger={true}
@@ -351,9 +379,9 @@ class FileAction extends React.Component<props, state> {
         >
           删除
         </Button>
-    </span>
+      </span>
     );
-  }
+  };
 
   render() {
     let somethingSelected = this.props.selectRows.length > 0;
@@ -387,13 +415,20 @@ class FileAction extends React.Component<props, state> {
                 onChange={this.onUploadChange}
               />
             </Button>
-            {
-              this.props.siderMenu === "all"?(
-              <Button icon={<FolderAddOutlined/>} className={style.actionButton} onClick={this.onCreateDirectoryClick}>
+            {this.props.siderMenu === 'all' ? (
+              <Button
+                icon={<FolderAddOutlined />}
+                className={style.actionButton}
+                onClick={this.onCreateDirectoryClick}
+              >
                 新建文件夹
-              </Button>):""
-            }
-            {somethingSelected ? this.generateSelectedButton(this.props.selectRows.length !== 1) : this.defaultButton}
+              </Button>
+            ) : (
+              ''
+            )}
+            {somethingSelected
+              ? this.generateSelectedButton(this.props.selectRows.length !== 1)
+              : this.defaultButton}
           </Col>
           <Col flex={2}>
             <span />

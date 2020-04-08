@@ -14,7 +14,6 @@ class UserSetting extends React.Component<any, state> {
     user: initUserDetail,
     loading: false,
   };
-
   render() {
     return (
       <div
