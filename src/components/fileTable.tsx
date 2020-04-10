@@ -1,5 +1,5 @@
-import React  from 'react';
-import ReactDOM  from 'react-dom'
+import React from 'react';
+import ReactDOM from 'react-dom';
 import moment from 'moment';
 import { Table, Input, Button, notification } from 'antd';
 import { FileInfo } from '@/pages/cloud/components/file';
@@ -23,10 +23,10 @@ interface props {
   onSelectRowKeyChanged: any;
   ChangedFileNameID: number;
   setSelectRowKeys: any;
-  onChangedFileNameClicked: (id:number)=>void
-  FileList: FileInfo[],
-  Loading: boolean,
-  changeFileName: (id:number, name:string) => void
+  onChangedFileNameClicked: (id: number) => void;
+  FileList: FileInfo[];
+  Loading: boolean;
+  changeFileName: (id: number, name: string) => void;
 }
 
 interface state {
@@ -40,13 +40,14 @@ const fileImgStyle = {
   fontSize: '',
 };
 
-const file2img = (file: FileInfo) => {
-  if (file.IsDirectory) {
+const file2img = (IsDirectory: boolean, Type: number) => {
+  if (IsDirectory) {
     return <FolderOutlined style={fileImgStyle} />;
   } else {
     return <FilePdfOutlined style={fileImgStyle} />;
   }
 };
+
 const size2str = (size: number) => {
   // size: kb
   const K = 1024;
@@ -89,71 +90,79 @@ class FileTable extends React.Component<props, state> {
     return function(e: any) {
       // @ts-ignore
       const name = this.changedFileNameRef.current.state.value;
-      const url = fileChangeUrl + "/" + ID.toString() + "/name";
-      fetch(url,{
-        method: "POST",
+      const url = fileChangeUrl + '/' + ID.toString() + '/name';
+      fetch(url, {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          name: name
-        })
-      }).then(res=>res.json()).then(resp=>{
-        // @ts-ignore
-        this.setState({
-          changeNameButtonLoading: false
-        })
-        if (resp.code === ErrorCode.OK) {
-          // @ts-ignore
-          this.props.onChangedFileNameClicked(-1);
-          // @ts-ignore
-          this.props.changeFileName(ID, name);
-        } else {
-          notification['error']({
-            message: "修改文件名失败",
-            description: resp.message
-          })
-        }
-      }).catch(e=> {
-        console.log(e)
-        // @ts-ignore
-        this.setState({
-          changeNameButtonLoading: false
-        })
+          name: name,
+        }),
       })
+        .then(res => res.json())
+        .then(resp => {
+          // @ts-ignore
+          this.setState({
+            changeNameButtonLoading: false,
+          });
+          if (resp.code === ErrorCode.OK) {
+            // @ts-ignore
+            this.props.onChangedFileNameClicked(-1);
+            // @ts-ignore
+            this.props.changeFileName(ID, name);
+          } else {
+            notification['error']({
+              message: '修改文件名失败',
+              description: resp.message,
+            });
+          }
+        })
+        .catch(e => {
+          console.log(e);
+          // @ts-ignore
+          this.setState({
+            changeNameButtonLoading: false,
+          });
+        });
       // @ts-ignore
     }.bind(this);
   };
 
   onCancelChangedName = (e: any) => {
-    const {onChangedFileNameClicked} = this.props;
+    const { onChangedFileNameClicked } = this.props;
     onChangedFileNameClicked(-1);
   };
 
-  formatFileUrl = (file:FileInfo) => {
-    return fileChangeUrl + "/" + file.ID.toString()
-  }
-  generateFileViewClick = (file: FileInfo) =>{
-    return function(e:any) {
+  formatFileUrl = (file: FileInfo) => {
+    return fileChangeUrl + '/' + file.ID.toString();
+  };
+  generateFileViewClick = (file: FileInfo) => {
+    return function(e: any) {
       if (file.IsDirectory) {
-       console.log("directory")
+        console.log('directory');
       } else {
-        if (Number2FileType(file.Type) !== "other") {
-          const maskElement = document.createElement("div")
-          maskElement.setAttribute("id", "__mask_file_view__")
-          document.body.appendChild(maskElement)
+        if (Number2FileType(file.Type) !== 'other') {
+          const maskElement = document.createElement('div');
+          maskElement.setAttribute('id', '__mask_file_view__');
+          document.body.appendChild(maskElement);
           //@ts-ignore
-          const mask = (<FileView type={Number2FileType(file.Type)} path={this.formatFileUrl(file)}/>)
-          ReactDOM.render(mask, maskElement)
+          const mask = (
+            <FileView
+              type={Number2FileType(file.Type)}
+              path={this.formatFileUrl(file)}
+            />
+          );
+          ReactDOM.render(mask, maskElement);
         } else {
           notification['error']({
-            message: "无法预览此文件",
-            description: "暂时无法预览此类文件，可能需要后期更新支持"
-          })
+            message: '无法预览此文件',
+            description: '暂时无法预览此类文件，可能需要后期更新支持',
+          });
         }
       }
     }.bind(this);
-  }
+  };
   columns = [
     {
       title: '文件名',
@@ -167,7 +176,7 @@ class FileTable extends React.Component<props, state> {
           return (
             <span>
               <Input
-                prefix={file2img(record)}
+                prefix={file2img(record.IsDirectory, record.Type)}
                 defaultValue={fileName}
                 ref={this.changedFileNameRef}
                 style={{ width: '60%' }}
@@ -177,9 +186,7 @@ class FileTable extends React.Component<props, state> {
                 type={'primary'}
                 size={'small'}
                 style={{ marginLeft: '5px' }}
-                onClick={this.onConfirmChangedName(
-                  record.ID,
-                )}
+                onClick={this.onConfirmChangedName(record.ID)}
                 loading={this.state.changeNameButtonLoading}
               >
                 <CheckOutlined />
@@ -197,8 +204,15 @@ class FileTable extends React.Component<props, state> {
         } else {
           return (
             <span>
-              <span style={{ marginRight: '10px' }}>{file2img(record)}</span>
-              <a style={{ userSelect: 'none' }} onClick={this.generateFileViewClick(record)}>{fileName}</a>
+              <span style={{ marginRight: '10px' }}>
+                {file2img(record.IsDirectory, record.Type)}
+              </span>
+              <a
+                style={{ userSelect: 'none' }}
+                onClick={this.generateFileViewClick(record)}
+              >
+                {fileName}
+              </a>
             </span>
           );
         }
@@ -271,7 +285,6 @@ class FileTable extends React.Component<props, state> {
     };
   }
 
-
   onScrollHandle() {
     if (!this.shouldLoad) {
       return;
@@ -285,7 +298,7 @@ class FileTable extends React.Component<props, state> {
     const loadingRate = 0.8;
     let loading = scrollTop + clientHeight > scrollHeight * loadingRate;
     if (loading) {
-      console.log("here");
+      console.log('here');
     }
   }
 
@@ -294,7 +307,7 @@ class FileTable extends React.Component<props, state> {
       selectedRowKeys: selectedRowKeys,
     });
     this.props.setSelectRowKeys(selectedRowKeys);
-    const rows = selectedRows.filter((e:any)=>e!==undefined);
+    const rows = selectedRows.filter((e: any) => e !== undefined);
     this.props.onSelectRowKeyChanged(rows);
   };
 
@@ -353,5 +366,6 @@ class FileTable extends React.Component<props, state> {
     );
   }
 }
+export { file2img, Number2FileType, size2str };
 
 export default FileTable;

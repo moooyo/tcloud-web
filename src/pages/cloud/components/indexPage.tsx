@@ -3,17 +3,17 @@ import { Layout, Spin } from 'antd';
 import FileTable from '@/components/fileTable';
 import {
   FileAction,
-  FileShowLoadData, routerArgs,
+  FileShowLoadData,
+  routerArgs,
 } from '@/pages/cloud/components/fileAction';
 import { FileInfo } from '@/pages/cloud/components/file';
 import FileList from '@/components/fileList';
 import CloudSider from '@/pages/cloud/components/cloudSider';
+import ShareTable from './shareTable';
 
-const { Content,Sider } = Layout;
-
+const { Content, Sider } = Layout;
 
 class CloudIndex extends React.Component<any, any> {
-
   onRouterClick = (e: any) => {
     let key = e.currentTarget.children[0].innerHTML;
     let id = e.currentTarget.children[1].innerHTML;
@@ -29,26 +29,23 @@ class CloudIndex extends React.Component<any, any> {
   };
 
   onSelectKeyChange = (selected: FileInfo[]) => {
-    const {setSelect} = this.props;
+    const { setSelect } = this.props;
     setSelect(selected);
   };
 
-
   onShowModeChanged = () => {
     const { setDisplayMode, displayMode } = this.props;
-    setDisplayMode(displayMode === 0? 1: 0);
-  }
-
-
+    setDisplayMode(displayMode === 0 ? 1 : 0);
+  };
 
   onCreateDirectory = (file: FileInfo) => {
     this.setState({
-      changedFileNameID: file.ID
-    })
+      changedFileNameID: file.ID,
+    });
   };
 
   onChangedFileNameClicked = () => {
-    const {onChangedFileNameClicked} = this.props;
+    const { onChangedFileNameClicked } = this.props;
     if (this.props.selectRows.length !== 1) {
       return;
     } else {
@@ -57,19 +54,19 @@ class CloudIndex extends React.Component<any, any> {
   };
 
   resetWhenSiderClick = () => {
-    this.props.onChangedFileNameClicked(-1)
+    this.props.onChangedFileNameClicked(-1);
     this.props.changePath({
       Key: this.props.user.DiskRoot,
-      Name: "我的文件"
-    })
-    this.props.setSelect([])
-    this.props.setSelectKeys([])
-  }
+      Name: '我的文件',
+    });
+    this.props.setSelect([]);
+    this.props.setSelectKeys([]);
+  };
 
   render() {
-    const {loading} = this.props;
-    const {routerArgs} = this.props;
-    const path = routerArgs[0]
+    const { loading } = this.props;
+    const { routerArgs } = this.props;
+    const path = routerArgs[0];
     const displayTable = (
       <FileTable
         path={path}
@@ -83,10 +80,7 @@ class CloudIndex extends React.Component<any, any> {
       />
     );
     const displayList = (
-      <FileList
-        path={path}
-        onSelectKeyChanged={this.onSelectKeyChange}
-      />
+      <FileList path={path} onSelectKeyChanged={this.onSelectKeyChange} />
     );
     const defaultContent = (
       <div>
@@ -110,46 +104,56 @@ class CloudIndex extends React.Component<any, any> {
         />
         {this.props.displayMode === 0 ? displayTable : displayList}
       </div>
-    )
+    );
+    const shareListContent = <ShareTable />;
+
+    const renderContent = () => {
+      switch (this.props.siderMenu) {
+        case 'share':
+          return shareListContent;
+        default:
+          return defaultContent;
+      }
+    };
 
     return (
       <Spin spinning={loading}>
-      <Layout>
-        <Sider
-          style={{
-            position: 'fixed',
-            left: '1vw',
-            height: '88vh',
-            backgroundColor: 'white',
-            boxShadow: '2px -1px 6px 0 rgba(0,0,0,.05)',
-            width: '10vw',
-            top: '10vh',
-            userSelect: 'none',
-          }}
-        >
-          <CloudSider
-            changeSiderMenu={this.props.changeSiderMenu}
-            changeLoadingState={this.props.changeLoadingState}
-            user={this.props.user}
-            resetSomething={this.resetWhenSiderClick}
-            setFileList={this.props.setFileList}
-            changeFileListLoadingState={this.props.setFileListLoading}
-          />
-        </Sider>
-        <Content
-          style={{
-            backgroundColor: 'white',
-            width: '84vw',
-            height: '88vh',
-            boxShadow: '-2px -1px 6px 0 rgba(0,0,0,.05)',
-            position: 'fixed',
-            top: '10vh',
-            left: '15vw',
-          }}
-        >
-          {defaultContent}
-        </Content>
-      </Layout>
+        <Layout>
+          <Sider
+            style={{
+              position: 'fixed',
+              left: '1vw',
+              height: '88vh',
+              backgroundColor: 'white',
+              boxShadow: '2px -1px 6px 0 rgba(0, 0, 0, 0.05)',
+              width: '10vw',
+              top: '10vh',
+              userSelect: 'none',
+            }}
+          >
+            <CloudSider
+              changeSiderMenu={this.props.changeSiderMenu}
+              changeLoadingState={this.props.changeLoadingState}
+              user={this.props.user}
+              resetSomething={this.resetWhenSiderClick}
+              setFileList={this.props.setFileList}
+              changeFileListLoadingState={this.props.setFileListLoading}
+            />
+          </Sider>
+          <Content
+            style={{
+              backgroundColor: 'white',
+              width: '84vw',
+              height: '88vh',
+              boxShadow: '-2px -1px 6px 0 rgba(0, 0, 0, 0.05)',
+              position: 'fixed',
+              top: '10vh',
+              left: '15vw',
+            }}
+          >
+            {renderContent()}
+          </Content>
+        </Layout>
       </Spin>
     );
   }
