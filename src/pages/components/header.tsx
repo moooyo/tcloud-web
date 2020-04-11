@@ -32,9 +32,9 @@ const IconFont = createFromIconfontCN({
   scriptUrl: IconFontCnUrl,
 });
 
-function pathname2current(pathname:string) {
-  const pathArray = pathname.split("/")
-  return pathArray[1]
+function pathname2current(pathname: string) {
+  const pathArray = pathname.split('/');
+  return pathArray[1];
 }
 
 class MainHeader extends React.Component<props, state> {
@@ -55,9 +55,6 @@ class MainHeader extends React.Component<props, state> {
         return;
       case 'practise':
         history.push('/practice');
-        return;
-      case 'comment':
-        history.push('/comment');
         return;
       case 'user':
         history.push('/user/info');
@@ -88,10 +85,6 @@ class MainHeader extends React.Component<props, state> {
               <Menu.Item key={'practise'}>
                 <CodeOutlined />
                 练习系统
-              </Menu.Item>
-              <Menu.Item key={'comment'}>
-                <CommentOutlined />
-                讨论区
               </Menu.Item>
               <Menu.Item key={'user'}>
                 <IconFont type={'icon-ico-user-info'} />
