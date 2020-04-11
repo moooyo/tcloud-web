@@ -6,11 +6,9 @@ import { createFromIconfontCN } from '@ant-design/icons/es';
 import { IconFontCnUrl } from '@/_config/.api';
 import style from './practice.module.css';
 import { List } from 'antd';
+import { IconFont } from '@/components/utils';
 
 const { Search } = Input;
-const IconFont = createFromIconfontCN({
-  scriptUrl: IconFontCnUrl,
-});
 
 interface problemListProps {
   loading: boolean;
@@ -71,7 +69,7 @@ const demoSource: practice[] = [
     Total: 500,
     AcRate: 47.9,
     Tags: demoTags,
-    Solved: false,
+    Solved: true,
   },
 ];
 
@@ -121,12 +119,13 @@ const ProblemList = (props: problemListProps) => {
     >
       <Col span={1}>ID</Col>
       <Col span={2}>OJ</Col>
-      <Col span={10} style={{ textAlign: 'left' }}>
+      <Col span={9} style={{ textAlign: 'left' }}>
         Title
       </Col>
       <Col span={nowSpan}>Total</Col>
       <Col span={nowSpan}>AC Rate</Col>
       {props.displayTag ? <Col span={4}>Tags</Col> : ''}
+      <Col span={1}>Solved</Col>
     </Row>
   );
   const renderTags = (tags: tag[]) => {
@@ -156,7 +155,7 @@ const ProblemList = (props: problemListProps) => {
         <Col span={1}>{item.ID}</Col>
         <Col span={2}>{renderOj(item.OJ)}</Col>
         <Col
-          span={10}
+          span={9}
           style={{
             textAlign: 'left',
           }}
@@ -166,6 +165,18 @@ const ProblemList = (props: problemListProps) => {
         <Col span={nowSpan}>{item.Total}</Col>
         <Col span={nowSpan}>{item.AcRate}</Col>
         {props.displayTag ? <Col span={4}>{renderTags(item.Tags)}</Col> : ''}
+        <Col span={1}>
+          {item.Solved ? (
+            <IconFont
+              type={'icon-icon_success'}
+              style={{
+                fontSize: '24px',
+              }}
+            />
+          ) : (
+            ''
+          )}
+        </Col>
       </Row>
     );
   };

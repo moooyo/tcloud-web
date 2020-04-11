@@ -1,3 +1,6 @@
+import { createFromIconfontCN } from '@ant-design/icons';
+import { IconFontCnUrl } from '@/_config/.api';
+
 enum FileType {
   FileTypeOther = 1,
   FileTypePdf,
@@ -12,39 +15,39 @@ enum FileType {
   FileTypeGif,
   FileTypeBmp,
   FileTypeJpg,
-  FileTypeEnd
+  FileTypeEnd,
 }
 
 function Number2FileType(num: number) {
   switch (num) {
     case FileType.FileTypeCsv:
-      return "csv"
+      return 'csv';
     case FileType.FileTypeDocx:
-      return "docx"
+      return 'docx';
     case FileType.FileTypeMp3:
-      return "mp3"
+      return 'mp3';
     case FileType.FileTypeMp4:
-      return "mp4"
+      return 'mp4';
     case FileType.FileTypePdf:
-      return "pdf"
+      return 'pdf';
     case FileType.FileTypeWebm:
-      return "webm"
+      return 'webm';
     case FileType.FileTypeXlsx:
-      return "xlsx"
+      return 'xlsx';
     case FileType.FileTypeJpeg:
-      return "jpeg"
+      return 'jpeg';
     case FileType.FileTypeJpg:
-      return "jpg"
+      return 'jpg';
     case FileType.FileTypeGif:
-      return "gif"
+      return 'gif';
     case FileType.FileTypeBmp:
-      return "bmp"
+      return 'bmp';
     case FileType.FileTypePng:
-      return "png"
+      return 'png';
     case FileType.FileTypeOther:
-      return "other"
+      return 'other';
     default:
-      return "other"
+      return 'other';
   }
 }
 
@@ -57,8 +60,8 @@ enum FileListType {
   Image,
 }
 
+const IconFont = createFromIconfontCN({
+  scriptUrl: IconFontCnUrl,
+});
 
-
-
-
-export {Number2FileType, FileListType}
+export { Number2FileType, FileListType, IconFont };
