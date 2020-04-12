@@ -150,6 +150,7 @@ class FileTable extends React.Component<props, state> {
           const mask = (
             <FileView
               type={Number2FileType(file.Type)}
+              //@ts-ignore
               path={this.formatFileUrl(file)}
             />
           );

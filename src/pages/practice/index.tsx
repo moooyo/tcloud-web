@@ -25,10 +25,13 @@ const PracticeIndex = (props: any) => {
           }}
         >
           <Row style={{ width: '100%' }}>
-            <TagsBox tagTitle={'Tags'} tags={demoTags} />
+            <TagsBox tagTitle={'标签'} tags={demoTags} />
           </Row>
           <Row style={{ marginTop: '3vh', width: '100%' }}>
-            <TagsBox tagTitle={'Class'} tags={demoTags} />
+            <TagsBox tagTitle={'课程'} tags={demoTags} />
+          </Row>
+          <Row style={{ marginTop: '3vh', width: '100%' }}>
+            <TagsBox tagTitle={'知识点'} tags={demoTags} />
           </Row>
         </Col>
         <Col />

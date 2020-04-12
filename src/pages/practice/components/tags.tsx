@@ -54,3 +54,5 @@ const TagsBox = (props: tagsProps) => {
 };
 
 export default TagsBox;
+
+export { renderTag };

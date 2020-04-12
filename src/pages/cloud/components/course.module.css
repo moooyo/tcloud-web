@@ -1,0 +1,15 @@
+.wrapper {
+  margin-top: 20px;
+  margin-left: 20px;
+}
+
+.courseBox {
+  width: 800px;
+  padding: 10px;
+  margin-bottom: 20px;
+  cursor: default;
+}
+
+.courseTitle {
+
+}

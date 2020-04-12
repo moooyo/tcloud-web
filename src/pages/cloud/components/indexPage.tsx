@@ -10,6 +10,8 @@ import { FileInfo } from '@/pages/cloud/components/file';
 import FileList from '@/components/fileList';
 import CloudSider from '@/pages/cloud/components/cloudSider';
 import ShareTable from './shareTable';
+import CourseContent from './course';
+import TagSearch from './tagSearch';
 
 const { Content, Sider } = Layout;
 
@@ -106,11 +108,17 @@ class CloudIndex extends React.Component<any, any> {
       </div>
     );
     const shareListContent = <ShareTable />;
+    const courseContent = <CourseContent />;
+    const tagSearchContent = <TagSearch />;
 
     const renderContent = () => {
       switch (this.props.siderMenu) {
         case 'share':
           return shareListContent;
+        case 'course':
+          return courseContent;
+        case 'tag':
+          return tagSearchContent;
         default:
           return defaultContent;
       }
