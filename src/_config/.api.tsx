@@ -13,6 +13,7 @@ let infoUrl = baseUrl + '/info';
 let userInfoUrl = infoUrl + '/user';
 
 let fileInfoUrl = baseUrl + '/files';
+let trashListUrl = fileInfoUrl + '/trash';
 let directoryCreateUrl = fileInfoUrl + '/directory';
 let fileDownloadUrl = fileInfoUrl + '/download';
 
@@ -27,7 +28,7 @@ let RegisterCodeResend = UsersBaseUrl + '/code';
 
 let shareFileBaseUrl = baseUrl + '/share';
 
-let IconFontCnUrl = '//at.alicdn.com/t/font_1704308_zrzvu8h1xci.js';
+let IconFontCnUrl = '//at.alicdn.com/t/font_1704308_8vb37ydfkxu.js';
 let userIconUrl =
   'https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png';
 
@@ -46,4 +47,5 @@ export {
   fileChangeUrl,
   shareFileBaseUrl,
   userIconUrl,
+  trashListUrl,
 };
