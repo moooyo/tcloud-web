@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { file2img, size2str } from '@/components/fileTable';
 import moment from 'moment';
-import { Table, Row, Col, Button, notification } from 'antd';
+import { Table, Row, Col, Button, notification, Popconfirm } from 'antd';
 import style from './trash.module.css';
-import { DeleteOutlined, IeOutlined } from '@ant-design/icons';
+import {
+  DeleteOutlined,
+  IeOutlined,
+  QuestionCircleOutlined,
+} from '@ant-design/icons';
 import { IconFont } from '@/components/utils';
 import { fileChangeUrl, trashListUrl } from '@/_config/.api';
 import { ErrorCode } from '@/_config/error';
@@ -122,26 +126,60 @@ const TrashAction = (props: trashActionProps) => {
       }
     })();
   };
+  const restoreFile = () => {
+    if (props.select.length <= 0) {
+      return;
+    }
+    const idStr = props.select.join(',');
+    const url = fileChangeUrl + '/' + idStr + '?op=restore';
+    (async () => {
+      setLoading(true);
+      try {
+        const res = await fetch(url, {
+          method: 'PATCH',
+        });
+        const resp = await res.json();
+        props.deleteTrashFromList(resp.data);
+        if (resp.code !== ErrorCode.OK) {
+          notification['error']({
+            message: '服务器错误',
+            description: resp.message,
+          });
+        }
+      } catch (e) {
+        console.log(e);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  };
+
   return (
     <div className={style.actionBar}>
       <Button
         type={'primary'}
         icon={<IconFont type={'icon-huanyuan'} />}
         loading={loading}
+        onClick={restoreFile}
       >
         恢复
       </Button>
-      <Button
-        loading={loading}
-        danger
-        style={{
-          marginLeft: '10px',
-        }}
-        icon={<DeleteOutlined />}
-        onClick={deleteFileClick}
+      <Popconfirm
+        title="确定要彻底删除这些文件?"
+        icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
+        onConfirm={deleteFileClick}
       >
-        彻底删除
-      </Button>
+        <Button
+          loading={loading}
+          danger
+          style={{
+            marginLeft: '10px',
+          }}
+          icon={<DeleteOutlined />}
+        >
+          彻底删除
+        </Button>
+      </Popconfirm>
     </div>
   );
 };
@@ -249,6 +287,7 @@ const TrashTable = (props: trashTableProps) => {
       />
       <TrashLoadInfo count={14} />
       <Table
+        //@ts-ignore
         columns={columns}
         dataSource={props.trashList}
         pagination={false}
