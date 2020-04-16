@@ -3,7 +3,7 @@ import { file2img, size2str } from '@/components/fileTable';
 import moment from 'moment';
 import { Table, Row, Col, Button, notification } from 'antd';
 import style from './trash.module.css';
-import { DeleteOutlined } from '@ant-design/icons';
+import { DeleteOutlined, IeOutlined } from '@ant-design/icons';
 import { IconFont } from '@/components/utils';
 import { fileChangeUrl, trashListUrl } from '@/_config/.api';
 import { ErrorCode } from '@/_config/error';
@@ -82,6 +82,7 @@ const defaultSelect: React.ReactText[] = [];
 
 interface trashActionProps {
   select: React.ReactText[];
+  deleteTrashFromList: (id: number[]) => void;
 }
 
 const TrashAction = (props: trashActionProps) => {
@@ -100,7 +101,20 @@ const TrashAction = (props: trashActionProps) => {
           method: 'DELETE',
         });
         let resp = await res.json();
-        console.log(resp);
+        if (resp.code === ErrorCode.OK) {
+          let ids: number[] = [];
+          let ids_str = idStr.split(',');
+          for (const i of ids_str) {
+            let num = parseInt(i);
+            ids.push(num);
+          }
+          props.deleteTrashFromList(ids);
+        } else {
+          notification['error']({
+            message: '彻底删除文件错误',
+            description: resp.message,
+          });
+        }
       } catch (e) {
         console.log(e);
       } finally {
@@ -177,31 +191,36 @@ const TrashLoadInfo = (props: loadInfoProps) => {
   );
 };
 
-const TrashTable = (props: any) => {
+interface trashTableProps {
+  trashList: TrashInfo[];
+  limit: number;
+  offset: number;
+  setTrashList: (list: TrashInfo[]) => void;
+  setTrashStatus: (offset: number, limit: number) => void;
+  trashInitLoad: boolean;
+  setTrashInitLoad: (load: boolean) => void;
+  deleteTrashFromList: (id: number[]) => void;
+}
+
+const TrashTable = (props: trashTableProps) => {
   const [select, setSelect] = useState(defaultSelect);
-  const [source, setSource] = useState({
-    offset: 0,
-    limit: 30,
-    source: defaultSource,
-  });
-  const formatUrl = () => {
+  const formatUrl = (offset: number, limit: number) => {
     return (
       trashListUrl +
       '?offset=' +
-      source.offset.toString() +
+      offset.toString() +
       '&limit=' +
-      source.limit.toString()
+      limit.toString()
     );
   };
-  const [initLoading, setInitLoading] = useState(false);
   useEffect(() => {
-    if (initLoading) {
+    if (props.trashInitLoad) {
       return;
     }
-    setInitLoading(true);
+    props.setTrashInitLoad(true);
     (async () => {
       try {
-        const res = await fetch(formatUrl(), {
+        const res = await fetch(formatUrl(props.offset, props.limit), {
           method: 'GET',
         });
         const resp = await res.json();
@@ -211,13 +230,8 @@ const TrashTable = (props: any) => {
             description: resp.message,
           });
         } else {
-          let nextState = {};
-          Object.assign(nextState, source, {
-            offset: source.limit,
-            source: resp.data,
-          });
-          // @ts-ignore
-          setSource(nextState);
+          props.setTrashList(resp.data);
+          props.setTrashStatus(props.limit, props.limit);
         }
       } catch (e) {
         console.log(e);
@@ -229,14 +243,17 @@ const TrashTable = (props: any) => {
   };
   return (
     <div>
-      <TrashAction select={select} />
+      <TrashAction
+        select={select}
+        deleteTrashFromList={props.deleteTrashFromList}
+      />
       <TrashLoadInfo count={14} />
       <Table
         columns={columns}
-        dataSource={source.source}
+        dataSource={props.trashList}
         pagination={false}
         size={'small'}
-        loading={!initLoading}
+        loading={!props.trashInitLoad}
         rowSelection={{
           selectedRowKeys: select,
           fixed: true,
@@ -251,3 +268,5 @@ const TrashTable = (props: any) => {
 };
 
 export default TrashTable;
+
+export { TrashInfo };

@@ -111,7 +111,18 @@ class CloudIndex extends React.Component<any, any> {
     const shareListContent = <ShareTable />;
     const courseContent = <CourseContent />;
     const tagSearchContent = <TagSearch />;
-    const trashContent = <TrashTable />;
+    const trashContent = (
+      <TrashTable
+        trashList={this.props.trashList}
+        offset={this.props.trashStatus.offset}
+        limit={this.props.trashStatus.limit}
+        setTrashList={this.props.setTrashList}
+        setTrashStatus={this.props.setTrashStatus}
+        trashInitLoad={this.props.trashInitLoad}
+        setTrashInitLoad={this.props.setTrashInitLoad}
+        deleteTrashFromList={this.props.deleteTrashFromList}
+      />
+    );
     const renderContent = () => {
       switch (this.props.siderMenu) {
         case 'share':

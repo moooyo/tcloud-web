@@ -20,85 +20,92 @@ import {
   SET_SELECTED_ROWS_KEY,
   SET_UPLOAD_LIST,
   UPDATE_CLOUD_STATE,
+  SET_TRASH_LIST,
+  SET_TRASH_INIT_LOAD,
+  SET_TRASH_STATUS,
+  DELETE_TRASH_FROM_LIST,
 } from '@/pages/cloud/components/type';
-import { routerArgs, UploadFileMeta } from '@/pages/cloud/components/fileAction';
-
+import {
+  routerArgs,
+  UploadFileMeta,
+} from '@/pages/cloud/components/fileAction';
+import { TrashInfo } from './trash';
 
 export function SetUploadFileList(file: UploadFileMeta[]) {
   return {
     type: SET_UPLOAD_LIST,
-    payload: file
-  }
+    payload: file,
+  };
 }
 
 export function ChangedFileNameID(id: number) {
   return {
     type: CHANGE_FILE_NAME_ID,
-    payload: id
-  }
+    payload: id,
+  };
 }
 
 export function DeleteFileFromListID(id: number[]) {
   return {
     type: DELETE_FILE_FROM_FILE_LIST,
-    payload: id
-  }
+    payload: id,
+  };
 }
 
 export function AddFileToList(file: FileInfo) {
   return {
     type: ADD_FILE_TO_FILE_LIST,
-    payload: file
-  }
+    payload: file,
+  };
 }
 
 export function UpdateCloudState(payload: any) {
   return {
     type: UPDATE_CLOUD_STATE,
-    payload: payload
-  }
+    payload: payload,
+  };
 }
 
 export function ChangeLoadingState(loading: boolean) {
   return {
     type: CHANGE_LOADING_STATE,
-    payload: loading
-  }
+    payload: loading,
+  };
 }
 
-export function SetLoadCountAndHasMore(count:number, hasMore: boolean) {
+export function SetLoadCountAndHasMore(count: number, hasMore: boolean) {
   return {
     type: SET_LOAD_COUNT_AND_HAS_MORE,
     payload: {
       Count: count,
-      HasMore: hasMore
-    }
-  }
+      HasMore: hasMore,
+    },
+  };
 }
 
-export function SetDisplayMode(mode:number) {
+export function SetDisplayMode(mode: number) {
   return {
     type: SET_DISPLAY_MODE,
-    payload: mode
-  }
+    payload: mode,
+  };
 }
 
 export function SetSelectRows(SelectRows: any) {
   return {
     type: SET_SELECTED_ROWS,
     payload: {
-      selectRows: SelectRows
-    }
-  }
+      selectRows: SelectRows,
+    },
+  };
 }
 
 export function SetSelectedRowKeys(selectedRowKeys: any) {
   return {
     type: SET_SELECTED_ROWS_KEY,
     payload: {
-      selectedRowKeys: selectedRowKeys
-    }
-  }
+      selectedRowKeys: selectedRowKeys,
+    },
+  };
 }
 
 export function ChangeFileNameFromList(ID: number, Name: string) {
@@ -106,35 +113,66 @@ export function ChangeFileNameFromList(ID: number, Name: string) {
     type: CHANGE_FILE_NAME_FROM_LIST,
     payload: {
       id: ID,
-      name: Name
-    }
-  }
+      name: Name,
+    },
+  };
 }
 
 export function ChangeSiderMenu(menu: string) {
   return {
     type: CHANGE_SIDER_MENU,
-    payload: menu
-  }
+    payload: menu,
+  };
 }
 
 export function ChangePath(path: routerArgs) {
   return {
     type: CHANGE_PATH,
-    payload: path
-  }
+    payload: path,
+  };
 }
 
 export function SetFileList(list: FileInfo[]) {
   return {
     type: SET_FILE_LIST,
-    payload: list
-  }
+    payload: list,
+  };
 }
 
 export function SetFileListLoading(loading: boolean) {
   return {
     type: SET_FILE_LIST_LOADING,
-    payload: loading
-  }
+    payload: loading,
+  };
+}
+
+export function SetTrashList(list: TrashInfo[]) {
+  return {
+    type: SET_TRASH_LIST,
+    payload: list,
+  };
+}
+
+export function SetTrashStatus(offset: number, limit: number) {
+  return {
+    type: SET_TRASH_STATUS,
+    payload: {
+      offset: offset,
+      limit: limit,
+    },
+  };
+}
+
+export function SetTrashInitLoad(load: boolean) {
+  return {
+    type: SET_TRASH_INIT_LOAD,
+    payload: load,
+  };
+}
+
+export function DeleteTrashFromList(trashID: number[]) {
+  return {
+    type: DELETE_TRASH_FROM_LIST,
+    payload: trashID,
+  };
 }

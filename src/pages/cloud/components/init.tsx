@@ -1,7 +1,7 @@
 import { fileInfoUrl, userInfoUrl } from '@/_config/.api';
 import { FileInfo } from '@/pages/cloud/components/file';
 
-const formatPageUrl = (offset:number, limit:number, path:number) => {
+const formatPageUrl = (offset: number, limit: number, path: number) => {
   return (
     fileInfoUrl +
     '?offset=' +
@@ -12,7 +12,6 @@ const formatPageUrl = (offset:number, limit:number, path:number) => {
     path.toString()
   );
 };
-
 
 const loadCloudState = async () => {
   try {
@@ -36,25 +35,27 @@ const loadCloudState = async () => {
       user: user,
       loading: false,
       fileListLoading: false,
-      routerArgs:[{
-        Key: user.DiskRoot,
-        Name: '我的文件',
-      }],
+      routerArgs: [
+        {
+          Key: user.DiskRoot,
+          Name: '我的文件',
+        },
+      ],
       selectRows: [],
       selectedRowKeys: [],
       hasMore: !(fileList.length === 100),
       count: fileList.length,
       displayMode: 0,
       uploadFileList: [],
-      siderMenu: "all",
-    }
+      siderMenu: 'all',
+    };
   } catch (e) {
     console.log(e);
   }
 
   return {
-    loading: true
-  }
-}
+    loading: true,
+  };
+};
 
 export default loadCloudState;
