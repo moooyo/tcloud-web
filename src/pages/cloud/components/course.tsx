@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { Card, Divider, Row, Col } from 'antd';
+import { Card, Divider, Row, Col, Button } from 'antd';
 import { tag, demoTags } from '@/pages/practice/components/problem';
 import { FileInfo, demoList } from './file';
 import style from './course.module.css';
 import FileTable from '@/components/fileTable';
 import { routerArgs } from './fileAction';
 import moment from 'moment';
+import { IconFont } from '@/components/utils';
+import { DownloadOutlined } from '@ant-design/icons';
 
 const demoPath: routerArgs = {
   Key: 1,
@@ -39,6 +41,55 @@ interface courseBoxProps {
   course: course;
 }
 
+interface courseActionProps {
+  select: any;
+}
+
+const CourseAction = (props: courseActionProps) => {
+  const [loading, setLoading] = useState(false);
+  const onSaveClick = () => {
+    if (props.select.length === 0) {
+      return;
+    }
+    console.log(props.select);
+  };
+  const onDownloadClick = () => {
+    if (props.select.length === 0) {
+      return;
+    }
+  };
+
+  return (
+    <Row
+      style={{
+        marginBottom: '1vh',
+        marginTop: '2vh',
+      }}
+    >
+      <Col>
+        <Button
+          type={'primary'}
+          icon={<IconFont type={'icon-save'} />}
+          onClick={onSaveClick}
+          loading={loading}
+        >
+          保存
+        </Button>
+        <Button
+          icon={<DownloadOutlined />}
+          style={{
+            marginLeft: '5px',
+          }}
+          onClick={onDownloadClick}
+          loading={loading}
+        >
+          下载
+        </Button>
+      </Col>
+    </Row>
+  );
+};
+
 const CourseBox = (props: courseBoxProps) => {
   const [selectRowKeys, setSelectRowKeys] = useState([]);
 
@@ -65,7 +116,13 @@ const CourseBox = (props: courseBoxProps) => {
           {props.course.Description}
         </p>
       </div>
-      <Divider />
+      <Divider
+        style={{
+          marginTop: '5px',
+          marginBottom: 0,
+        }}
+      />
+      <CourseAction select={selectRowKeys} />
       <FileTable
         path={props.course.FilePath}
         ChangedFileNameID={-1}
@@ -75,8 +132,9 @@ const CourseBox = (props: courseBoxProps) => {
         changeFileName={(id: number, name: string) => {}}
         onSelectRowKeyChanged={(a: any) => {}}
         setSelectRowKeys={(rows: any) => {
-          console.log(rows);
+          setSelectRowKeys(rows);
         }}
+        showTableAction={false}
       />
     </Card>
   );

@@ -27,6 +27,7 @@ interface props {
   FileList: FileInfo[];
   Loading: boolean;
   changeFileName: (id: number, name: string) => void;
+  showTableAction: boolean;
 }
 
 interface state {
@@ -224,6 +225,10 @@ class FileTable extends React.Component<props, state> {
       dataIndex: 'action',
       width: '10%',
       render: (x: any, record: FileInfo) => {
+        if (!this.props.showTableAction) {
+          return <></>;
+        }
+
         if (!record.IsDirectory) {
           return (
             <div className={'action' + ' ' + style.noDisplay}>

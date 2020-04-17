@@ -1,5 +1,5 @@
 import React from 'react';
-import { Avatar, Col, Dropdown, Menu, Row } from 'antd';
+import { Avatar, Col, Dropdown, Menu, Row, Spin, notification } from 'antd';
 import { UserInfo } from '@/components/user';
 import style from './header.module.css';
 import {
@@ -8,25 +8,18 @@ import {
   CommentOutlined,
   createFromIconfontCN,
 } from '@ant-design/icons';
-import { IconFontCnUrl } from '@/_config/.api';
+import { IconFontCnUrl, loginUrl } from '@/_config/.api';
 import { history } from 'umi';
+import { ErrorCode } from '@/_config/error';
 
 interface state {
   current: string;
+  loading: boolean;
 }
 
 interface props {
   user: UserInfo;
 }
-
-const menu = (
-  <Menu>
-    <Menu.Item>个人中心</Menu.Item>
-    <Menu.Item>个人设置</Menu.Item>
-    <Menu.Divider />
-    <Menu.Item>注销</Menu.Item>
-  </Menu>
-);
 
 const IconFont = createFromIconfontCN({
   scriptUrl: IconFontCnUrl,
@@ -38,12 +31,53 @@ function pathname2current(pathname: string) {
 }
 
 class MainHeader extends React.Component<props, state> {
-  constructor(props: any) {
-    super(props);
-    this.state = {
-      current: pathname2current(history.location.pathname),
-    };
-  }
+  onMenuClick = (val: any) => {
+    switch (val.key) {
+      case '1':
+        history.push('/user/info');
+        break;
+      case '2':
+        history.push('/user/setting');
+        break;
+      case '3':
+        (async () => {
+          try {
+            this.setState({
+              loading: true,
+            });
+            const res = await fetch(loginUrl, {
+              method: 'DELETE',
+            });
+            const resp = await res.json();
+            if (resp.code === ErrorCode.OK) {
+              notification['success']({
+                message: '注销成功',
+                description: '注销成功，现在可以安全的关闭此页面',
+              });
+              history.push('/login');
+            } else {
+              notification['error']({
+                message: '注销失败',
+                description: resp.message,
+              });
+            }
+          } catch (e) {
+            console.log(e);
+          } finally {
+            this.setState({
+              loading: false,
+            });
+          }
+        })();
+      default:
+        console.log(val);
+    }
+  };
+
+  state = {
+    current: pathname2current(history.location.pathname),
+    loading: false,
+  };
 
   handleClick = (e: any) => {
     this.setState({
@@ -63,6 +97,16 @@ class MainHeader extends React.Component<props, state> {
   };
 
   render() {
+    const menu = (
+      <Spin spinning={this.state.loading}>
+        <Menu onClick={this.onMenuClick}>
+          <Menu.Item key={1}>个人中心</Menu.Item>
+          <Menu.Item key={2}>个人设置</Menu.Item>
+          <Menu.Divider />
+          <Menu.Item key={3}>注销</Menu.Item>
+        </Menu>
+      </Spin>
+    );
     return (
       <div style={{ userSelect: 'none' }}>
         <Row>

@@ -80,6 +80,7 @@ class CloudIndex extends React.Component<any, any> {
         FileList={this.props.fileList}
         Loading={this.props.fileListLoading}
         changeFileName={this.props.changeFileName}
+        showTableAction={true}
       />
     );
     const displayList = (
