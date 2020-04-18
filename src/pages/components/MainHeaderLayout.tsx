@@ -38,7 +38,7 @@ class MainHeaderLayout extends React.Component<any, state> {
           <Header
             style={{
               backgroundColor: '#FFFFFF',
-              boxShadow: '0 2px 6px 0 rgba(0,0,0,.05)',
+              boxShadow: '0 2px 6px 0 rgba(0, 0, 0, 0.05)',
               width: '100%',
             }}
           >

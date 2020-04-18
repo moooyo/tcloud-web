@@ -28,7 +28,7 @@ let RegisterCodeResend = UsersBaseUrl + '/code';
 
 let shareFileBaseUrl = baseUrl + '/share';
 
-let IconFontCnUrl = '//at.alicdn.com/t/font_1704308_tj2hn8cfm1.js';
+let IconFontCnUrl = '//at.alicdn.com/t/font_1704308_poggm1ik2gl.js';
 let userIconUrl =
   'https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png';
 
@@ -48,4 +48,5 @@ export {
   shareFileBaseUrl,
   userIconUrl,
   trashListUrl,
+  UsersBaseUrl,
 };

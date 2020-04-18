@@ -93,6 +93,9 @@ class MainHeader extends React.Component<props, state> {
       case 'user':
         history.push('/user/info');
         return;
+      case 'admin':
+        history.push('/admin');
+        return;
     }
   };
 
@@ -133,6 +136,10 @@ class MainHeader extends React.Component<props, state> {
               <Menu.Item key={'user'}>
                 <IconFont type={'icon-ico-user-info'} />
                 用户中心
+              </Menu.Item>
+              <Menu.Item key={'admin'}>
+                <IconFont type={'icon-admin'} />
+                管理中心
               </Menu.Item>
             </Menu>
           </Col>
