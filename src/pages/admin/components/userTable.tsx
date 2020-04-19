@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Table } from 'antd';
+import { Table, Row, Col, Space, Button, Input, Select } from 'antd';
 import moment from 'moment';
 import { UsersBaseUrl } from '@/_config/.api';
 import { ErrorCode } from '@/_config/error';
+const { Search } = Input;
+const { Option } = Select;
 interface userDBInfo {
   ID: number;
   CreatedAt: number;
@@ -13,38 +15,6 @@ interface userDBInfo {
   Type: number;
   Status: number;
 }
-const mockList: userDBInfo[] = [
-  {
-    ID: 1,
-    CreatedAt: 1587217563,
-    UpdatedAt: 1587217563,
-    Nickname: 'ccc',
-    Email: 'ccc@qq.com',
-    Class: 0,
-    Type: 0,
-    Status: 3,
-  },
-  {
-    ID: 2,
-    CreatedAt: 1587217563,
-    UpdatedAt: 1587217563,
-    Nickname: 'bbb',
-    Email: 'bbb@qq.com',
-    Class: 1,
-    Type: 0,
-    Status: 3,
-  },
-  {
-    ID: 3,
-    CreatedAt: 1587217563,
-    UpdatedAt: 1587217563,
-    Nickname: 'eee',
-    Email: 'eee@qq.com',
-    Class: 1,
-    Type: 1,
-    Status: 3,
-  },
-];
 const columns = [
   {
     title: '序号',
@@ -121,6 +91,7 @@ const UserTable = (props: any) => {
     offset: 0,
   });
   const [source, setSource] = useState(defaultSource);
+  const [select, setSelect] = useState([]);
   const formatUrl = (offset: number, limit: number) => {
     return (
       UsersBaseUrl +
@@ -152,15 +123,76 @@ const UserTable = (props: any) => {
       }
     })();
   }, [status]);
+  const UserTableAction = (props: any) => {
+    return (
+      <Row
+        style={{
+          marginLeft: '1vw',
+          marginTop: '1vh',
+          marginBottom: '1vh',
+        }}
+      >
+        <Col flex={1}>
+          <Space>
+            <Button type={'primary'} disabled={select.length !== 1}>
+              更改信息
+            </Button>
+            <Button danger>封停用户</Button>
+            <Button>更改班级信息</Button>
+            <Button>重置密码</Button>
+          </Space>
+        </Col>
+        <Col
+          style={{
+            display: 'flex',
+            justifyContent: 'flex-end',
+          }}
+          flex={1}
+        >
+          <Input.Group
+            compact
+            style={{
+              width: '50%',
+              marginRight: '1vw',
+            }}
+          >
+            <Select
+              defaultValue="0"
+              style={{
+                width: '30%',
+              }}
+            >
+              <Option value="0">ID</Option>
+              <Option value="1">邮箱</Option>
+              <Option value="2">昵称</Option>
+            </Select>
+            <Search style={{ width: '70%' }} />
+          </Input.Group>
+        </Col>
+      </Row>
+    );
+  };
+  const onSelectChange = (selectedRowKeys: any) => {
+    setSelect(selectedRowKeys);
+  };
+  const rowSelection = {
+    select,
+    onChange: onSelectChange,
+  };
+
   return (
-    <Table
-      //@ts-ignore
-      columns={columns}
-      dataSource={source}
-      size={'small'}
-      pagination={false}
-      loading={loading}
-    />
+    <>
+      <UserTableAction />
+      <Table
+        //@ts-ignore
+        columns={columns}
+        dataSource={source}
+        size={'small'}
+        pagination={false}
+        loading={loading}
+        rowSelection={rowSelection}
+      />
+    </>
   );
 };
 

@@ -1,11 +1,46 @@
-import React from 'react';
+import React, { useEffect, useContext } from 'react';
 import { Menu } from 'antd';
 import { IconFont } from '@/components/utils';
+import { useLocation } from 'umi';
+import { SiderMenuContext, AdminSiderKey } from '../_layout';
 
-const AdminSider = (props: any) => {
+interface siderProps {
+  setMenuKey: (key: AdminSiderKey) => void;
+}
+
+const AdminSider = (props: siderProps) => {
+  const selectKey = useContext(SiderMenuContext);
+  const onKeyClick = (e: any) => {
+    switch (e.key) {
+      case 'user':
+        props.setMenuKey(AdminSiderKey.User);
+        return;
+      case 'class':
+        props.setMenuKey(AdminSiderKey.Class);
+        return;
+      case 'course':
+        props.setMenuKey(AdminSiderKey.Course);
+        return;
+      case 'practice':
+        props.setMenuKey(AdminSiderKey.Practice);
+        return;
+      case 'source':
+        props.setMenuKey(AdminSiderKey.Source);
+        return;
+      case 'notice':
+        props.setMenuKey(AdminSiderKey.Notice);
+        return;
+      default:
+        return;
+    }
+  };
   return (
     <div>
-      <Menu mode={'inline'}>
+      <Menu
+        mode={'inline'}
+        defaultSelectedKeys={[selectKey]}
+        onClick={onKeyClick}
+      >
         <Menu.Item key={'user'}>
           <IconFont type={'icon-set'} />
           用户管理

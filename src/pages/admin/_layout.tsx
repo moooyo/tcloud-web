@@ -1,14 +1,38 @@
 import MainHeaderLayout from '@/pages/components/MainHeaderLayout';
 
-import React from 'react';
+import React, { useReducer } from 'react';
 import { Layout } from 'antd';
 import AdminSider from './components/sider';
 
 const { Sider, Content, Header } = Layout;
+enum AdminSiderKey {
+  User = 'user',
+  Class = 'class',
+  Course = 'course',
+  Source = 'source',
+  Practice = 'practice',
+  Notice = 'notice',
+}
+
+const SiderMenuContext = React.createContext(AdminSiderKey.User);
 
 export default function(props: any) {
+  const reducer = (state: any, action: any) => {
+    switch (action.type) {
+      case 'SET_SIDER_KEY':
+        return {
+          key: action.payload,
+        };
+      default:
+        throw new Error();
+    }
+  };
+  const [state, dispatch] = useReducer(reducer, {
+    key: AdminSiderKey.User,
+  });
+
   return (
-    <>
+    <SiderMenuContext.Provider value={state.key}>
       <MainHeaderLayout />
       <Layout>
         <Sider
@@ -23,7 +47,14 @@ export default function(props: any) {
             userSelect: 'none',
           }}
         >
-          <AdminSider />
+          <AdminSider
+            setMenuKey={(key: AdminSiderKey) =>
+              dispatch({
+                type: 'SET_SIDER_KEY',
+                payload: key,
+              })
+            }
+          />
         </Sider>
         <Content
           style={{
@@ -39,6 +70,8 @@ export default function(props: any) {
           {props.children}
         </Content>
       </Layout>
-    </>
+    </SiderMenuContext.Provider>
   );
 }
+
+export { AdminSiderKey, SiderMenuContext };

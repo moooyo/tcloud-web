@@ -8,6 +8,7 @@ import { routerArgs } from './fileAction';
 import moment from 'moment';
 import { IconFont } from '@/components/utils';
 import { DownloadOutlined } from '@ant-design/icons';
+import { courseNotice, course } from '@/components/course';
 
 const demoPath: routerArgs = {
   Key: 1,
@@ -16,6 +17,7 @@ const demoPath: routerArgs = {
 
 const demoCourseList: course[] = [
   {
+    ID: 1,
     Name: '程序设计入门',
     Tags: demoTags,
     StartTime: 0,
@@ -26,6 +28,7 @@ const demoCourseList: course[] = [
     FilePath: demoPath,
   },
   {
+    ID: 2,
     Name: '程序设计入门',
     Tags: demoTags,
     StartTime: 0,
@@ -139,23 +142,6 @@ const CourseBox = (props: courseBoxProps) => {
     </Card>
   );
 };
-
-interface course {
-  Name: string;
-  Tags: tag[];
-  StartTime: number;
-  EndTime: number;
-  Description: string;
-  FileList: FileInfo[];
-  FilePath: routerArgs;
-}
-
-interface courseNotice {
-  Title: string;
-  Description: string;
-  Level: number;
-  Time: number;
-}
 
 interface courseNoticeProps {
   notice: courseNotice[];

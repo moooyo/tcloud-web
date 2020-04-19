@@ -1,4 +1,4 @@
-let dev = true;
+const dev = true;
 let baseUrl = '';
 if (dev) {
   baseUrl = '/api';
@@ -6,33 +6,36 @@ if (dev) {
   baseUrl = 'http://tcloud.lengyu.me/api';
 }
 
-let loginUrl = baseUrl + '/session';
-let forgetPassword = baseUrl + '/forget';
+const classUrl = baseUrl + '/class';
 
-let infoUrl = baseUrl + '/info';
-let userInfoUrl = infoUrl + '/user';
+const loginUrl = baseUrl + '/session';
+const forgetPassword = baseUrl + '/forget';
 
-let fileInfoUrl = baseUrl + '/files';
-let trashListUrl = fileInfoUrl + '/trash';
-let directoryCreateUrl = fileInfoUrl + '/directory';
-let fileDownloadUrl = fileInfoUrl + '/download';
+const infoUrl = baseUrl + '/info';
+const userInfoUrl = infoUrl + '/user';
 
-let fileChangeUrl = baseUrl + '/file';
+const fileInfoUrl = baseUrl + '/files';
+const trashListUrl = fileInfoUrl + '/trash';
+const directoryCreateUrl = fileInfoUrl + '/directory';
+const fileDownloadUrl = fileInfoUrl + '/download';
 
-let uploadFileUrl = fileInfoUrl;
+const fileChangeUrl = baseUrl + '/file';
 
-let UsersBaseUrl = baseUrl + '/users';
-let RegisterUrl = UsersBaseUrl;
-let RegisterConfirmUrl = UsersBaseUrl + '/confirm';
-let RegisterCodeResend = UsersBaseUrl + '/code';
+const uploadFileUrl = fileInfoUrl;
 
-let shareFileBaseUrl = baseUrl + '/share';
+const UsersBaseUrl = baseUrl + '/users';
+const RegisterUrl = UsersBaseUrl;
+const RegisterConfirmUrl = UsersBaseUrl + '/confirm';
+const RegisterCodeResend = UsersBaseUrl + '/code';
 
-let IconFontCnUrl = '//at.alicdn.com/t/font_1704308_poggm1ik2gl.js';
-let userIconUrl =
+const shareFileBaseUrl = baseUrl + '/share';
+
+const IconFontCnUrl = '//at.alicdn.com/t/font_1704308_poggm1ik2gl.js';
+const userIconUrl =
   'https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png';
 
 export {
+  classUrl,
   loginUrl,
   forgetPassword,
   userInfoUrl,
