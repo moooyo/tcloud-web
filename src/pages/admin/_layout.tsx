@@ -33,7 +33,6 @@ export default function(props: any) {
 
   return (
     <SiderMenuContext.Provider value={state.key}>
-      <MainHeaderLayout />
       <Layout>
         <Sider
           style={{

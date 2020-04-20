@@ -1,10 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { colors, tag } from '@/pages/practice/components/problem';
-import { Tag, Table, Row, Col, Space, Button } from 'antd';
+import {
+  Tag,
+  Table,
+  Row,
+  Col,
+  Space,
+  Button,
+  Modal,
+  Form,
+  Input,
+  TimePicker,
+  DatePicker,
+} from 'antd';
 import moment from 'moment';
 import { FileInfo } from '@/pages/cloud/components/file';
 import { course } from '@/components/course';
-
+const { TextArea } = Input;
+const { RangePicker } = DatePicker;
 /*
 interface course {
   Name: string;
@@ -96,12 +109,56 @@ const CourseTable = (props: any) => {
   const [loading, setLoading] = useState(false);
   const [select, setSelect] = useState([]);
   const [source, setSource] = useState(defaultSource);
+  const [visible, setVisible] = useState(false);
+  const [confirmLoading, setConfirmLoading] = useState(false);
+  const [modal, contextHolder] = Modal.useModal();
+
   const rowSelection = {
     select,
     onChange: (selectKey: any) => {
       setSelect(selectKey);
     },
   };
+
+  /*
+interface course {
+  Name: string;
+  Tags: tag[];
+  StartTime: number;
+  EndTime: number;
+  Description: string;
+  FileList: FileInfo[];
+  FilePath: routerArgs;
+}
+*/
+
+  const ModalFormContent = () => {
+    const [form] = Form.useForm();
+    return (
+      <Form form={form}>
+        <Form.Item name={'name'} label={'课程名'} rules={[{ required: true }]}>
+          <Input />
+        </Form.Item>
+        <Form.Item
+          name={'description'}
+          label={'课程描述'}
+          rules={[{ required: true }]}
+        >
+          <TextArea rows={4} />
+        </Form.Item>
+        <Form.Item name={'time'} label={'时间'} rules={[{ required: true }]}>
+          <RangePicker showTime={{ format: 'HH:mm' }} />
+        </Form.Item>
+        <Form.Item name={'tags'} label={'标签'}>
+          Tags
+        </Form.Item>
+        <Form.Item name={'files'} label={'课程文件'}>
+          Content
+        </Form.Item>
+      </Form>
+    );
+  };
+
   const CourseAction = (props: any) => {
     return (
       <Row
@@ -113,7 +170,18 @@ const CourseTable = (props: any) => {
       >
         <Col>
           <Space>
-            <Button type={'primary'}>添加课程</Button>
+            <Button
+              type={'primary'}
+              onClick={() => {
+                Modal.confirm({
+                  centered: true,
+                  content: <ModalFormContent />,
+                  title: '添加课程',
+                });
+              }}
+            >
+              添加课程
+            </Button>
             <Button>修改课程</Button>
             <Button>绑定至班级</Button>
             <Button danger>删除课程</Button>
@@ -122,6 +190,7 @@ const CourseTable = (props: any) => {
       </Row>
     );
   };
+
   return (
     <>
       <CourseAction />
@@ -134,6 +203,7 @@ const CourseTable = (props: any) => {
         loading={loading}
         rowSelection={rowSelection}
       />
+      {contextHolder}
     </>
   );
 };

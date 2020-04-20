@@ -7,17 +7,13 @@ import { IconFontCnUrl } from '@/_config/.api';
 import style from './practice.module.css';
 import { List } from 'antd';
 import { IconFont } from '@/components/utils';
+import { tag, practice } from '@/components/practice';
 
 const { Search } = Input;
 
 interface problemListProps {
   loading: boolean;
   displayTag: boolean;
-}
-
-interface tag {
-  ID: number;
-  Name: string;
 }
 
 const demoTags: tag[] = [
@@ -38,17 +34,6 @@ const demoTags: tag[] = [
     Name: '暖暖',
   },
 ];
-
-interface practice {
-  ID: number;
-  OJ: number;
-  Title: string;
-  URL: string;
-  Total: number;
-  AcRate: number;
-  Tags: tag[];
-  Solved: boolean;
-}
 
 const demoSource: practice[] = [
   {

@@ -20,4 +20,13 @@ interface courseNotice {
   Time: number;
 }
 
-export { course, courseNotice };
+interface courseNoticeRecord {
+  ID: number;
+  Title: string;
+  Description: string;
+  Level: number;
+  Time: number;
+  Class: number[];
+}
+
+export { course, courseNotice, courseNoticeRecord };

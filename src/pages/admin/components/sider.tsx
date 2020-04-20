@@ -24,9 +24,6 @@ const AdminSider = (props: siderProps) => {
       case 'practice':
         props.setMenuKey(AdminSiderKey.Practice);
         return;
-      case 'source':
-        props.setMenuKey(AdminSiderKey.Source);
-        return;
       case 'notice':
         props.setMenuKey(AdminSiderKey.Notice);
         return;
@@ -56,10 +53,6 @@ const AdminSider = (props: siderProps) => {
         <Menu.Item key={'practice'}>
           <IconFont type={'icon-source'} />
           练习管理
-        </Menu.Item>
-        <Menu.Item key={'source'}>
-          <IconFont type={'icon-source1'} />
-          资源推送
         </Menu.Item>
         <Menu.Item key={'notice'}>
           <IconFont type={'icon-tonggaozhongxin'} />

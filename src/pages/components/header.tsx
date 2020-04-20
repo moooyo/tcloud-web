@@ -110,6 +110,7 @@ class MainHeader extends React.Component<props, state> {
         </Menu>
       </Spin>
     );
+    const isTeacher = this.props.user.Type === 1;
     return (
       <div style={{ userSelect: 'none' }}>
         <Row>
@@ -120,7 +121,7 @@ class MainHeader extends React.Component<props, state> {
           </Col>
           <Col flex={13}>
             <Menu
-              style={{ lineHeight: '64px' }}
+              style={{ lineHeight: '62px' }}
               onClick={this.handleClick}
               selectedKeys={[this.state.current]}
               mode={'horizontal'}
@@ -129,15 +130,42 @@ class MainHeader extends React.Component<props, state> {
                 <CloudOutlined />
                 教学资源
               </Menu.Item>
-              <Menu.Item key={'practise'}>
+              <Menu.Item
+                key={'practise'}
+                style={
+                  isTeacher
+                    ? {
+                        display: 'none',
+                      }
+                    : {}
+                }
+              >
                 <CodeOutlined />
                 练习系统
               </Menu.Item>
-              <Menu.Item key={'user'}>
+              <Menu.Item
+                key={'user'}
+                style={
+                  isTeacher
+                    ? {
+                        display: 'none',
+                      }
+                    : {}
+                }
+              >
                 <IconFont type={'icon-ico-user-info'} />
                 用户中心
               </Menu.Item>
-              <Menu.Item key={'admin'}>
+              <Menu.Item
+                key={'admin'}
+                style={
+                  !isTeacher
+                    ? {
+                        display: 'none',
+                      }
+                    : {}
+                }
+              >
                 <IconFont type={'icon-admin'} />
                 管理中心
               </Menu.Item>
