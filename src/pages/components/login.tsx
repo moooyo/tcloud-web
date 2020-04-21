@@ -69,7 +69,7 @@ class LoginBox extends React.Component<any, state> {
               '如果长时间没有收到这封邮件，您也可以点击按钮再次获取。注意:注册码的有效时间为五分钟！',
           });
         } else if (res.code === ErrorCode.OK) {
-          window.location.hash = '/cloud';
+          history.push('/cloud');
         } else {
           return openLoginFailNotification(res.message);
         }

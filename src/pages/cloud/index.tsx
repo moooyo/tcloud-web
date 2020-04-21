@@ -63,11 +63,6 @@ const initData = {
 // @ts-ignore
 const store = createStore(CloudReducer, initData, composeWithDevTools());
 
-loadCloudState().then(resp => {
-  // @ts-ignore
-  store.dispatch(UpdateCloudState(resp));
-});
-
 const mapStateToProps = (state: any) => {
   return {
     fileList: state.fileList,
@@ -91,6 +86,7 @@ const mapStateToProps = (state: any) => {
 
 const mapDispatchToProps = (dispatch: any) => {
   return {
+    updateCloudState: (state: any) => dispatch(UpdateCloudState(state)),
     onChangedFileNameClicked: (id: number) => dispatch(ChangedFileNameID(id)),
     addFileToFileList: (file: FileInfo) => dispatch(AddFileToList(file)),
     deleteFileFromList: (id: number[]) => dispatch(DeleteFileFromListID(id)),

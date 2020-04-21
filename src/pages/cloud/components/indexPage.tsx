@@ -13,10 +13,17 @@ import ShareTable from './shareTable';
 import CourseContent from './course';
 import TagSearch from './tagSearch';
 import TrashTable from './trash';
+import loadCloudState from './init';
 
 const { Content, Sider } = Layout;
 
 class CloudIndex extends React.Component<any, any> {
+  componentDidMount() {
+    loadCloudState().then(resp => {
+      this.props.updateCloudState(resp);
+    });
+  }
+
   onRouterClick = (e: any) => {
     let key = e.currentTarget.children[0].innerHTML;
     let id = e.currentTarget.children[1].innerHTML;
