@@ -5,14 +5,21 @@ import MainHeaderLayout from '@/pages/components/MainHeaderLayout';
 const { Content } = Layout;
 
 const MainLayout = (props: any) => {
-  return (
-    <div>
-      <MainHeaderLayout />
-      <Layout>
-        <Content>{props.children}</Content>
-      </Layout>
-    </div>
-  );
+  switch (props.location.pathname) {
+    case '/login':
+    case '/register':
+    case '/share':
+      return <>{props.children}</>;
+    default:
+      return (
+        <div>
+          <MainHeaderLayout />
+          <Layout>
+            <Content>{props.children}</Content>
+          </Layout>
+        </div>
+      );
+  }
 };
 
 export default MainLayout;
