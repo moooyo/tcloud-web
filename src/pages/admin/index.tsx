@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import UserTable from './components/userTable';
+import UserTable from './components/user';
 import { SiderMenuContext, AdminSiderKey } from './_layout';
 import ClassTable from './components/class';
 import CourseTable from './components/course';

@@ -1,10 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import { Table, Row, Col, Space, Button, Input, Select } from 'antd';
+import React, { useState, useEffect, useRef } from 'react';
+import {
+  Table,
+  Row,
+  Col,
+  Space,
+  Button,
+  Input,
+  Select,
+  Popconfirm,
+  notification,
+  Modal,
+  Form,
+} from 'antd';
 import moment from 'moment';
 import { UsersBaseUrl } from '@/_config/.api';
 import { ErrorCode } from '@/_config/error';
+import { QuestionCircleOutlined } from '@ant-design/icons';
 const { Search } = Input;
 const { Option } = Select;
+
 interface userDBInfo {
   ID: number;
   CreatedAt: number;
@@ -84,6 +98,7 @@ const columns = [
 ];
 
 const defaultSource: userDBInfo[] = [];
+const defaultSelect: number[] = [];
 const UserTable = (props: any) => {
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState({
@@ -91,7 +106,10 @@ const UserTable = (props: any) => {
     offset: 0,
   });
   const [source, setSource] = useState(defaultSource);
-  const [select, setSelect] = useState([]);
+  const [select, setSelect] = useState(defaultSelect);
+  const [modal, contextHolder] = Modal.useModal();
+  let classSelectValue = -1;
+
   const formatUrl = (offset: number, limit: number) => {
     return (
       UsersBaseUrl +
@@ -123,6 +141,93 @@ const UserTable = (props: any) => {
       }
     })();
   }, [status]);
+  const classSelectConfig = {
+    title: '选择班级',
+    content: (
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+        }}
+      >
+        <Select
+          placeholder={'选择班级'}
+          onChange={(v: number) => {
+            classSelectValue = v;
+          }}
+          defaultValue={-1}
+        >
+          <Option value={-1}>暂不选择</Option>
+          <Option value={0}>软件1604</Option>
+          <Option value={1}>软件1605</Option>
+        </Select>
+      </div>
+    ),
+    onOk: () => {
+      if (classSelectValue === -1) {
+        return;
+      }
+    },
+    onCancle: () => {
+      classSelectValue = -1;
+    },
+  };
+  const ChangeUserInfoForm = (props: any) => {
+    const index = source.findIndex(e => {
+      return e.ID === select[0];
+    });
+    if (index === -1) {
+      return <></>;
+    }
+    const user = source[index];
+    const [form] = Form.useForm();
+
+    return (
+      <div
+        style={{
+          marginTop: '20px',
+        }}
+      >
+        <Form
+          form={form}
+          initialValues={{
+            nickname: user.Nickname,
+            email: user.Email,
+            class: user.Class,
+          }}
+        >
+          <Form.Item name={'nickname'} label={'昵称'}>
+            <Input />
+          </Form.Item>
+          <Form.Item name={'email'} label={'邮箱'}>
+            <Input type={'email'} />
+          </Form.Item>
+          <Form.Item name={'password'} label={'密码'}>
+            <Input.Password />
+          </Form.Item>
+          <Form.Item name={'class'} label={'班级'}>
+            <Select
+              placeholder={'选择班级'}
+              onChange={(v: number) => {
+                classSelectValue = v;
+              }}
+              defaultValue={-1}
+            >
+              <Option value={-1}>暂不选择</Option>
+              <Option value={0}>软件1604</Option>
+              <Option value={1}>软件1605</Option>
+            </Select>
+          </Form.Item>
+        </Form>
+      </div>
+    );
+  };
+
+  const changeUserInfoConfig = {
+    title: '更改信息',
+    content: <ChangeUserInfoForm />,
+  };
+
   const UserTableAction = (props: any) => {
     return (
       <Row
@@ -132,14 +237,41 @@ const UserTable = (props: any) => {
           marginBottom: '1vh',
         }}
       >
+        {contextHolder}
         <Col flex={1}>
           <Space>
-            <Button type={'primary'} disabled={select.length !== 1}>
+            <Button
+              type={'primary'}
+              disabled={select.length !== 1}
+              onClick={() => {
+                modal.confirm(changeUserInfoConfig);
+              }}
+            >
               更改信息
             </Button>
-            <Button danger>封停用户</Button>
-            <Button>更改班级信息</Button>
-            <Button>重置密码</Button>
+            <Popconfirm
+              title="确定要封停选中用户？"
+              icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
+            >
+              <Button danger>封停用户</Button>
+            </Popconfirm>
+            <Button
+              onClick={() => {
+                modal.confirm(classSelectConfig);
+              }}
+            >
+              更改班级信息
+            </Button>
+            <Button
+              onClick={() => {
+                notification['success']({
+                  message: '重置密码邮件已经发送至对应邮箱',
+                  description: '请通知对应用户进入邮箱查收重置密码邮件',
+                });
+              }}
+            >
+              重置密码
+            </Button>
           </Space>
         </Col>
         <Col
@@ -179,7 +311,6 @@ const UserTable = (props: any) => {
     select,
     onChange: onSelectChange,
   };
-
   return (
     <>
       <UserTableAction />
@@ -191,6 +322,7 @@ const UserTable = (props: any) => {
         pagination={false}
         loading={loading}
         rowSelection={rowSelection}
+        rowKey={(record: userDBInfo) => record.ID}
       />
     </>
   );

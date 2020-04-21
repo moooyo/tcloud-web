@@ -100,12 +100,20 @@ class MainHeader extends React.Component<props, state> {
   };
 
   render() {
+    const isStudent = this.props.user.Type === 0;
+    const hidden = {
+      display: 'none',
+    };
     const menu = (
       <Spin spinning={this.state.loading}>
         <Menu onClick={this.onMenuClick}>
-          <Menu.Item key={1}>个人中心</Menu.Item>
-          <Menu.Item key={2}>个人设置</Menu.Item>
-          <Menu.Divider />
+          <Menu.Item key={1} style={isStudent ? {} : hidden}>
+            个人中心
+          </Menu.Item>
+          <Menu.Item key={2} style={isStudent ? {} : hidden}>
+            个人设置
+          </Menu.Item>
+          <Menu.Divider style={isStudent ? {} : hidden} />
           <Menu.Item key={3}>注销</Menu.Item>
         </Menu>
       </Spin>
