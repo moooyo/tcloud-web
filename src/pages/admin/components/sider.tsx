@@ -2,14 +2,15 @@ import React, { useEffect, useContext } from 'react';
 import { Menu } from 'antd';
 import { IconFont } from '@/components/utils';
 import { useLocation } from 'umi';
-import { SiderMenuContext, AdminSiderKey } from '../_layout';
+import { StateContext, AdminSiderKey } from '../_layout';
 
 interface siderProps {
   setMenuKey: (key: AdminSiderKey) => void;
 }
 
 const AdminSider = (props: siderProps) => {
-  const selectKey = useContext(SiderMenuContext);
+  const selectKey = useContext(StateContext);
+  const key = selectKey.key;
   const onKeyClick = (e: any) => {
     switch (e.key) {
       case 'user':
@@ -33,11 +34,7 @@ const AdminSider = (props: siderProps) => {
   };
   return (
     <div>
-      <Menu
-        mode={'inline'}
-        defaultSelectedKeys={[selectKey]}
-        onClick={onKeyClick}
-      >
+      <Menu mode={'inline'} defaultSelectedKeys={[key]} onClick={onKeyClick}>
         <Menu.Item key={'user'}>
           <IconFont type={'icon-set'} />
           用户管理

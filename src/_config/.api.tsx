@@ -27,6 +27,7 @@ const UsersBaseUrl = baseUrl + '/users';
 const RegisterUrl = UsersBaseUrl;
 const RegisterConfirmUrl = UsersBaseUrl + '/confirm';
 const RegisterCodeResend = UsersBaseUrl + '/code';
+const userUrl = baseUrl + '/user';
 
 const shareFileBaseUrl = baseUrl + '/share';
 
@@ -35,6 +36,7 @@ const userIconUrl =
   'https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png';
 
 export {
+  userUrl,
   classUrl,
   loginUrl,
   forgetPassword,

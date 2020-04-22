@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import {
   Table,
   Row,
@@ -13,9 +13,10 @@ import {
   Form,
 } from 'antd';
 import moment from 'moment';
-import { UsersBaseUrl } from '@/_config/.api';
+import { UsersBaseUrl, userUrl } from '@/_config/.api';
 import { ErrorCode } from '@/_config/error';
 import { QuestionCircleOutlined } from '@ant-design/icons';
+import { StateContext } from '../_layout';
 const { Search } = Input;
 const { Option } = Select;
 
@@ -29,86 +30,111 @@ interface userDBInfo {
   Type: number;
   Status: number;
 }
-const columns = [
-  {
-    title: '序号',
-    dataIndex: 'ID',
-    key: 'ID',
-    align: 'center',
-  },
-  {
-    title: '昵称',
-    dataIndex: 'Nickname',
-    align: 'center',
-  },
-  {
-    title: '邮箱',
-    dataIndex: 'Email',
-    align: 'center',
-  },
-  {
-    title: '班级',
-    dataIndex: 'Class',
-    render: (text: number) => {
-      return <span>软件xs1604</span>;
-    },
-    align: 'center',
-  },
-  {
-    title: '创建时间',
-    dataIndex: 'CreatedAt',
-    render: (text: number) => {
-      return <span>{moment(text).format()}</span>;
-    },
-    align: 'center',
-  },
-  {
-    title: '用户状态',
-    dataIndex: 'status',
-    render: (text: number) => {
-      return <span>正常</span>;
-    },
-    align: 'center',
-    filters: [
-      {
-        text: '注册未验证',
-        value: 2,
-      },
-      {
-        text: '正常',
-        value: 3,
-      },
-      {
-        text: '封停',
-        value: 4,
-      },
-      {
-        text: '删除',
-        value: 5,
-      },
-    ],
-    onFilter: (value: number, record: userDBInfo) => {
-      if (value === 2) {
-        return record.Status <= 2;
-      } else {
-        return record.Status === value;
-      }
-    },
-  },
-];
 
 const defaultSource: userDBInfo[] = [];
 const defaultSelect: number[] = [];
 const UserTable = (props: any) => {
+  const layoutState = useContext(StateContext);
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState({
     limit: 30,
     offset: 0,
   });
+  const [buttonLoading, setButtonLoading] = useState(false);
   const [source, setSource] = useState(defaultSource);
   const [select, setSelect] = useState(defaultSelect);
   const [modal, contextHolder] = Modal.useModal();
+  const classFilters = [
+    {
+      text: '暂未设置',
+      value: 0,
+    },
+  ];
+  layoutState.classList.forEach(e => {
+    classFilters.push({
+      text: e.Name,
+      value: e.ID,
+    });
+  });
   let classSelectValue = -1;
+  const columns = [
+    {
+      title: '序号',
+      dataIndex: 'ID',
+      key: 'ID',
+      align: 'center',
+    },
+    {
+      title: '昵称',
+      dataIndex: 'Nickname',
+      align: 'center',
+    },
+    {
+      title: '邮箱',
+      dataIndex: 'Email',
+      align: 'center',
+    },
+    {
+      title: '班级',
+      dataIndex: 'Class',
+      render: (text: number) => {
+        for (const e of layoutState.classList) {
+          if (e.ID === text) {
+            return e.Name;
+          }
+        }
+        return '暂未设置';
+      },
+      align: 'center',
+      filters: classFilters,
+    },
+    {
+      title: '创建时间',
+      dataIndex: 'CreatedAt',
+      render: (text: number) => {
+        return <span>{moment(text).format()}</span>;
+      },
+      align: 'center',
+    },
+    {
+      title: '用户状态',
+      dataIndex: 'Status',
+      render: (text: number) => {
+        switch (text) {
+          case 4:
+            return '封停';
+          default:
+            return '正常';
+        }
+      },
+      align: 'center',
+      filters: [
+        {
+          text: '注册未验证',
+          value: 2,
+        },
+        {
+          text: '正常',
+          value: 3,
+        },
+        {
+          text: '封停',
+          value: 4,
+        },
+        {
+          text: '删除',
+          value: 5,
+        },
+      ],
+      onFilter: (value: number, record: userDBInfo) => {
+        if (value === 2) {
+          return record.Status <= 2;
+        } else {
+          return record.Status === value;
+        }
+      },
+    },
+  ];
 
   const formatUrl = (offset: number, limit: number) => {
     return (
@@ -157,9 +183,14 @@ const UserTable = (props: any) => {
           }}
           defaultValue={-1}
         >
-          <Option value={-1}>暂不选择</Option>
-          <Option value={0}>软件1604</Option>
-          <Option value={1}>软件1605</Option>
+          <Option value={-1} key={-1}>
+            暂不选择
+          </Option>
+          {layoutState.classList.map(e => (
+            <Option value={e.ID} key={e.ID}>
+              {e.Name}
+            </Option>
+          ))}
         </Select>
       </div>
     ),
@@ -167,11 +198,42 @@ const UserTable = (props: any) => {
       if (classSelectValue === -1) {
         return;
       }
+      return new Promise(async function(resolve, reject) {
+        (async () => {
+          try {
+            const ids = select.join(',');
+            const url = userUrl + '/' + ids + '?op=class';
+            const res = await fetch(url, {
+              method: 'PATCH',
+              body: JSON.stringify({
+                class: classSelectValue,
+              }),
+            });
+            const resp = await res.json();
+            if (resp.code === ErrorCode.OK) {
+              notification['success']({
+                message: '修改成功',
+              });
+              resolve();
+            } else {
+              notification['error']({
+                message: '修改班级失败',
+                description: resp.message,
+              });
+              throw new Error('operation error');
+            }
+          } catch (e) {
+            console.log(e);
+            reject(e);
+          }
+        })();
+      });
     },
     onCancle: () => {
       classSelectValue = -1;
     },
   };
+  const [form] = Form.useForm();
   const ChangeUserInfoForm = (props: any) => {
     const index = source.findIndex(e => {
       return e.ID === select[0];
@@ -180,7 +242,6 @@ const UserTable = (props: any) => {
       return <></>;
     }
     const user = source[index];
-    const [form] = Form.useForm();
 
     return (
       <div
@@ -203,7 +264,7 @@ const UserTable = (props: any) => {
             <Input type={'email'} />
           </Form.Item>
           <Form.Item name={'password'} label={'密码'}>
-            <Input.Password />
+            <Input.Password autoComplete={'off'} />
           </Form.Item>
           <Form.Item name={'class'} label={'班级'}>
             <Select
@@ -211,7 +272,6 @@ const UserTable = (props: any) => {
               onChange={(v: number) => {
                 classSelectValue = v;
               }}
-              defaultValue={-1}
             >
               <Option value={-1}>暂不选择</Option>
               <Option value={0}>软件1604</Option>
@@ -226,6 +286,34 @@ const UserTable = (props: any) => {
   const changeUserInfoConfig = {
     title: '更改信息',
     content: <ChangeUserInfoForm />,
+    onOk: () => {
+      return new Promise(function(resolve, reject) {
+        (async () => {
+          try {
+            const url = userUrl + '/' + select[0].toString() + '?op=full';
+            const res = await fetch(url, {
+              method: 'PATCH',
+              body: JSON.stringify(form.getFieldsValue()),
+            });
+            const resp = await res.json();
+            if (resp.code === ErrorCode.OK) {
+              notification['success']({
+                message: '修改成功',
+                description: '刷新后可见',
+              });
+              resolve();
+              const nextSource = source.filter(e => e.ID !== select[0]);
+              nextSource.push(resp.data);
+              setSource(nextSource);
+            } else {
+              throw new Error('operation error.');
+            }
+          } catch (e) {
+            reject(e);
+          }
+        })();
+      });
+    },
   };
 
   const UserTableAction = (props: any) => {
@@ -252,8 +340,38 @@ const UserTable = (props: any) => {
             <Popconfirm
               title="确定要封停选中用户？"
               icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
+              onConfirm={(e: any) => {
+                (async () => {
+                  try {
+                    setButtonLoading(true);
+                    const ids = select.join(',');
+                    const url = userUrl + '/' + ids + '?op=ban';
+                    const res = await fetch(url, {
+                      method: 'PATCH',
+                    });
+                    const resp = await res.json();
+                    if (resp.code === ErrorCode.OK) {
+                      notification['success']({
+                        message: '封禁成功',
+                        description: '对应的用户已被封禁',
+                      });
+                    } else {
+                      notification['error']({
+                        message: '封禁失败',
+                        description: resp.message,
+                      });
+                    }
+                  } catch (e) {
+                    console.log(e);
+                  } finally {
+                    setButtonLoading(false);
+                  }
+                })();
+              }}
             >
-              <Button danger>封停用户</Button>
+              <Button danger loading={buttonLoading}>
+                封停用户
+              </Button>
             </Popconfirm>
             <Button
               onClick={() => {

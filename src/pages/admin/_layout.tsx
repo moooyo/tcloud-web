@@ -1,8 +1,11 @@
 import MainHeaderLayout from '@/pages/components/MainHeaderLayout';
 
-import React, { useReducer } from 'react';
-import { Layout } from 'antd';
+import React, { useReducer, useState, useEffect } from 'react';
+import { Layout, notification } from 'antd';
 import AdminSider from './components/sider';
+import { ClassInfo } from '@/components/class';
+import { classUrl } from '@/_config/.api';
+import { ErrorCode } from '@/_config/error';
 
 const { Sider, Content, Header } = Layout;
 enum AdminSiderKey {
@@ -13,26 +16,58 @@ enum AdminSiderKey {
   Practice = 'practice',
   Notice = 'notice',
 }
+const defaultClassList: ClassInfo[] = [];
+const defaultState = {
+  key: AdminSiderKey.User,
+  classList: defaultClassList,
+};
 
-const SiderMenuContext = React.createContext(AdminSiderKey.User);
+const StateContext = React.createContext(defaultState);
 
 export default function(props: any) {
   const reducer = (state: any, action: any) => {
     switch (action.type) {
       case 'SET_SIDER_KEY':
-        return {
+        return Object.assign({}, state, {
           key: action.payload,
-        };
+        });
+      case 'SET_CLASS_LIST':
+        return Object.assign({}, state, {
+          classList: action.payload,
+        });
       default:
         throw new Error();
     }
   };
   const [state, dispatch] = useReducer(reducer, {
     key: AdminSiderKey.User,
+    classList: defaultClassList,
   });
-
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await fetch(classUrl, {
+          method: 'GET',
+        });
+        const resp = await res.json();
+        if (resp.code === ErrorCode.OK) {
+          dispatch({
+            type: 'SET_CLASS_LIST',
+            payload: resp.data,
+          });
+        } else {
+          notification['error']({
+            message: '获取班级列表失败，可能需要稍后刷新重试',
+            description: resp.message,
+          });
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    })();
+  }, []);
   return (
-    <SiderMenuContext.Provider value={state.key}>
+    <StateContext.Provider value={state}>
       <Layout>
         <Sider
           style={{
@@ -69,8 +104,8 @@ export default function(props: any) {
           {props.children}
         </Content>
       </Layout>
-    </SiderMenuContext.Provider>
+    </StateContext.Provider>
   );
 }
 
-export { AdminSiderKey, SiderMenuContext };
+export { AdminSiderKey, StateContext };
