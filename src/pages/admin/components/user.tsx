@@ -56,7 +56,7 @@ const UserTable = (props: any) => {
       value: e.ID,
     });
   });
-  let classSelectValue = -1;
+  let classSelectValue = 0;
   const columns = [
     {
       title: '序号',
@@ -181,9 +181,9 @@ const UserTable = (props: any) => {
           onChange={(v: number) => {
             classSelectValue = v;
           }}
-          defaultValue={-1}
+          defaultValue={0}
         >
-          <Option value={-1} key={-1}>
+          <Option value={0} key={0}>
             暂不选择
           </Option>
           {layoutState.classList.map(e => (
@@ -195,7 +195,7 @@ const UserTable = (props: any) => {
       </div>
     ),
     onOk: () => {
-      if (classSelectValue === -1) {
+      if (classSelectValue === 0) {
         return;
       }
       return new Promise(async function(resolve, reject) {
@@ -230,7 +230,7 @@ const UserTable = (props: any) => {
       });
     },
     onCancle: () => {
-      classSelectValue = -1;
+      classSelectValue = 0;
     },
   };
   const [form] = Form.useForm();
@@ -273,9 +273,14 @@ const UserTable = (props: any) => {
                 classSelectValue = v;
               }}
             >
-              <Option value={-1}>暂不选择</Option>
-              <Option value={0}>软件1604</Option>
-              <Option value={1}>软件1605</Option>
+              <Option value={0} key={0}>
+                暂不选择
+              </Option>
+              {layoutState.classList.map(e => (
+                <Option value={e.ID} key={e.ID}>
+                  {e.Name}
+                </Option>
+              ))}
             </Select>
           </Form.Item>
         </Form>
@@ -286,7 +291,7 @@ const UserTable = (props: any) => {
   const changeUserInfoConfig = {
     title: '更改信息',
     content: <ChangeUserInfoForm />,
-    onOk: () => {
+    onOk: (close: any) => {
       return new Promise(function(resolve, reject) {
         (async () => {
           try {
@@ -297,15 +302,15 @@ const UserTable = (props: any) => {
             });
             const resp = await res.json();
             if (resp.code === ErrorCode.OK) {
-              notification['success']({
-                message: '修改成功',
-                description: '刷新后可见',
-              });
               resolve();
-              const nextSource = source.filter(e => e.ID !== select[0]);
+              const nextSource = source.slice().filter(e => e.ID !== select[0]);
               nextSource.push(resp.data);
-              setSource(nextSource);
+              setSource(resp.data);
             } else {
+              notification['error']({
+                message: '修改失败',
+                description: resp.message,
+              });
               throw new Error('operation error.');
             }
           } catch (e) {

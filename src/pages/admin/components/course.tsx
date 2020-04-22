@@ -12,10 +12,14 @@ import {
   Input,
   TimePicker,
   DatePicker,
+  notification,
 } from 'antd';
 import moment from 'moment';
 import { FileInfo } from '@/pages/cloud/components/file';
 import { course } from '@/components/course';
+import { PlusOutlined } from '@ant-design/icons';
+import { tagUrl } from '@/_config/.api';
+import { ErrorCode } from '@/_config/error';
 const { TextArea } = Input;
 const { RangePicker } = DatePicker;
 /*
@@ -134,6 +138,35 @@ interface course {
 
   const ModalFormContent = () => {
     const [form] = Form.useForm();
+    const defaultTags: tag[] = [];
+    const [tags, setTags] = useState(defaultTags);
+    const [inputVisible, setInputVisible] = useState(false);
+    const [mockID, setMockID] = useState(-1);
+    const ref = React.createRef<Input>();
+    const handleClose = (removedTag: any) => {
+      const nextTags = tags.slice().filter(tag => tag !== removedTag);
+      setTags(nextTags);
+    };
+    const handleConfirm = () => {
+      if (!ref.current || ref.current.state.value == undefined) {
+        setInputVisible(false);
+      } else {
+        //@ts-ignore
+        const index = tags.findIndex(e => e.Name === ref.current.state.value);
+        if (index === -1) {
+          const nextTags = tags.slice();
+          const mockTag: tag = {
+            ID: mockID,
+            Name: ref.current.state.value,
+          };
+          nextTags.push(mockTag);
+          setTags(nextTags);
+          setMockID(mockID - 1);
+        }
+        setInputVisible(false);
+      }
+    };
+
     return (
       <Form form={form}>
         <Form.Item name={'name'} label={'课程名'} rules={[{ required: true }]}>
@@ -150,7 +183,43 @@ interface course {
           <RangePicker showTime={{ format: 'HH:mm' }} />
         </Form.Item>
         <Form.Item name={'tags'} label={'标签'}>
-          Tags
+          {tags.map((e: tag) => {
+            return (
+              <Tag
+                closable
+                color={colors[Math.floor(Math.random() * colors.length)]}
+                style={{
+                  width: '50px',
+                  height: '24px',
+                  textAlign: 'center',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+                key={e.ID}
+                onClose={handleClose}
+              >
+                {e.Name}
+              </Tag>
+            );
+          })}
+          {inputVisible ? (
+            <Input
+              ref={ref}
+              size={'small'}
+              onBlur={handleConfirm}
+              onPressEnter={handleConfirm}
+            />
+          ) : (
+            <Tag
+              className="site-tag-plus"
+              onClick={() => {
+                setInputVisible(true);
+              }}
+            >
+              <PlusOutlined /> New Tag
+            </Tag>
+          )}
         </Form.Item>
         <Form.Item name={'files'} label={'课程文件'}>
           Content

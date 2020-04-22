@@ -264,7 +264,7 @@ const ShareTable = (props: any) => {
   };
 
   const generateCopyBar = (uuid: string, secret: boolean, code: string) => {
-    const url = 'localhost/share/' + window.btoa(uuid);
+    const url = 'localhost/#/share/' + window.btoa(uuid);
     const onCopyButtonClicl = () => {
       const str = formatCopyText(url, secret, code);
       onCopyToClipboardClick(str);
@@ -272,7 +272,7 @@ const ShareTable = (props: any) => {
     return (
       <div className={style.copyBar}>
         <span>链接: </span>
-        <a href={url} style={{ marginLeft: '5px' }}>
+        <a href={'//' + url} style={{ marginLeft: '5px' }}>
           {url}
         </a>
         {secret ? (

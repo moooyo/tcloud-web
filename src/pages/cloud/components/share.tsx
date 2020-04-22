@@ -77,7 +77,7 @@ const disabledDate = (current: any) => {
 };
 
 const uuid2shareLink = (uuid: string) => {
-  const url = 'localhost' + '/share/' + window.btoa(uuid);
+  const url = 'localhost' + '/#/share/' + window.btoa(uuid);
   return url;
 };
 const unixTime2str = (expired: number) => {
