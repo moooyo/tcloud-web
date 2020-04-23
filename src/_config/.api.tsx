@@ -31,12 +31,14 @@ const userUrl = baseUrl + '/user';
 
 const shareFileBaseUrl = baseUrl + '/share';
 const tagUrl = baseUrl + '/tag';
+const courseUrl = baseUrl + '/course';
 
 const IconFontCnUrl = '//at.alicdn.com/t/font_1704308_poggm1ik2gl.js';
 const userIconUrl =
   'https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png';
 
 export {
+  courseUrl,
   tagUrl,
   userUrl,
   classUrl,

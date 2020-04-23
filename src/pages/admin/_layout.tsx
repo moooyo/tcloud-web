@@ -4,8 +4,9 @@ import React, { useReducer, useState, useEffect } from 'react';
 import { Layout, notification } from 'antd';
 import AdminSider from './components/sider';
 import { ClassInfo } from '@/components/class';
-import { classUrl } from '@/_config/.api';
+import { classUrl, userInfoUrl } from '@/_config/.api';
 import { ErrorCode } from '@/_config/error';
+import { errorUser } from '@/components/user';
 
 const { Sider, Content, Header } = Layout;
 enum AdminSiderKey {
@@ -20,6 +21,7 @@ const defaultClassList: ClassInfo[] = [];
 const defaultState = {
   key: AdminSiderKey.User,
   classList: defaultClassList,
+  user: errorUser,
 };
 
 const StateContext = React.createContext(defaultState);
@@ -34,6 +36,10 @@ export default function(props: any) {
       case 'SET_CLASS_LIST':
         return Object.assign({}, state, {
           classList: action.payload,
+        });
+      case 'SET_USER':
+        return Object.assign({}, state, {
+          user: action.payload,
         });
       default:
         throw new Error();
@@ -65,6 +71,19 @@ export default function(props: any) {
         console.log(e);
       }
     })();
+  }, []);
+  useEffect(() => {
+    fetch(userInfoUrl)
+      .then(res => res.json())
+      .then(res => {
+        dispatch({
+          type: 'SET_USER',
+          payload: res.data,
+        });
+      })
+      .catch(error => {
+        console.log(error);
+      });
   }, []);
   return (
     <StateContext.Provider value={state}>

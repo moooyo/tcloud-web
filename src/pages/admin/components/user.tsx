@@ -15,7 +15,11 @@ import {
 import moment from 'moment';
 import { UsersBaseUrl, userUrl } from '@/_config/.api';
 import { ErrorCode } from '@/_config/error';
-import { QuestionCircleOutlined } from '@ant-design/icons';
+import {
+  QuestionCircleOutlined,
+  RedoOutlined,
+  ReloadOutlined,
+} from '@ant-design/icons';
 import { StateContext } from '../_layout';
 const { Search } = Input;
 const { Option } = Select;
@@ -213,6 +217,7 @@ const UserTable = (props: any) => {
             if (resp.code === ErrorCode.OK) {
               notification['success']({
                 message: '修改成功',
+                description: '请刷新后查看',
               });
               resolve();
             } else {
@@ -302,10 +307,11 @@ const UserTable = (props: any) => {
             });
             const resp = await res.json();
             if (resp.code === ErrorCode.OK) {
+              notification['success']({
+                message: '修改成功',
+                description: '请刷新后查看',
+              });
               resolve();
-              const nextSource = source.slice().filter(e => e.ID !== select[0]);
-              nextSource.push(resp.data);
-              setSource(resp.data);
             } else {
               notification['error']({
                 message: '修改失败',
@@ -423,6 +429,20 @@ const UserTable = (props: any) => {
             </Select>
             <Search style={{ width: '70%' }} />
           </Input.Group>
+          <Button
+            type={'link'}
+            icon={<ReloadOutlined />}
+            onClick={() => {
+              setSource(defaultSource);
+              setStatus({
+                offset: 0,
+                limit: 30,
+              });
+            }}
+            style={{
+              marginRight: '10px',
+            }}
+          ></Button>
         </Col>
       </Row>
     );
