@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Card, Divider, Row, Col, Button } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Card, Divider, Row, Col, Button, Spin, notification } from 'antd';
 import { tag, demoTags } from '@/pages/practice/components/problem';
 import { FileInfo, demoList } from './file';
 import style from './course.module.css';
@@ -9,13 +9,26 @@ import moment from 'moment';
 import { IconFont } from '@/components/utils';
 import { DownloadOutlined } from '@ant-design/icons';
 import { courseNotice, course } from '@/components/course';
+import { courseUrl, noticeUrl } from '@/_config/.api';
+import { ErrorCode } from '@/_config/error';
 
 const demoPath: routerArgs = {
   Key: 1,
   Name: '第一节课',
 };
 
-const demoCourseList: course[] = [
+interface courseDisplay {
+  ID: number;
+  Name: string;
+  Tags: tag[];
+  StartTime: number;
+  EndTime: number;
+  Description: string;
+  FileList: FileInfo[];
+  FilePath: routerArgs;
+}
+
+const demoCourseList: courseDisplay[] = [
   {
     ID: 1,
     Name: '程序设计入门',
@@ -41,7 +54,7 @@ const demoCourseList: course[] = [
 ];
 
 interface courseBoxProps {
-  course: course;
+  course: courseDisplay;
 }
 
 interface courseActionProps {
@@ -95,7 +108,12 @@ const CourseAction = (props: courseActionProps) => {
 
 const CourseBox = (props: courseBoxProps) => {
   const [selectRowKeys, setSelectRowKeys] = useState([]);
-
+  const startTime = moment(props.course.StartTime * 1000).format(
+    'YYYY-MM-DD HH:mm',
+  );
+  const endTime = moment(props.course.EndTime * 1000).format(
+    'YYYY-MM-DD HH:mm',
+  );
   return (
     <Card className={style.courseBox} hoverable>
       <div className={style.courseTitle}>
@@ -108,7 +126,7 @@ const CourseBox = (props: courseBoxProps) => {
         >
           {props.course.Name}{' '}
           <span style={{ fontSize: '12px', fontWeight: 400 }}>
-            2020 年 03 月 15 日 19:00 - 20:00
+            {startTime + ' 至 ' + endTime}
           </span>
         </p>
         <p
@@ -196,7 +214,7 @@ const CourseNotice = (props: courseNoticeProps) => {
             color: '#999',
           }}
         >
-          {moment(item.Time).format()}
+          {moment(item.Time * 1000).format('YYYY-MM-DD HH:mm')}
         </div>
         <div
           style={{
@@ -246,26 +264,83 @@ const CourseNotice = (props: courseNoticeProps) => {
 };
 
 const CourseContent = (props: any) => {
+  const [course, setCourse] = useState(demoCourseList);
+  const [notice, setNotice] = useState(demoCourseNotice);
+  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    (async () => {
+      setLoading(true);
+      try {
+        const url = courseUrl + '?offset=0&limit=1000';
+        const res = await fetch(url, {
+          method: 'GET',
+        });
+        const resp = await res.json();
+        if (resp.code === ErrorCode.OK) {
+          if (resp.data !== null) {
+            setCourse(resp.data);
+          }
+        } else {
+          notification['error']({
+            message: '加载失败',
+            description: resp.message,
+          });
+        }
+      } catch (e) {
+        console.log(e);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
+  useEffect(() => {
+    (async () => {
+      setLoading(true);
+      try {
+        const url = noticeUrl + '?offset=0&limit=1000';
+        const res = await fetch(url, {
+          method: 'GET',
+        });
+        const resp = await res.json();
+        if (resp.code === ErrorCode.OK) {
+          if (resp.data !== null) {
+            setNotice(resp.data);
+          }
+        } else {
+          notification['error']({
+            message: '加载失败',
+            description: resp.message,
+          });
+        }
+      } catch (e) {
+        console.log(e);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
   return (
-    <Row>
-      <Col span={16}>
-        <div className={style.wrapper}>
-          {demoCourseList.map(e => {
-            return <CourseBox course={e} />;
-          })}
-        </div>
-      </Col>
-      <Col span={8}>
-        <div
-          style={{
-            marginTop: '20px',
-            marginRight: '3vw',
-          }}
-        >
-          <CourseNotice notice={demoCourseNotice} />
-        </div>
-      </Col>
-    </Row>
+    <Spin spinning={loading}>
+      <Row>
+        <Col span={16}>
+          <div className={style.wrapper}>
+            {course.map(e => {
+              return <CourseBox course={e} />;
+            })}
+          </div>
+        </Col>
+        <Col span={8}>
+          <div
+            style={{
+              marginTop: '20px',
+              marginRight: '3vw',
+            }}
+          >
+            <CourseNotice notice={notice} />
+          </div>
+        </Col>
+      </Row>
+    </Spin>
   );
 };
 export default CourseContent;
