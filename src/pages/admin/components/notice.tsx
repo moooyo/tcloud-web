@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import moment from 'moment';
 import { courseNoticeRecord } from '@/components/course';
-import { Row, Col, Space, Button, Table } from 'antd';
+import { Row, Col, Space, Button, Table, notification } from 'antd';
+import { noticeUrl } from '@/_config/.api';
+import { ErrorCode } from '@/_config/error';
 
 /*
 interface courseNoticeRecord {
@@ -67,6 +69,39 @@ const NoticeTable = (props: any) => {
   const [loading, setLoading] = useState(false);
   const [select, setSelect] = useState([]);
   const [source, setSource] = useState(defaultSource);
+  const [status, setStatus] = useState({
+    limit: 30,
+    offset: 0,
+  });
+  useEffect(() => {
+    (async () => {
+      try {
+        setLoading(true);
+        const url =
+          noticeUrl +
+          '?offset=' +
+          status.offset.toString() +
+          '&limit=' +
+          status.limit.toString();
+        const res = await fetch(url, {
+          method: 'GET',
+        });
+        const resp = await res.json();
+        if (resp.code === ErrorCode.OK) {
+          setSource(resp.data);
+        } else {
+          notification['error']({
+            message: '获取数据失败',
+            description: resp.message,
+          });
+        }
+      } catch (e) {
+        console.log(e);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, [status]);
   const rowSelection = {
     select,
     onChange: (selectKey: any) => {
