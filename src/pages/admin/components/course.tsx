@@ -99,13 +99,27 @@ const columns = [
       }
     },
   },
+  {
+    dataIndex: 'Class',
+    title: '班级',
+    align: 'center',
+    render: (e: ClassInfo[]) => {
+      if (e !== null) {
+        return e.map(c => {
+          return <Tag>{c.Name}</Tag>;
+        });
+      } else {
+        return <></>;
+      }
+    },
+  },
 ];
 const defaultSource: course[] = [];
-
+const defaultSelect: number[] = [];
 const CourseTable = (props: any) => {
   const layoutState = useContext(StateContext);
   const [loading, setLoading] = useState(false);
-  const [select, setSelect] = useState([]);
+  const [select, setSelect] = useState(defaultSelect);
   const [source, setSource] = useState(defaultSource);
   const [modal, contextHolder] = Modal.useModal();
   const [status, setStatus] = useState({
@@ -150,6 +164,119 @@ const CourseTable = (props: any) => {
     },
   };
   const CourseAction = (props: any) => {
+    const { Option } = Select;
+    const defaultSelectSource: ClassInfo[] = [];
+    let uploadClass = defaultSelectSource;
+    const ClassSelect = () => {
+      const [source, setSource] = useState(defaultSelectSource);
+      const [selectVisible, setSelectVisible] = useState(false);
+      useEffect(() => {
+        uploadClass = source;
+      }, [source]);
+      const classSelctContext = (
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+          }}
+        >
+          <Select
+            placeholder={'选择班级'}
+            onChange={(v: number) => {
+              if (v === 0) {
+                setSelectVisible(false);
+                return;
+              }
+              const nextSource = source.slice().filter(e => e.ID !== v);
+              const index = layoutState.classList.findIndex(i => i.ID === v);
+              if (index !== -1) {
+                nextSource.push(layoutState.classList[index]);
+              }
+              setSource(nextSource);
+              setSelectVisible(false);
+            }}
+          >
+            <Option value={0} key={0}>
+              暂不选择
+            </Option>
+            {layoutState.classList.map(e => (
+              <Option value={e.ID} key={e.ID}>
+                {e.Name}
+              </Option>
+            ))}
+          </Select>
+        </div>
+      );
+      return (
+        <>
+          {source.map((e: ClassInfo) => {
+            return (
+              <Tag
+                closable
+                key={e.ID}
+                onClose={(v: ClassInfo) => {
+                  const nextSource = source.slice().filter(e => e !== v);
+                  setSource(nextSource);
+                }}
+              >
+                {e.Name}
+              </Tag>
+            );
+          })}
+          {selectVisible ? (
+            classSelctContext
+          ) : (
+            <Tag
+              onClick={() => {
+                setSelectVisible(true);
+              }}
+            >
+              <PlusOutlined /> 添加班级
+            </Tag>
+          )}
+        </>
+      );
+    };
+    const classSelectConfig = {
+      title: '绑定至班级',
+      content: <ClassSelect />,
+      onOk: () => {
+        return new Promise((resolve, reject) => {
+          (async () => {
+            try {
+              const url = courseUrl + '/' + select[0].toString() + '?op=class';
+              const val: number[] = [];
+              uploadClass.forEach(e => {
+                val.push(e.ID);
+              });
+              const res = await fetch(url, {
+                method: 'PATCH',
+                body: JSON.stringify({
+                  class: val,
+                }),
+              });
+              const resp = await res.json();
+              if (resp.code === ErrorCode.OK) {
+                notification['success']({
+                  message: '绑定成功',
+                  description: '刷新后查看',
+                });
+                resolve();
+              } else {
+                notification['error']({
+                  message: '绑定失败',
+                  description: resp.message,
+                });
+                throw new Error(resp.data);
+              }
+            } catch (e) {
+              console.log(e);
+              reject(e);
+            }
+          })();
+        });
+      },
+    };
     const ModalFormContent = (props: any) => {
       const defaultTags: tag[] = [];
       const [tags, setTags] = useState(defaultTags);
@@ -446,8 +573,14 @@ const CourseTable = (props: any) => {
             >
               添加课程
             </Button>
-            <Button>修改课程</Button>
-            <Button>绑定至班级</Button>
+            <Button
+              onClick={() => {
+                modal.confirm(classSelectConfig);
+              }}
+              disabled={select.length !== 1}
+            >
+              绑定至班级
+            </Button>
             <Button danger>删除课程</Button>
           </Space>
         </Col>

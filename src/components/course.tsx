@@ -1,6 +1,7 @@
 import { FileInfo } from '@/pages/cloud/components/file';
 import { routerArgs } from '@/pages/cloud/components/fileAction';
 import { tag } from '@/pages/practice/components/problem';
+import { ClassInfo } from './class';
 
 interface course {
   ID: number;
@@ -11,6 +12,7 @@ interface course {
   Description: string;
   FileList: FileInfo[];
   FilePath: routerArgs;
+  Class: ClassInfo[];
 }
 
 interface courseNotice {

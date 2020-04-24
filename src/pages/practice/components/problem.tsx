@@ -1,13 +1,24 @@
-import React, { useState } from 'react';
-import { Card, Row, Col, Switch, Button, Menu, Dropdown, Tag } from 'antd';
+import React, { useState, useEffect } from 'react';
+import {
+  Card,
+  Row,
+  Col,
+  Switch,
+  Button,
+  Menu,
+  Dropdown,
+  Tag,
+  notification,
+} from 'antd';
 import { CheckOutlined, CloseOutlined, DownOutlined } from '@ant-design/icons';
 import { Input } from 'antd';
 import { createFromIconfontCN } from '@ant-design/icons/es';
-import { IconFontCnUrl } from '@/_config/.api';
+import { IconFontCnUrl, practiceUrl, noticeUrl } from '@/_config/.api';
 import style from './practice.module.css';
 import { List } from 'antd';
 import { IconFont } from '@/components/utils';
 import { tag, practice } from '@/components/practice';
+import { ErrorCode } from '@/_config/error';
 
 const { Search } = Input;
 
@@ -35,29 +46,6 @@ const demoTags: tag[] = [
   },
 ];
 
-const demoSource: practice[] = [
-  {
-    ID: 1,
-    OJ: 1,
-    Title: 'A+B',
-    URL: 'https://www.baidu.com',
-    Total: 500,
-    AcRate: 47.9,
-    Tags: demoTags,
-    Solved: false,
-  },
-  {
-    ID: 2,
-    OJ: 1,
-    Title: 'C+D',
-    URL: 'https://www.baidu.com',
-    Total: 500,
-    AcRate: 47.9,
-    Tags: demoTags,
-    Solved: true,
-  },
-];
-
 enum OnlineJudge {
   PKU,
   QDU,
@@ -65,13 +53,16 @@ enum OnlineJudge {
 }
 
 const renderOj = (oj: number) => {
-  let tmp = {
-    height: '22px',
-    fontSize: '12px',
-    border: '1px solid #e9eaec',
-    borderRadius: '3px',
-  };
-  return <Tag>PKU</Tag>;
+  let str = '';
+  switch (oj) {
+    case 1:
+      str = 'PKU';
+      break;
+    case 2:
+      str = 'HDU';
+      break;
+  }
+  return <Tag>{str}</Tag>;
 };
 
 const colors = [
@@ -92,6 +83,44 @@ const noTagsSpan = 5;
 const displayTagsSpan = 3;
 
 const ProblemList = (props: problemListProps) => {
+  const [status, setStatus] = useState({
+    limit: 30,
+    offset: 0,
+  });
+  const defaultSource: practice[] = [];
+  const [source, setSource] = useState(defaultSource);
+  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    (async () => {
+      setLoading(true);
+      try {
+        const url =
+          practiceUrl +
+          '?offset' +
+          status.offset.toString() +
+          '&limit=' +
+          status.limit.toString();
+        const res = await fetch(url, {
+          method: 'GET',
+        });
+        const resp = await res.json();
+        if (resp.code === ErrorCode.OK) {
+          if (resp.data !== null) {
+            setSource(resp.data);
+          }
+        } else {
+          notification['error']({
+            message: '加载失败',
+            description: resp.message,
+          });
+        }
+      } catch (e) {
+        console.log(e);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, [status]);
   const nowSpan = props.displayTag ? displayTagsSpan : noTagsSpan;
   const listHeader = (
     <Row
@@ -114,6 +143,9 @@ const ProblemList = (props: problemListProps) => {
     </Row>
   );
   const renderTags = (tags: tag[]) => {
+    if (tags === null) {
+      return <></>;
+    }
     return (
       <div>
         {tags.map(e => {
@@ -168,9 +200,9 @@ const ProblemList = (props: problemListProps) => {
   return (
     <List
       header={listHeader}
-      loading={props.loading}
+      loading={loading}
       pagination={false}
-      dataSource={demoSource}
+      dataSource={source}
       renderItem={renderItem}
       split={true}
     />
