@@ -145,6 +145,9 @@ const CourseBox = (props: courseBoxProps) => {
       />
       <CourseAction select={selectRowKeys} />
       <FileTable
+        changeLoadingState={() => {}}
+        setFileList={() => {}}
+        setRouterArgs={() => {}}
         path={props.course.FilePath}
         ChangedFileNameID={-1}
         onChangedFileNameClicked={(id: number) => {}}

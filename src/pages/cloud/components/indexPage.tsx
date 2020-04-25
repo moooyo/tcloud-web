@@ -1,10 +1,9 @@
 import React from 'react';
-import { Layout, Spin } from 'antd';
+import { Layout, Spin, notification } from 'antd';
 import FileTable from '@/components/fileTable';
 import {
   FileAction,
   FileShowLoadData,
-  routerArgs,
 } from '@/pages/cloud/components/fileAction';
 import { FileInfo } from '@/pages/cloud/components/file';
 import FileList from '@/components/fileList';
@@ -14,6 +13,8 @@ import CourseContent from './course';
 import TagSearch from './tagSearch';
 import TrashTable from './trash';
 import loadCloudState from './init';
+import { fileInfoUrl } from '@/_config/.api';
+import { ErrorCode } from '@/_config/error';
 
 const { Content, Sider } = Layout;
 
@@ -30,11 +31,32 @@ class CloudIndex extends React.Component<any, any> {
     if (key === -1) {
       return;
     } else {
-      let args = this.state.routerArgs;
+      let args = this.props.routerArgs;
       args = args.slice(0, id + 1);
-      this.setState({
-        routerArgs: args,
-      });
+      (async () => {
+        this.props.changeLoadingState(true);
+        try {
+          const url =
+            fileInfoUrl + '?path=' + key.trim() + '&offset=0&limit=30';
+          const res = await fetch(url, {
+            method: 'GET',
+          });
+          const resp = await res.json();
+          if (resp.code === ErrorCode.OK) {
+            this.props.setRouterArgs(args);
+            this.props.setFileList(resp.data);
+          } else {
+            notification['error']({
+              message: '加载失败',
+              description: resp.message,
+            });
+          }
+        } catch (e) {
+          console.log(e);
+        } finally {
+          this.props.changeLoadingState(false);
+        }
+      })();
     }
   };
 
@@ -49,9 +71,9 @@ class CloudIndex extends React.Component<any, any> {
   };
 
   onCreateDirectory = (file: FileInfo) => {
-    this.setState({
-      changedFileNameID: file.ID,
-    });
+    this.props.addFileToFileList(file);
+    const { onChangedFileNameClicked } = this.props;
+    onChangedFileNameClicked(file.ID);
   };
 
   onChangedFileNameClicked = () => {
@@ -65,10 +87,12 @@ class CloudIndex extends React.Component<any, any> {
 
   resetWhenSiderClick = () => {
     this.props.onChangedFileNameClicked(-1);
-    this.props.changePath({
-      Key: this.props.user.DiskRoot,
-      Name: '我的文件',
-    });
+    this.props.setRouterArgs([
+      {
+        Key: this.props.user.DiskRoot,
+        Name: '我的文件',
+      },
+    ]);
     this.props.setSelect([]);
     this.props.setSelectKeys([]);
   };
@@ -79,6 +103,9 @@ class CloudIndex extends React.Component<any, any> {
     const path = routerArgs[0];
     const displayTable = (
       <FileTable
+        setFileList={this.props.setFileList}
+        changeLoadingState={this.props.changeLoadingState}
+        setRouterArgs={this.props.setRouterArgs}
         path={path}
         setSelectRowKeys={this.props.setSelectKeys}
         onSelectRowKeyChanged={this.onSelectKeyChange}

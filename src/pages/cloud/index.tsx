@@ -24,6 +24,7 @@ import {
   SetTrashStatus,
   SetTrashInitLoad,
   DeleteTrashFromList,
+  SetRouterArgs,
 } from '@/pages/cloud/components/actions';
 import { FileInfo } from '@/pages/cloud/components/file';
 import loadCloudState from '@/pages/cloud/components/init';
@@ -111,6 +112,7 @@ const mapDispatchToProps = (dispatch: any) => {
       dispatch(SetTrashStatus(offset, limit)),
     setTrashInitLoad: (load: boolean) => dispatch(SetTrashInitLoad(load)),
     deleteTrashFromList: (id: number[]) => dispatch(DeleteTrashFromList(id)),
+    setRouterArgs: (args: routerArgs[]) => dispatch(SetRouterArgs(args)),
   };
 };
 

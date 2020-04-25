@@ -16,6 +16,7 @@ import {
   SET_TRASH_STATUS,
   SET_TRASH_INIT_LOAD,
   DELETE_TRASH_FROM_LIST,
+  SET_ROUTER_ARGS,
 } from '@/pages/cloud/components/type';
 import { SetTrashStatus } from './actions';
 
@@ -25,10 +26,14 @@ const CloudReducer = (state = [], action: CloudActions) => {
       return Object.assign({}, state, {
         uploadFileList: action.payload,
       });
-    case ADD_FILE_TO_FILE_LIST:
+    case ADD_FILE_TO_FILE_LIST: {
+      //@ts-ignore
+      const list = state.fileList.slice();
+      list.push(action.payload);
       return Object.assign({}, state, {
-        AddFile: action.payload,
+        fileList: list,
       });
+    }
     case CHANGE_FILE_NAME_ID:
       return Object.assign({}, state, {
         changedFileNameID: action.payload,
@@ -43,9 +48,9 @@ const CloudReducer = (state = [], action: CloudActions) => {
       return Object.assign({}, state, action.payload);
     case SET_SELECTED_ROWS_KEY:
       return Object.assign({}, state, action.payload);
-    case CHANGE_FILE_NAME_FROM_LIST:
+    case CHANGE_FILE_NAME_FROM_LIST: {
       // @ts-ignore
-      let fileList = state.fileList.slice();
+      const fileList = state.fileList.slice();
       const index = fileList.findIndex((e: { ID: any }) => {
         return e.ID === action.payload.id;
       });
@@ -55,6 +60,7 @@ const CloudReducer = (state = [], action: CloudActions) => {
       return Object.assign({}, state, {
         fileList: fileList,
       });
+    }
     case DELETE_FILE_FROM_FILE_LIST: {
       // @ts-ignore
       let fileList = state.fileList.slice();
@@ -119,7 +125,11 @@ const CloudReducer = (state = [], action: CloudActions) => {
       return Object.assign({}, state, {
         trashList: trashList,
       });
-
+    case SET_ROUTER_ARGS: {
+      return Object.assign({}, state, {
+        routerArgs: action.payload,
+      });
+    }
     default:
       return state;
   }

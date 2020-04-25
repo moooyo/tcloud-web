@@ -24,6 +24,7 @@ import {
   SET_TRASH_INIT_LOAD,
   SET_TRASH_STATUS,
   DELETE_TRASH_FROM_LIST,
+  SET_ROUTER_ARGS,
 } from '@/pages/cloud/components/type';
 import {
   routerArgs,
@@ -174,5 +175,12 @@ export function DeleteTrashFromList(trashID: number[]) {
   return {
     type: DELETE_TRASH_FROM_LIST,
     payload: trashID,
+  };
+}
+
+export function SetRouterArgs(args: routerArgs[]) {
+  return {
+    type: SET_ROUTER_ARGS,
+    payload: args,
   };
 }

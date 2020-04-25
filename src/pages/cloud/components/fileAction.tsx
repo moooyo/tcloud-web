@@ -481,6 +481,7 @@ class FileShowLoadData extends React.Component<breadcrumbProps, any> {
     if (this.props.hasMore) {
       str = '已加载' + this.props.count.toString() + '个';
     }
+    console.log(this.props.args);
     return (
       <div
         style={{

@@ -13,12 +13,13 @@ import {
 import style from '../pages/cloud/components/file.module.css';
 import { routerArgs } from '@/pages/cloud/components/fileAction';
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
-import { fileChangeUrl } from '@/_config/.api';
+import { fileChangeUrl, fileInfoUrl } from '@/_config/.api';
 import { ErrorCode } from '@/_config/error';
 import FileView from '@/pages/cloud/components/fileView';
 import { Number2FileType } from '@/components/utils';
 
 interface props {
+  setFileList: (fileList: FileInfo[]) => void;
   path: routerArgs;
   onSelectRowKeyChanged: any;
   ChangedFileNameID: number;
@@ -28,12 +29,15 @@ interface props {
   Loading: boolean;
   changeFileName: (id: number, name: string) => void;
   showTableAction: boolean;
+  setRouterArgs: (args: routerArgs[]) => void;
+  changeLoadingState: (loading: boolean) => void;
 }
 
 interface state {
   selectedRowKeys: number[];
   enterRowIndex: number | undefined;
   limit: number;
+  offset: number;
   changeNameButtonLoading: boolean;
 }
 
@@ -138,10 +142,52 @@ class FileTable extends React.Component<props, state> {
   formatFileUrl = (file: FileInfo) => {
     return fileChangeUrl + '/' + file.ID.toString();
   };
-  generateFileViewClick = (file: FileInfo) => {
+  generateFileClick = (file: FileInfo) => {
     return function(e: any) {
       if (file.IsDirectory) {
-        console.log('directory');
+        (async () => {
+          //@ts-ignore
+          this.props.changeLoadingState(true);
+          try {
+            const url =
+              fileInfoUrl +
+              '?offset=0' +
+              '&limit=' +
+              //@ts-ignore
+              this.state.limit.toString() +
+              '&path=' +
+              file.ID.toString();
+            const res = await fetch(url, {
+              method: 'GET',
+            });
+            const resp = await res.json();
+            if (resp.code === ErrorCode.OK) {
+              //@ts-ignore
+              this.props.setFileList(resp.data);
+              //@ts-ignore
+              const args = [this.props.path];
+              const path: routerArgs = {
+                Key: file.ID,
+                Name: file.Name,
+              };
+              args.push(path);
+              //@ts-ignore
+              this.props.setRouterArgs(args);
+              //@ts-ignore
+              this.props.setFileList(resp.data);
+              //@ts-ignore
+              this.setState({
+                offset: 0,
+              });
+            } else {
+            }
+          } catch (e) {
+            console.log(e);
+          } finally {
+            //@ts-ignore
+            this.props.changeLoadingState(false);
+          }
+        })();
       } else {
         if (Number2FileType(file.Type) !== 'other') {
           const maskElement = document.createElement('div');
@@ -211,7 +257,7 @@ class FileTable extends React.Component<props, state> {
               </span>
               <a
                 style={{ userSelect: 'none' }}
-                onClick={this.generateFileViewClick(record)}
+                onClick={this.generateFileClick(record)}
               >
                 {fileName}
               </a>
@@ -284,6 +330,7 @@ class FileTable extends React.Component<props, state> {
   constructor(props: any) {
     super(props);
     this.state = {
+      offset: 0,
       selectedRowKeys: [],
       enterRowIndex: undefined,
       limit: 20,

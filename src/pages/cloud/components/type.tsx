@@ -36,6 +36,8 @@ export const SET_TRASH_INIT_LOAD = 'set_trash_init_load';
 export type SET_TRASH_INIT_LOAD_TYPE = typeof SET_TRASH_INIT_LOAD;
 export const DELETE_TRASH_FROM_LIST = 'delete_trash_from_list';
 export type DELETE_TRASH_FROM_LIST_TYPE = typeof DELETE_TRASH_FROM_LIST;
+export const SET_ROUTER_ARGS = 'set_router_args';
+export type SET_ROUTER_ARGS_TYPE = typeof SET_ROUTER_ARGS;
 
 export interface AddFileToListAction {
   type: ADD_FILE_TO_FILE_LIST_TYPE;
@@ -129,6 +131,11 @@ export interface DeleteTrashFromList {
   payload: any;
 }
 
+export interface SetRouterArgsAction {
+  type: SET_ROUTER_ARGS_TYPE;
+  payload: any;
+}
+
 export type CloudActions =
   | AddFileToListAction
   | AddFileToUploadListAction
@@ -147,4 +154,5 @@ export type CloudActions =
   | SetTrashListAction
   | SetTrashStatusAction
   | SetTrashInitLoadAction
-  | DeleteTrashFromList;
+  | DeleteTrashFromList
+  | SetRouterArgsAction;
