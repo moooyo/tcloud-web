@@ -57,6 +57,9 @@ const columns = [
     title: '课程标签',
     align: 'center',
     render: (data: any) => {
+      if (data === null) {
+        return <></>;
+      }
       return renderTags(data);
     },
   },
@@ -90,6 +93,9 @@ const columns = [
     title: '课程文件',
     align: 'center',
     render: (files: FileInfo[]) => {
+      if (files === null) {
+        return <></>;
+      }
       if (files.length > 1) {
         return files[0].Name + '等';
       } else if (files.length === 1) {
@@ -621,6 +627,9 @@ const CourseTable = (props: any) => {
         pagination={false}
         loading={loading}
         rowSelection={rowSelection}
+        rowKey={(e: course) => {
+          return e.ID;
+        }}
       />
       {contextHolder}
     </>

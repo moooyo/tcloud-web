@@ -19,7 +19,7 @@ import FileView from '@/pages/cloud/components/fileView';
 import { Number2FileType } from '@/components/utils';
 
 interface props {
-  setFileList: (fileList: FileInfo[]) => void;
+  enterDirectory: (file: FileInfo, limit: number) => void;
   path: routerArgs;
   onSelectRowKeyChanged: any;
   ChangedFileNameID: number;
@@ -29,8 +29,6 @@ interface props {
   Loading: boolean;
   changeFileName: (id: number, name: string) => void;
   showTableAction: boolean;
-  setRouterArgs: (args: routerArgs[]) => void;
-  changeLoadingState: (loading: boolean) => void;
 }
 
 interface state {
@@ -145,49 +143,12 @@ class FileTable extends React.Component<props, state> {
   generateFileClick = (file: FileInfo) => {
     return function(e: any) {
       if (file.IsDirectory) {
-        (async () => {
-          //@ts-ignore
-          this.props.changeLoadingState(true);
-          try {
-            const url =
-              fileInfoUrl +
-              '?offset=0' +
-              '&limit=' +
-              //@ts-ignore
-              this.state.limit.toString() +
-              '&path=' +
-              file.ID.toString();
-            const res = await fetch(url, {
-              method: 'GET',
-            });
-            const resp = await res.json();
-            if (resp.code === ErrorCode.OK) {
-              //@ts-ignore
-              this.props.setFileList(resp.data);
-              //@ts-ignore
-              const args = [this.props.path];
-              const path: routerArgs = {
-                Key: file.ID,
-                Name: file.Name,
-              };
-              args.push(path);
-              //@ts-ignore
-              this.props.setRouterArgs(args);
-              //@ts-ignore
-              this.props.setFileList(resp.data);
-              //@ts-ignore
-              this.setState({
-                offset: 0,
-              });
-            } else {
-            }
-          } catch (e) {
-            console.log(e);
-          } finally {
-            //@ts-ignore
-            this.props.changeLoadingState(false);
-          }
-        })();
+        //@ts-ignore
+        this.props.enterDirectory(file, 30);
+        //@ts-ignore
+        this.setState({
+          offset: 30,
+        });
       } else {
         if (Number2FileType(file.Type) !== 'other') {
           const maskElement = document.createElement('div');

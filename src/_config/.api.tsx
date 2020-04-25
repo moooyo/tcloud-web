@@ -32,6 +32,7 @@ const userUrl = baseUrl + '/user';
 const shareFileBaseUrl = baseUrl + '/share';
 const tagUrl = baseUrl + '/tag';
 const courseUrl = baseUrl + '/course';
+const courseDirectoryUrl = courseUrl + '/directory';
 const practiceUrl = baseUrl + '/practice';
 const noticeUrl = baseUrl + '/notice';
 
@@ -40,6 +41,7 @@ const userIconUrl =
   'https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png';
 
 export {
+  courseDirectoryUrl,
   noticeUrl,
   practiceUrl,
   courseUrl,

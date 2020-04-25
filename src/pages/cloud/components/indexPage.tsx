@@ -4,6 +4,7 @@ import FileTable from '@/components/fileTable';
 import {
   FileAction,
   FileShowLoadData,
+  routerArgs,
 } from '@/pages/cloud/components/fileAction';
 import { FileInfo } from '@/pages/cloud/components/file';
 import FileList from '@/components/fileList';
@@ -96,16 +97,56 @@ class CloudIndex extends React.Component<any, any> {
     this.props.setSelect([]);
     this.props.setSelectKeys([]);
   };
+  enterDirectory = (file: FileInfo, limit: number) => {
+    (async () => {
+      this.props.changeLoadingState(true);
+      try {
+        const url =
+          fileInfoUrl +
+          '?offset=0' +
+          '&limit=' +
+          limit.toString() +
+          '&path=' +
+          file.ID.toString();
+        const res = await fetch(url, {
+          method: 'GET',
+        });
+        const resp = await res.json();
+        if (resp.code === ErrorCode.OK) {
+          //@ts-ignore
+          this.props.setFileList(resp.data);
+          //@ts-ignore
+          const args = this.props.routerArgs.slice();
+          const path: routerArgs = {
+            Key: file.ID,
+            Name: file.Name,
+          };
+          args.push(path);
+          //@ts-ignore
+          this.props.setRouterArgs(args);
+          //@ts-ignore
+          this.props.setFileList(resp.data);
+        } else {
+          notification['error']({
+            message: '加载失败',
+            description: resp.message,
+          });
+        }
+      } catch (e) {
+        console.log(e);
+      } finally {
+        this.props.changeLoadingState(false);
+      }
+    })();
+  };
 
   render() {
     const { loading } = this.props;
     const { routerArgs } = this.props;
-    const path = routerArgs[0];
+    const path = routerArgs[routerArgs.length - 1];
     const displayTable = (
       <FileTable
-        setFileList={this.props.setFileList}
-        changeLoadingState={this.props.changeLoadingState}
-        setRouterArgs={this.props.setRouterArgs}
+        enterDirectory={this.enterDirectory}
         path={path}
         setSelectRowKeys={this.props.setSelectKeys}
         onSelectRowKeyChanged={this.onSelectKeyChange}

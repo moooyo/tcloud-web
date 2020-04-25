@@ -4,12 +4,12 @@ import { tag, demoTags } from '@/pages/practice/components/problem';
 import { FileInfo, demoList } from './file';
 import style from './course.module.css';
 import FileTable from '@/components/fileTable';
-import { routerArgs } from './fileAction';
+import { routerArgs, FileShowLoadData } from './fileAction';
 import moment from 'moment';
 import { IconFont } from '@/components/utils';
 import { DownloadOutlined } from '@ant-design/icons';
 import { courseNotice, course } from '@/components/course';
-import { courseUrl, noticeUrl } from '@/_config/.api';
+import { courseUrl, noticeUrl, courseDirectoryUrl } from '@/_config/.api';
 import { ErrorCode } from '@/_config/error';
 
 const demoPath: routerArgs = {
@@ -63,6 +63,7 @@ interface courseActionProps {
 
 const CourseAction = (props: courseActionProps) => {
   const [loading, setLoading] = useState(false);
+
   const onSaveClick = () => {
     if (props.select.length === 0) {
       return;
@@ -108,12 +109,108 @@ const CourseAction = (props: courseActionProps) => {
 
 const CourseBox = (props: courseBoxProps) => {
   const [selectRowKeys, setSelectRowKeys] = useState([]);
+  const [source, setSource] = useState(props.course.FileList);
+  const defaultPath: routerArgs[] = [{ Key: -1, Name: '课程文件' }];
+  const [path, setPath] = useState(defaultPath);
+  const [loading, setLoading] = useState(false);
   const startTime = moment(props.course.StartTime * 1000).format(
     'YYYY-MM-DD HH:mm',
   );
   const endTime = moment(props.course.EndTime * 1000).format(
     'YYYY-MM-DD HH:mm',
   );
+
+  const enterDirectory = (file: FileInfo, limit: number) => {
+    const url =
+      courseDirectoryUrl + '?path=' + file.ID + '&course=' + props.course.ID;
+    (async () => {
+      try {
+        setLoading(true);
+        const res = await fetch(url);
+        const resp = await res.json();
+        if (resp.code === ErrorCode.OK) {
+          const args = path.slice();
+          args.push({
+            Key: file.ID,
+            Name: file.Name,
+          });
+          setPath(args);
+          setSource(resp.data);
+        } else {
+          notification['error']({
+            message: '加载失败',
+            description: resp.message,
+          });
+        }
+      } catch (e) {
+        console.log(e);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  };
+
+  const onPathClick = (e: any) => {
+    const key = e.currentTarget.children[0].innerHTML.trim();
+    let id = e.currentTarget.children[1].innerHTML;
+    const nextPath = path.slice(0, id + 1);
+    if (key === '-1') {
+      (async () => {
+        setLoading(true);
+        try {
+          const url =
+            courseUrl +
+            '?offset=0&limit=1000&course=' +
+            props.course.ID.toString();
+          const res = await fetch(url, {
+            method: 'GET',
+          });
+          const resp = await res.json();
+          console.log('1');
+          console.log(resp);
+          if (resp.code === ErrorCode.OK) {
+            setSource(resp.data.FileList);
+            console.log(resp.data);
+            setPath(nextPath);
+          } else {
+            console.log(2);
+            notification['error']({
+              message: '加载失败',
+              description: resp.message,
+            });
+          }
+        } catch (e) {
+          console.log(e);
+        } finally {
+          setLoading(false);
+        }
+      })();
+    } else {
+      const url =
+        courseDirectoryUrl + '?path=' + key + '&course=' + props.course.ID;
+      (async () => {
+        try {
+          setLoading(true);
+          const res = await fetch(url);
+          const resp = await res.json();
+          if (resp.code === ErrorCode.OK) {
+            setSource(resp.data);
+            setPath(nextPath);
+          } else {
+            notification['error']({
+              message: '加载失败',
+              description: resp.message,
+            });
+          }
+        } catch (e) {
+          console.log(e);
+        } finally {
+          setLoading(false);
+        }
+      })();
+    }
+  };
+
   return (
     <Card className={style.courseBox} hoverable>
       <div className={style.courseTitle}>
@@ -144,15 +241,19 @@ const CourseBox = (props: courseBoxProps) => {
         }}
       />
       <CourseAction select={selectRowKeys} />
+      <FileShowLoadData
+        args={path}
+        onClick={onPathClick}
+        count={source.length}
+        hasMore={false}
+      />
       <FileTable
-        changeLoadingState={() => {}}
-        setFileList={() => {}}
-        setRouterArgs={() => {}}
-        path={props.course.FilePath}
+        enterDirectory={enterDirectory}
+        path={path[path.length - 1]}
         ChangedFileNameID={-1}
         onChangedFileNameClicked={(id: number) => {}}
-        FileList={props.course.FileList}
-        Loading={false}
+        FileList={source}
+        Loading={loading}
         changeFileName={(id: number, name: string) => {}}
         onSelectRowKeyChanged={(a: any) => {}}
         setSelectRowKeys={(rows: any) => {
@@ -270,6 +371,7 @@ const CourseContent = (props: any) => {
   const [course, setCourse] = useState(demoCourseList);
   const [notice, setNotice] = useState(demoCourseNotice);
   const [loading, setLoading] = useState(false);
+  const [init, setInit] = useState(false);
   useEffect(() => {
     (async () => {
       setLoading(true);
@@ -293,6 +395,7 @@ const CourseContent = (props: any) => {
         console.log(e);
       } finally {
         setLoading(false);
+        setInit(true);
       }
     })();
   }, []);
@@ -322,28 +425,32 @@ const CourseContent = (props: any) => {
       }
     })();
   }, []);
-  return (
-    <Spin spinning={loading}>
-      <Row>
-        <Col span={16}>
-          <div className={style.wrapper}>
-            {course.map(e => {
-              return <CourseBox course={e} />;
-            })}
-          </div>
-        </Col>
-        <Col span={8}>
-          <div
-            style={{
-              marginTop: '20px',
-              marginRight: '3vw',
-            }}
-          >
-            <CourseNotice notice={notice} />
-          </div>
-        </Col>
-      </Row>
-    </Spin>
-  );
+  if (init) {
+    return (
+      <Spin spinning={loading}>
+        <Row>
+          <Col span={16}>
+            <div className={style.wrapper}>
+              {course.map(e => {
+                return <CourseBox course={e} />;
+              })}
+            </div>
+          </Col>
+          <Col span={8}>
+            <div
+              style={{
+                marginTop: '20px',
+                marginRight: '3vw',
+              }}
+            >
+              <CourseNotice notice={notice} />
+            </div>
+          </Col>
+        </Row>
+      </Spin>
+    );
+  } else {
+    return <></>;
+  }
 };
 export default CourseContent;

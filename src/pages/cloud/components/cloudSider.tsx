@@ -133,10 +133,6 @@ class CloudSider extends React.Component<props, any> {
             <IconFont type={'icon-course-management'} />
             课程
           </Menu.Item>
-          <Menu.Item key={'knowledge'}>
-            <IconFont type={'icon-knowledge'} />
-            知识点
-          </Menu.Item>
           <Menu.Item key={'tag'}>
             <IconFont type={'icon-tag'} />
             标签

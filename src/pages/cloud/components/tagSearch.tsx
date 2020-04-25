@@ -32,8 +32,7 @@ const TagSearch = (props: any) => {
           width: '400px',
         }}
       >
-        <Select defaultValue="1" style={{ width: '30%' }}>
-          <Option value="1">知识点</Option>
+        <Select defaultValue="0" style={{ width: '30%' }}>
           <Option value="0">标签</Option>
         </Select>
         <Search style={{ width: '70%' }} />

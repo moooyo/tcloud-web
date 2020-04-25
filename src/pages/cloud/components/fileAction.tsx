@@ -481,7 +481,6 @@ class FileShowLoadData extends React.Component<breadcrumbProps, any> {
     if (this.props.hasMore) {
       str = '已加载' + this.props.count.toString() + '个';
     }
-    console.log(this.props.args);
     return (
       <div
         style={{
@@ -501,12 +500,17 @@ class FileShowLoadData extends React.Component<breadcrumbProps, any> {
                 let a = <a>{item.Name}</a>;
                 let id = <span style={{ display: 'none' }}>{index}</span>;
                 let k = <span style={{ display: 'none' }}> {item.Key}</span>;
+                let click = true;
                 if (index == this.props.args.length - 1) {
                   a = <span>{item.Name}</span>;
                   k = <span style={{ display: 'none' }}>-1</span>;
+                  click = false;
                 }
                 return (
-                  <Breadcrumb.Item onClick={this.props.onClick} key={item.Key}>
+                  <Breadcrumb.Item
+                    onClick={click ? this.props.onClick : () => {}}
+                    key={item.Key}
+                  >
                     {k}
                     {id}
                     {a}

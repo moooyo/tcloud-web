@@ -5,7 +5,6 @@ import {
   Card,
   Divider,
   Spin,
-  Skeleton,
   Row,
   Col,
   Input,
@@ -40,55 +39,130 @@ const formatTimestamp = (timestamp: number) => {
 };
 
 const ShareBox = function(props: any) {
-  const path: routerArgs = {
-    Key: 0,
+  const defaultPath: routerArgs = {
+    Key: -1,
     Name: '分享',
   };
+  const [path, setPath] = useState([defaultPath]);
+  const [source, setSource] = useState(demoList);
   const [resp, setResp] = useState({
     owner: false,
     nickname: 'Alice',
     id: 1,
     secret: true,
-    fileList: demoList,
     expired: new Date().getTime(),
   });
-  const [loading, setLoading] = useState(true);
   const [codeButtonLoading, setCodeButtonLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const params = useParams();
   // @ts-ignore
   const id = useParams().id;
   const infoUrl = shareFileBaseUrl + '/' + id;
-  const loadState = async () => {
-    const tmp = await fetch(infoUrl);
-    const json = await tmp.json();
-    try {
-      if (tmp.status === 200 && json.code === ErrorCode.OK) {
-        const data = json.data;
-        setResp({
-          owner: data.owner,
-          nickname: data.nickname,
-          id: data.id,
-          secret: data.secret,
-          fileList: data.fileList,
-          expired: data.expired,
-        });
-      } else {
-        notification['error']({
-          message: '加载失败',
-          description: '请稍后刷新重试',
-        });
-      }
-    } catch (e) {
-      console.log(e);
-    } finally {
-      setLoading(false);
+
+  const onClick = (e: any) => {
+    let key = e.currentTarget.children[0].innerHTML;
+    let id = e.currentTarget.children[1].innerHTML;
+    if (key === -1) {
+      return;
+    } else {
+      let args = path;
+      args = args.slice(0, id + 1);
+      (async () => {
+        setLoading(true);
+        try {
+          const shareDirectoryUrl =
+            shareFileBaseUrl +
+            '?limit=' +
+            '30' +
+            '&path=' +
+            key.trim().toString();
+          const res = await fetch(shareDirectoryUrl, {
+            method: 'GET',
+          });
+          const resp = await res.json();
+          if (resp.code === ErrorCode.OK) {
+            setPath(args);
+            setSource(resp.data);
+          } else {
+            notification['error']({
+              message: '加载失败',
+              description: resp.message,
+            });
+          }
+        } catch (e) {
+          console.log(e);
+        } finally {
+          setLoading(false);
+        }
+      })();
     }
   };
+  const enterDirectory = (file: FileInfo, limit: number) => {
+    const shareDirectoryUrl =
+      shareFileBaseUrl + '?limit=' + limit.toString() + '&path=' + file.ID;
+    (async () => {
+      setLoading(true);
+      try {
+        const res = await fetch(shareDirectoryUrl, {
+          method: 'GET',
+        });
+        const resp = await res.json();
+        if (resp.code === ErrorCode.OK) {
+          setSource(resp.data);
+          const nextPath = path.slice();
+          nextPath.push({
+            Key: file.ID,
+            Name: file.Name,
+          });
+          setPath(nextPath);
+        } else {
+          notification['error']({
+            message: '加载失败',
+            description: resp.message,
+          });
+        }
+      } catch (e) {
+        console.log(e);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  };
   useEffect(() => {
-    if (loading) {
-      loadState();
-    }
-  });
+    (async () => {
+      setLoading(true);
+      try {
+        const tmp = await fetch(infoUrl);
+        const json = await tmp.json();
+        if (tmp.status === 200 && json.code === ErrorCode.OK) {
+          const data = json.data;
+          setResp({
+            owner: data.owner,
+            nickname: data.nickname,
+            id: data.id,
+            secret: data.secret,
+            expired: data.expired,
+          });
+          setPath([
+            {
+              Key: data.path,
+              Name: '分享',
+            },
+          ]);
+          setSource(data.fileList);
+        } else {
+          notification['error']({
+            message: '加载失败',
+            description: '请稍后刷新重试',
+          });
+        }
+      } catch (e) {
+        console.log(e);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
 
   const onGetShareInfoClick = () => {
     const input = document.getElementById('share_code');
@@ -112,9 +186,15 @@ const ShareBox = function(props: any) {
             nickname: data.nickname,
             id: data.id,
             secret: false,
-            fileList: data.fileList,
             expired: data.expired,
           });
+          setPath([
+            {
+              Key: data.path,
+              Name: '分享',
+            },
+          ]);
+          setSource(data.fileList);
         } else {
           notification['error']({
             message: '提取码错误',
@@ -262,10 +342,12 @@ const ShareBox = function(props: any) {
           </span>
         </div>
         <Divider style={{ margin: '10px' }} />
-        <ShareAction />
+        <ShareAction args={path} onClick={onClick} />
         <div className={style.fileTable}>
           <FileTable
-            path={path}
+            showTableAction={false}
+            enterDirectory={enterDirectory}
+            path={path[path.length - 1]}
             onSelectRowKeyChanged={(keys: any) => {
               console.log(keys);
             }}
@@ -274,8 +356,8 @@ const ShareBox = function(props: any) {
               console.log(selected);
             }}
             onChangedFileNameClicked={(id: number) => {}}
-            FileList={resp.fileList}
-            Loading={false}
+            FileList={source}
+            Loading={loading}
             changeFileName={(id: number, name: string) => {}}
           />
         </div>
