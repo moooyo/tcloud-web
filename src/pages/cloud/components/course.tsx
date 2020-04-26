@@ -9,7 +9,12 @@ import moment from 'moment';
 import { IconFont } from '@/components/utils';
 import { DownloadOutlined } from '@ant-design/icons';
 import { courseNotice, course } from '@/components/course';
-import { courseUrl, noticeUrl, courseDirectoryUrl } from '@/_config/.api';
+import {
+  courseUrl,
+  noticeUrl,
+  courseDirectoryUrl,
+  fileChangeUrl,
+} from '@/_config/.api';
 import { ErrorCode } from '@/_config/error';
 
 const demoPath: routerArgs = {
@@ -248,6 +253,16 @@ const CourseBox = (props: courseBoxProps) => {
         hasMore={false}
       />
       <FileTable
+        formatFileUrl={(file: FileInfo) => {
+          return (
+            fileChangeUrl +
+            '/' +
+            file.ID.toString() +
+            '?op=course' +
+            '&course=' +
+            props.course.ID.toString()
+          );
+        }}
         enterDirectory={enterDirectory}
         path={path[path.length - 1]}
         ChangedFileNameID={-1}
@@ -294,12 +309,13 @@ const demoCourseNotice = [
 ];
 
 const CourseNotice = (props: courseNoticeProps) => {
-  const renderNotice = (item: courseNotice) => {
+  const renderNotice = (item: courseNotice, key: number) => {
     return (
       <div
         style={{
           padding: '10px',
         }}
+        key={key}
       >
         <div>
           <span
@@ -360,8 +376,8 @@ const CourseNotice = (props: courseNoticeProps) => {
           }}
         />
       </div>
-      {props.notice.map(e => {
-        return renderNotice(e);
+      {props.notice.map((e: courseNotice, index: number) => {
+        return renderNotice(e, index);
       })}
     </Card>
   );
@@ -432,7 +448,7 @@ const CourseContent = (props: any) => {
           <Col span={16}>
             <div className={style.wrapper}>
               {course.map(e => {
-                return <CourseBox course={e} />;
+                return <CourseBox key={e.ID} course={e} />;
               })}
             </div>
           </Col>

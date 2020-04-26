@@ -4,7 +4,7 @@
   justify-content: center;
   height: 100%;
   background-color: #eef2f6;
-  background-image: url("../../../img/share_background.png");
+  background-image: url('../../../img/share_background.png');
   background-repeat: no-repeat;
   background-position: bottom center;
   background-size: 100% auto;
@@ -30,7 +30,7 @@
 }
 
 .img {
-  z-index: 999;
+  z-index: 111;
   margin-top: -42px;
 }
 

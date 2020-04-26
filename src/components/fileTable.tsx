@@ -29,6 +29,7 @@ interface props {
   Loading: boolean;
   changeFileName: (id: number, name: string) => void;
   showTableAction: boolean;
+  formatFileUrl: (file: FileInfo) => string;
 }
 
 interface state {
@@ -138,7 +139,7 @@ class FileTable extends React.Component<props, state> {
   };
 
   formatFileUrl = (file: FileInfo) => {
-    return fileChangeUrl + '/' + file.ID.toString();
+    return this.props.formatFileUrl(file);
   };
   generateFileClick = (file: FileInfo) => {
     return function(e: any) {

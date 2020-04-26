@@ -15,7 +15,13 @@ import ShareAction from '@/pages/share/components/action';
 import FileTable from '@/components/fileTable';
 import { routerArgs } from '@/pages/cloud/components/fileAction';
 import { demoList, FileInfo } from '@/pages/cloud/components/file';
-import { userIconUrl, shareFileBaseUrl } from '@/_config/.api';
+import {
+  userIconUrl,
+  shareFileBaseUrl,
+  fileDownloadUrl,
+  fileInfoUrl,
+  fileChangeUrl,
+} from '@/_config/.api';
 import { useParams, history } from 'umi';
 import { ErrorCode } from '@/_config/error';
 import moment from 'moment';
@@ -51,6 +57,7 @@ const ShareBox = function(props: any) {
     id: 1,
     secret: true,
     expired: new Date().getTime(),
+    shareID: 0,
   });
   const [codeButtonLoading, setCodeButtonLoading] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -142,6 +149,7 @@ const ShareBox = function(props: any) {
             id: data.id,
             secret: data.secret,
             expired: data.expired,
+            shareID: data.shareID,
           });
           setPath([
             {
@@ -187,6 +195,7 @@ const ShareBox = function(props: any) {
             id: data.id,
             secret: false,
             expired: data.expired,
+            shareID: data.shareID,
           });
           setPath([
             {
@@ -345,6 +354,15 @@ const ShareBox = function(props: any) {
         <ShareAction args={path} onClick={onClick} />
         <div className={style.fileTable}>
           <FileTable
+            formatFileUrl={(file: FileInfo) => {
+              return (
+                fileChangeUrl +
+                '/' +
+                file.ID.toString() +
+                '?op=share&share=' +
+                resp.shareID.toString()
+              );
+            }}
             showTableAction={false}
             enterDirectory={enterDirectory}
             path={path[path.length - 1]}

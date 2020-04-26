@@ -14,7 +14,7 @@ import CourseContent from './course';
 import TagSearch from './tagSearch';
 import TrashTable from './trash';
 import loadCloudState from './init';
-import { fileInfoUrl } from '@/_config/.api';
+import { fileInfoUrl, fileChangeUrl } from '@/_config/.api';
 import { ErrorCode } from '@/_config/error';
 
 const { Content, Sider } = Layout;
@@ -146,6 +146,9 @@ class CloudIndex extends React.Component<any, any> {
     const path = routerArgs[routerArgs.length - 1];
     const displayTable = (
       <FileTable
+        formatFileUrl={(file: FileInfo) => {
+          return fileChangeUrl + '/' + file.ID.toString();
+        }}
         enterDirectory={this.enterDirectory}
         path={path}
         setSelectRowKeys={this.props.setSelectKeys}
