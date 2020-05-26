@@ -1,15 +1,19 @@
-import React from 'react';
-import { Breadcrumb, Button, Col, Row } from 'antd';
+import React, { useState } from 'react';
+import { Breadcrumb, Button, Col, Row, notification } from 'antd';
 import style from './share.module.css';
 import { DownloadOutlined, SaveOutlined } from '@ant-design/icons';
 import { routerArgs } from '@/pages/cloud/components/fileAction';
+import { FileInfo } from '@/pages/cloud/components/file';
+import { fileDownloadUrl } from '@/_config/.api';
 
 interface actionProps {
   args: routerArgs[];
   onClick: any;
+  select: FileInfo[];
 }
 
 const ShareAction = function(props: actionProps) {
+  const [loading, setLoading] = useState(false);
   return (
     <div>
       <Row>
@@ -59,7 +63,57 @@ const ShareAction = function(props: actionProps) {
             >
               保存
             </Button>
-            <Button className={style.button} icon={<DownloadOutlined />}>
+            <Button
+              className={style.button}
+              icon={<DownloadOutlined />}
+              loading={loading}
+              onClick={() => {
+                const downloadList: number[] = [];
+                props.select.forEach(e => {
+                  downloadList.push(e.ID);
+                });
+                const url = fileDownloadUrl + '?op=share';
+                (async () => {
+                  setLoading(true);
+                  try {
+                    const res = await fetch(url, {
+                      method: 'POST',
+                      body: JSON.stringify({
+                        files: downloadList,
+                      }),
+                    });
+                    if (res.status === 200) {
+                      const blob = await res.blob();
+                      const disposition = res.headers.get(
+                        'Content-Disposition',
+                      );
+                      let filename = 'init';
+                      if (disposition !== null) {
+                        filename = disposition.split('filename=')[1].trim();
+                      }
+                      const blobUrl = window.URL.createObjectURL(blob);
+                      const a = document.createElement('a');
+                      a.href = blobUrl;
+                      a.download = filename;
+                      a.click();
+                      window.URL.revokeObjectURL(blobUrl);
+                    } else {
+                      const resp = await res.json();
+                      notification['error']({
+                        message: '下载失败',
+                        description: resp.message,
+                      });
+                      console.log(resp);
+                    }
+                  } catch (e) {
+                    console.log(e);
+                  } finally {
+                    setLoading(false);
+                  }
+                })();
+                console.log(props.select);
+              }}
+            >
               下载
             </Button>
           </div>

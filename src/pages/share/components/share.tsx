@@ -61,7 +61,8 @@ const ShareBox = function(props: any) {
   });
   const [codeButtonLoading, setCodeButtonLoading] = useState(false);
   const [loading, setLoading] = useState(false);
-  const params = useParams();
+  const defaultSelect: FileInfo[] = [];
+  const [select, setSelect] = useState(defaultSelect);
   // @ts-ignore
   const id = useParams().id;
   const infoUrl = shareFileBaseUrl + '/' + id;
@@ -351,7 +352,7 @@ const ShareBox = function(props: any) {
           </span>
         </div>
         <Divider style={{ margin: '10px' }} />
-        <ShareAction args={path} onClick={onClick} />
+        <ShareAction args={path} onClick={onClick} select={select} />
         <div className={style.fileTable}>
           <FileTable
             formatFileUrl={(file: FileInfo) => {
@@ -367,7 +368,7 @@ const ShareBox = function(props: any) {
             enterDirectory={enterDirectory}
             path={path[path.length - 1]}
             onSelectRowKeyChanged={(keys: any) => {
-              console.log(keys);
+              setSelect(keys);
             }}
             ChangedFileNameID={-1}
             setSelectRowKeys={(selected: any) => {
