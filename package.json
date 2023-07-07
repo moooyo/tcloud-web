@@ -42,7 +42,7 @@
     "redux": "^4.0.5",
     "redux-devtools": "^3.5.0",
     "redux-devtools-extension": "^2.13.8",
-    "stylelint": "^13.2.0",
+    "stylelint": "^15.10.1",
     "stylelint-config-css-modules": "^2.2.0",
     "stylelint-config-prettier": "^8.0.1",
     "stylelint-config-rational-order": "^0.1.2",
